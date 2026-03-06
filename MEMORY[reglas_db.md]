@@ -18,3 +18,11 @@ Para que el Agente pueda tener control y ejecutar las correcciones directamente 
 ## 3. 🛡️ SEGURIDAD
 - Nunca subir credenciales (`service_role`, contraseñas) a repositorios públicos.
 - Realizar backups (dump) antes de operaciones destructivas masivas.
+
+## 4. 👑 GESTIÓN DE PRIORIDAD VIP
+Cualquier pedido marcado como "PRIORIDAD" (`priority: true`) debe seguir este protocolo estricto:
+
+- **Visual:** Borde Dorado Brillante (`#FFD700`) y etiqueta de Star icon.
+- **Posicionamiento:** Estos pedidos se renderizan **siempre al principio** de su respectiva columna, ignorando el orden cronológico estándar para garantizar visibilidad inmediata.
+- **Alerta:** En el Portal Mesero, marcar un pedido como VIP debe ser una acción consciente (requiere toggle) y en el KDS debe tratarse como "Urgencia Nivel 1".
+- **SLA:** El tiempo de alerta roja para un VIP puede configurarse como un 25% más corto que para un pedido estándar.

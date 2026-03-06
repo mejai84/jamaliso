@@ -1,91 +1,50 @@
-# 🐟 Pargo Rojo - Sistema Integral de Restaurante
+# 🐟 JAMALI OS - Sistema Integral de Gestión Gastronómica
+¡Sistema de alto rendimiento implementado! Aquí encontrarás la guía para todas las funcionalidades de nivel empresarial.
 
-¡Sistema completo implementado! Aquí encontrarás la guía para todas las funcionalidades.
+## 📖 MANUAL DE OPERACIÓN PRO (NUEVO)
+> **[Consultar Manual de Usuario Vivo y Guía de Pruebas](MANUAL_DE_USUARIO_VIVO.md)**
+Este documento es la referencia definitiva para:
+- Pantalla de Cocina (KDS PRO)
+- Portal de Meseros (Waiter Pro)
+- Guía para realizar pruebas de calidad.
 
 ## 📚 Documentación por Módulo
-
 ### 1. 🔔 [Notificaciones y Realtime](NOTIFICACIONES_README.md)
 - Sistema de alertas para cocina
 - Notificaciones de estado para clientes
 - Sonidos y alertas de navegador
-- Ver detalle: `IMPLEMENTACION_NOTIFICACIONES.md`
 
-### 2. 💳 [Pagos Locales (Wompi)](PAGOS_README.md)
-- Integración con Wompi Colombia
-- Soporte para Tarjetas, Nequi, PSE, Bancolombia
-- Webhooks y seguridad
-- Ver detalle: `IMPLEMENTACION_PAGOS.md`
+### 2. 📱 [Portal de Meseros (Waiter Pro)](/admin/waiter)
+- Favoritos de acceso rápido.
+- Alertas de tiempo de servicio (Pulso Rojo).
+- División de cuentas (Split Check) y Unión de Mesas.
+- Transferencia de ítems entre mesas.
 
-### 3. 📱 [Menú Digital QR](IMPLEMENTACION_MENU_QR.md)
-- Menú móvil para clientes
-- Sistema de gestión de mesas
-- Generación e impresión de QR codes
-- Pedidos desde la mesa
+### 3. 👨‍🍳 [Cocina KDS PRO](/admin/kitchen)
+- Resumen de producción por ingredientes.
+- Alertas sonoras inteligentes.
+- Gestión de Stock Crítico (Marcar Agotado).
 
 ### 4. 📦 [Control de Inventario](IMPLEMENTACION_INVENTARIO.md)
-- Gestión de ingredientes
-- Recetas y descuento automático
-- Alertas de stock bajo
-- Historial de movimientos
+- Gestión de ingredientes y recetas.
+- Descuento automático de stock.
 
-### 5. 🏷️ Gestión de Cupones
-- Creación de códigos de descuento
-- Validación en checkout
-- Límites de uso y fechas
-- **Admin**: `/admin/coupons`
+### 5. 💳 Pagos Locales (Wompi)
+- Integración con Wompi Colombia (Tarjetas, Nequi, PSE).
 
-### 6. 📅 Sistema de Reservas
-- Formulario de reservas para clientes: `/reservas`
-- Dashboard de gestión para admin: `/admin/reservations`
-- Estados: Pendiente, Confirmada, Cancelada
+---
+## 🏗️ Documentación del Sistema (Developer & Admin)
+Para profundizar en el funcionamiento interno y la escalabilidad del sistema:
 
-### 7. 📊 Reportes y Analytics
-- Dashboard con KPIs clave: `/admin/reports`
-- Ventas diarias, Top productos
-- Ticket promedio y métricas de crecimiento
+1.  **[Blueprint de Arquitectura](docs/ARCHITECTURE_BLUEPRINT.md)**: Stack técnico y patrones de diseño.
+2.  **[Diccionario de Datos](docs/DATA_DICTIONARY.md)**: Esquema de base de datos y reglas de negocio.
+3.  **[Guía de Despliegue y Seguridad](docs/DEPLOYMENT_SECURITY_GUIDE.md)**: Checklist para pasar a producción.
+4.  **[Guía de Onboarding](docs/ONBOARDING_RESTAURANTS.md)**: Pasos para configurar un nuevo negocio.
 
-## 🚀 Pasos para Iniciar (IMPORTANTE)
+---
+## 🚀 Estructura del Sistema
+- **Admin**: `/admin` (Dashboard General)
+- **Meseros**: `/admin/waiter` (Optimizado para tablets/móvil)
+- **Cocina**: `/admin/kitchen` (KDS en tiempo real)
 
-Para que todo funcione, debes ejecutar estos scripts SQL en Supabase en este orden:
-
-1. `supabase_migrations/create_notifications_system.sql`
-2. `supabase_migrations/create_coupons_system.sql`
-3. `supabase_migrations/create_inventory_system.sql`
-4. `supabase_migrations/create_tables_system.sql`
-5. `supabase_migrations/create_analytics_functions.sql`
-
-*(Nota: `create_reservations_table.sql` ya debería estar ejecutado)*
-
-## 📂 Estructura de Carpetas Clave
-
-```
-src/
-├── app/
-│   ├── admin/              # Panel de administración
-│   │   ├── coupons/        # Gestión de cupones
-│   │   ├── inventory/      # Gestión de inventario
-│   │   ├── kitchen/        # KDS (Pantalla de cocina)
-│   │   ├── reports/        # Analytics
-│   │   ├── reservations/   # Gestión de reservas
-│   │   └── tables/         # Gestión de mesas y QR
-│   ├── menu-qr/            # Interfaz móvil para clientes (QR)
-│   └── reservas/           # Página pública de reservas
-├── components/
-│   ├── admin/              # Componentes del dashboard
-│   └── store/              # Componentes de la tienda
-└── lib/
-    ├── payments/           # Lógica de Wompi
-    └── supabase/           # Configuración de base de datos
-```
-
-## 🛠️ Credenciales y Configuración
-
-Asegúrate de configurar `.env.local` con:
-- Supabase URL & Key
-- Wompi Keys (Test/Prod)
-
-## 📞 Soporte
-
-El sistema está diseñado para ser modular. Si necesitas desactivar algo (ej: reservas), simplemente oculta el enlace en el sidebar.
-
-¡Disfruta tu nuevo sistema! 🚀
+> **Importante**: No subir este código a GitHub sin autorización. Respetar políticas de privacidad de datos.

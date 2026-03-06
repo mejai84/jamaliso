@@ -40,12 +40,13 @@ export interface CreateOrderData {
     user_id: string;
     waiter_id: string;
     table_id?: string;
-    customer_id?: string;
     items: OrderItemWithNotes[];
     subtotal: number;
     tax?: number;
+    service_charge?: number;
     total: number;
     notes?: string;
+    priority?: boolean;
 }
 
 export interface TransferOrderData {
@@ -74,9 +75,9 @@ export async function createOrderWithNotes(orderData: CreateOrderData) {
         // 1. Insertar Orden
         const insertOrderQuery = `
             INSERT INTO orders (
-                restaurant_id, user_id, waiter_id, table_id, customer_id, 
-                order_type, status, subtotal, tax, total, notes
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+                restaurant_id, user_id, waiter_id, table_id, 
+                order_type, status, subtotal, tax, service_charge, total, notes, priority
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
             RETURNING *
         `
         const orderValues = [
@@ -84,13 +85,14 @@ export async function createOrderWithNotes(orderData: CreateOrderData) {
             orderData.user_id,
             orderData.waiter_id,
             orderData.table_id || null,
-            orderData.customer_id || null,
             orderData.table_id ? 'dine_in' : 'pos',
             'pending',
             orderData.subtotal,
             orderData.tax || 0,
+            orderData.service_charge || 0,
             orderData.total,
-            orderData.notes || null
+            orderData.notes || null,
+            orderData.priority || false
         ]
 
         const { rows: orderRows } = await client.query(insertOrderQuery, orderValues)
@@ -100,8 +102,8 @@ export async function createOrderWithNotes(orderData: CreateOrderData) {
         if (orderData.items.length > 0) {
             const insertItemsQuery = `
                 INSERT INTO order_items (
-                    order_id, product_id, quantity, unit_price, subtotal, notes
-                ) VALUES ($1, $2, $3, $4, $5, $6)
+                    order_id, product_id, quantity, unit_price, notes
+                ) VALUES ($1, $2, $3, $4, $5)
             `
 
             for (const item of orderData.items) {
@@ -110,7 +112,6 @@ export async function createOrderWithNotes(orderData: CreateOrderData) {
                     item.product_id,
                     item.quantity,
                     item.unit_price,
-                    item.subtotal,
                     item.notes || null
                 ])
             }
@@ -225,9 +226,9 @@ export async function splitOrder(
         // 2. Crear nueva orden (Clonada)
         const newOrderQuery = `
             INSERT INTO orders (
-                restaurant_id, table_id, user_id, waiter_id, customer_id, 
-                order_type, status, notes, created_at, subtotal, total, payment_status
-            ) VALUES ($1, $2, $3, $4, $5, $6, 'pending', $7, NOW(), 0, 0, 'pending')
+                restaurant_id, table_id, user_id, waiter_id, 
+                order_type, status, notes, created_at, subtotal, tax, service_charge, total, payment_status
+            ) VALUES ($1, $2, $3, $4, $5, 'pending', $6, NOW(), 0, 0, 0, 0, 'pending')
             RETURNING *
         `
         const newOrderValues = [
@@ -235,7 +236,6 @@ export async function splitOrder(
             sourceOrder.table_id,
             userId, // Usuario que realiza el split es el nuevo 'creador' temporal
             sourceOrder.waiter_id,
-            sourceOrder.customer_id,
             sourceOrder.order_type,
             `Sub-cuenta de Orden #${sourceOrder.id.substring(0, 8)}`
         ]
@@ -260,9 +260,9 @@ export async function splitOrder(
 
                 // Crear nuevo item en nueva orden
                 await client.query(`
-                    INSERT INTO order_items (order_id, product_id, quantity, unit_price, subtotal, notes)
-                    VALUES ($1, $2, $3, $4, $5, $6)
-                `, [newOrder.id, dbItem.product_id, item.quantity, dbItem.unit_price, item.quantity * dbItem.unit_price, dbItem.notes])
+                    INSERT INTO order_items (order_id, product_id, quantity, unit_price, notes)
+                    VALUES ($1, $2, $3, $4, $5)
+                `, [newOrder.id, dbItem.product_id, item.quantity, dbItem.unit_price, dbItem.notes])
             }
         }
 
@@ -270,7 +270,7 @@ export async function splitOrder(
         await client.query(`
             UPDATE orders 
             SET subtotal = (SELECT COALESCE(SUM(subtotal), 0) FROM order_items WHERE order_id = $1),
-                total = (SELECT COALESCE(SUM(subtotal), 0) FROM order_items WHERE order_id = $1)
+                total = (SELECT COALESCE(SUM(subtotal), 0) FROM order_items WHERE order_id = $1) + COALESCE(tax, 0) + COALESCE(service_charge, 0)
             WHERE id = $1
         `, [sourceOrderId])
 
@@ -278,7 +278,7 @@ export async function splitOrder(
         await client.query(`
             UPDATE orders 
             SET subtotal = (SELECT COALESCE(SUM(subtotal), 0) FROM order_items WHERE order_id = $1),
-                total = (SELECT COALESCE(SUM(subtotal), 0) FROM order_items WHERE order_id = $1)
+                total = (SELECT COALESCE(SUM(subtotal), 0) FROM order_items WHERE order_id = $1) + COALESCE(tax, 0) + COALESCE(service_charge, 0)
             WHERE id = $1
         `, [newOrder.id])
 
@@ -347,18 +347,18 @@ export async function addItemsToOrder(orderId: string, items: OrderItemWithNotes
     try {
         await client.query('BEGIN')
         const insertItemsQuery = `
-            INSERT INTO order_items (order_id, product_id, quantity, unit_price, subtotal, notes)
-            VALUES ($1, $2, $3, $4, $5, $6)
+            INSERT INTO order_items (order_id, product_id, quantity, unit_price, notes)
+            VALUES ($1, $2, $3, $4, $5)
         `
         for (const item of items) {
             await client.query(insertItemsQuery, [
-                orderId, item.product_id, item.quantity, item.unit_price, item.subtotal, item.notes || null
+                orderId, item.product_id, item.quantity, item.unit_price, item.notes || null
             ])
         }
         await client.query(`
             UPDATE orders 
             SET subtotal = (SELECT COALESCE(SUM(subtotal), 0) FROM order_items WHERE order_id = $1),
-                total = (SELECT COALESCE(SUM(subtotal), 0) FROM order_items WHERE order_id = $1),
+                total = (SELECT COALESCE(SUM(subtotal), 0) FROM order_items WHERE order_id = $1) + COALESCE(tax, 0) + COALESCE(service_charge, 0),
                 updated_at = NOW()
             WHERE id = $1
         `, [orderId])
@@ -375,4 +375,116 @@ export async function addItemsToOrder(orderId: string, items: OrderItemWithNotes
     } finally {
         client.release()
     }
+}
+
+/**
+ * Une dos mesas fusionando sus órdenes activas.
+ */
+export async function mergeTables(sourceTableId: string, targetTableId: string, userId: string) {
+    const client = await pool.connect()
+    try {
+        await client.query('BEGIN')
+
+        // 1. Obtener órdenes activas
+        const { rows: [sourceOrder] } = await client.query('SELECT id FROM orders WHERE table_id = $1 AND status IN (\'pending\', \'preparing\', \'ready\')', [sourceTableId])
+        const { rows: [targetOrder] } = await client.query('SELECT id FROM orders WHERE table_id = $1 AND status IN (\'pending\', \'preparing\', \'ready\')', [targetTableId])
+
+        if (!sourceOrder || !targetOrder) throw new Error('Ambas mesas deben tener órdenes activas')
+
+        // 2. Mover items de la fuente al destino
+        await client.query('UPDATE order_items SET order_id = $1 WHERE order_id = $2', [targetOrder.id, sourceOrder.id])
+
+        // 3. Eliminar (o cancelar) la orden fuente
+        await client.query('UPDATE orders SET status = \'cancelled\', notes = \'Fusionada con Mesa \' || $1 WHERE id = $2', [targetTableId, sourceOrder.id])
+        await client.query('UPDATE tables SET status = \'free\' WHERE id = $1', [sourceTableId])
+
+        // 4. Recalcular totales destino
+        await client.query(`
+            UPDATE orders 
+            SET subtotal = (SELECT COALESCE(SUM(subtotal), 0) FROM order_items WHERE order_id = $1),
+                total = (SELECT COALESCE(SUM(subtotal), 0) FROM order_items WHERE order_id = $1) + COALESCE(tax, 0) + COALESCE(service_charge, 0),
+                updated_at = NOW()
+            WHERE id = $1
+        `, [targetOrder.id])
+
+        await client.query('COMMIT')
+        revalidatePath('/admin/tables')
+        return { success: true, message: 'Mesas fusionadas exitosamente' }
+    } catch (e: any) {
+        await client.query('ROLLBACK')
+        return { success: false, error: e.message }
+    } finally {
+        client.release()
+    }
+}
+
+/**
+ * Transfiere un item específico de una mesa a otra.
+ */
+export async function transferOrderItem(sourceOrderId: string, targetTableId: string, itemId: string, quantity: number, userId: string) {
+    const client = await pool.connect()
+    try {
+        await client.query('BEGIN')
+
+        // 1. Obtener o crear orden en mesa destino
+        let { rows: [targetOrder] } = await client.query('SELECT * FROM orders WHERE table_id = $1 AND status IN (\'pending\', \'preparing\', \'ready\')', [targetTableId])
+
+        if (!targetOrder) {
+            const { rows: [sourceOrder] } = await client.query('SELECT * FROM orders WHERE id = $1', [sourceOrderId])
+            const { rows: [newOrder] } = await client.query(`
+                INSERT INTO orders (restaurant_id, table_id, user_id, waiter_id, order_type, status, subtotal, total)
+                VALUES ($1, $2, $3, $4, \'dine_in\', \'pending\', 0, 0) RETURNING *
+            `, [sourceOrder.restaurant_id, targetTableId, userId, sourceOrder.waiter_id])
+            targetOrder = newOrder
+            await client.query('UPDATE tables SET status = \'occupied\' WHERE id = $1', [targetTableId])
+        }
+
+        // 2. Mover item logic (similar a split)
+        const { rows: [dbItem] } = await client.query('SELECT * FROM order_items WHERE id = $1', [itemId])
+        if (quantity >= dbItem.quantity) {
+            await client.query('UPDATE order_items SET order_id = $1 WHERE id = $2', [targetOrder.id, itemId])
+        } else {
+            await client.query('UPDATE order_items SET quantity = quantity - $1 WHERE id = $2', [quantity, itemId])
+            await client.query('INSERT INTO order_items (order_id, product_id, quantity, unit_price, notes) VALUES ($1, $2, $3, $4, $5)',
+                [targetOrder.id, dbItem.product_id, quantity, dbItem.unit_price, dbItem.notes])
+        }
+
+        // 3. Recalcular ambos
+        const ordersToRecalc = [sourceOrderId, targetOrder.id]
+        for (const id of ordersToRecalc) {
+            await client.query(`
+                UPDATE orders 
+                SET subtotal = (SELECT COALESCE(SUM(subtotal), 0) FROM order_items WHERE order_id = $1),
+                    total = (SELECT COALESCE(SUM(subtotal), 0) FROM order_items WHERE order_id = $1) + COALESCE(tax, 0) + COALESCE(service_charge, 0),
+                    updated_at = NOW()
+                WHERE id = $1
+            `, [id])
+        }
+
+        await client.query('COMMIT')
+        revalidatePath('/admin/tables')
+        return { success: true, message: 'Ítem transferido exitosamente' }
+    } catch (e: any) {
+        await client.query('ROLLBACK')
+        return { success: false, error: e.message }
+    } finally {
+        client.release()
+    }
+}
+
+/**
+ * Envía un mensaje a la cocina.
+ */
+export async function sendKitchenMessage(restaurantId: string, sender: string, message: string) {
+    const supabase = await createClient()
+    const { error } = await supabase.from('notifications').insert({
+        restaurant_id: restaurantId,
+        title: `MENSAJE DE ${sender.toUpperCase()}`,
+        message: message,
+        type: 'kitchen_msg',
+        status: 'unread'
+    })
+    if (error) return { success: false, error: error.message }
+    revalidatePath('/admin/kitchen')
+    return { success: true, message: 'Mensaje enviado a cocina' }
 }
