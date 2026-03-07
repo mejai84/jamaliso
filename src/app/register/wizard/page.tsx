@@ -97,8 +97,7 @@ export default function RegisterWizard() {
                     name: formData.restaurantName,
                     subdomain: formData.slug,
                     primary_color: formData.primaryColor,
-                    logo_url: '/jamali_os_dashboard_mockup_1772892029558.png', // Logo por defecto
-                    is_active: true
+                    logo_url: '', // TODO: Permitir subida de logo real
                 })
                 .select()
                 .single()

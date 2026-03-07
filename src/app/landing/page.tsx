@@ -192,8 +192,8 @@ export default function LandingJamaliOS() {
                         <div className="absolute inset-0 bg-orange-500/20 blur-[100px] rounded-full scale-75 group-hover:scale-100 transition-transform duration-1000" />
                         <div className="relative aspect-video rounded-[3rem] overflow-hidden border-8 border-white shadow-[0_50px_100px_rgba(0,0,0,0.15)] bg-slate-100">
                             <Image
-                                src="/jamali_os_dashboard_mockup_1772892029558.png"
-                                alt="Dashboard Mockup"
+                                src="/images/dashboard_mockup.png"
+                                alt="JAMALI OS Dashboard Mockup"
                                 fill
                                 className="object-cover"
                             />
