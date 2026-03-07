@@ -23,6 +23,13 @@ Geometría y estado del salón.
 *   `use_inventory`: (Boolean) Indica si el sistema debe descontar stock de este item.
 *   `station_id`: Vincula el producto a una estación (Cocina, Bar, Horno).
 
+### 🔄 Traspaso de Turno (`shift_handoffs`)
+*   `outgoing_user_id`: Cajera que entrega.
+*   `incoming_user_id`: Cajera que recibe.
+*   `pending_tables`: JSONB snapshot de mesas ocupadas.
+*   `pending_orders`: JSONB snapshot de platos en cocina.
+*   `status`: `pending`, `accepted`.
+
 ### 🧾 Órdenes (`orders`)
 *   `status`: `pending`, `preparing`, `ready`, `delivered`, `cancelled`.
 *   `order_type`: `dine_in` (Salón), `pos` (Mostrador), `delivery`.

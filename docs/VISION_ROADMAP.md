@@ -41,7 +41,7 @@ Fases para llevar a Jamali OS a la dominancia del mercado:
 - [ ] Integración física de pagos (Datáfonos QR, links de pago).
 
 ### Fase 3: Experiencia (Meses 6–9)
-- [ ] Carta Digital interactiva / Pedidos QR desde la mesa.
+- [x] Carta Digital interactiva / Pedidos QR desde la mesa.
 - [ ] Plano de Salón interactivo (Drag & Drop).
 - [ ] App móvil nativa (o PWA premium) de monitoreo para los Inversores/Dueños.
 - [ ] Fidelización (Puntos Pargo, Cupones automáticos).

@@ -69,6 +69,22 @@ Control central para chefs y cocineros.
 
 ---
 
+## 3.1. Módulo Pedidos QR (Auto-servicio)
+Extensión del POS para el cliente final.
+
+**Rutas Frontend:** `/src/app/[slug]/mesa/[mesa]`
+
+**Funciones Principales:**
+- Escaneo de mesa vinculada a un restaurante específico (`slug`).
+- Selección de productos y envío directo a la cocina.
+- Cambio automático de estado de mesa a `occupied`.
+
+**Tablas Afectadas:**
+- `orders` y `order_items`: Se insertan nuevos registros.
+- `tables`: Se actualiza el `status`.
+
+---
+
 ## 4. Módulo Caja y Finanzas
 Prevención de fraude y cierres de turno.
 
@@ -77,11 +93,13 @@ Prevención de fraude y cierres de turno.
 **Funciones Principales:**
 - Declarar base de efectivo al abrir turno.
 - Registrar movimientos de entrada/salida (pagos a proveedores).
+- **Traspaso de Turno (Handoff)**: Permite cerrar sesión aun con mesas abiertas, transfiriendo la responsabilidad a la siguiente cajera con firma digital.
 - Realizar el Cierre Ciego al finalizar el día (el cajero no sabe cuánto espera el sistema).
 - Comparativo entre ventas del sistema vs dinero reportado.
 
 **Tablas Afectadas:**
-- `cashbox_sessions`: Contrato de responsabilidad del turno actual.
+- `cashbox_sessions`: Contrato de responsabilidad del turno actual. Columnas para handoff: `closed_with_pending`, `transferred_to`.
+- `shift_handoffs`: Nueva tabla para documentar el traspaso (Snapshots de mesas y órdenes).
 - `cash_movements`: Trazabilidad granular del dinero que sale o entra.
 - `petty_cash_vouchers`: Egresos formales (recibos).
 
