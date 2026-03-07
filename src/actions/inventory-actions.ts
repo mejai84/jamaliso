@@ -24,10 +24,14 @@ export async function deductInventoryFromOrder(orderId: string, restaurantId: st
         )
 
         for (const item of itemsRes.rows) {
-            // 2. Buscar receta del producto (usando la tabla 'recipes' que vimos anteriormente)
-            // Asumimos que 'recipes' vincula product_id con ingredient_id
+            // 2. Buscar receta del producto usando las tablas correctas (recipes_new y recipe_items)
             const recipeRes = await client.query(
-                'SELECT ingredient_id, quantity as ingredient_qty FROM recipes WHERE product_id = $1 AND restaurant_id = $2',
+                `SELECT 
+                   ri.ingredient_id, 
+                   ri.quantity as ingredient_qty 
+                 FROM recipes_new r
+                 JOIN recipe_items ri ON r.id = ri.recipe_id
+                 WHERE r.product_id = $1 AND r.restaurant_id = $2`,
                 [item.product_id, restaurantId]
             )
 

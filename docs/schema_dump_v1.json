@@ -2435,64 +2435,6 @@
       "is_nullable": "YES"
     }
   ],
-  "recipes": [
-    {
-      "column_name": "id",
-      "data_type": "uuid",
-      "character_maximum_length": null,
-      "column_default": "gen_random_uuid()",
-      "is_nullable": "NO"
-    },
-    {
-      "column_name": "product_id",
-      "data_type": "uuid",
-      "character_maximum_length": null,
-      "column_default": null,
-      "is_nullable": "YES"
-    },
-    {
-      "column_name": "ingredient_id",
-      "data_type": "uuid",
-      "character_maximum_length": null,
-      "column_default": null,
-      "is_nullable": "YES"
-    },
-    {
-      "column_name": "quantity",
-      "data_type": "numeric",
-      "character_maximum_length": null,
-      "column_default": null,
-      "is_nullable": "NO"
-    },
-    {
-      "column_name": "notes",
-      "data_type": "text",
-      "character_maximum_length": null,
-      "column_default": null,
-      "is_nullable": "YES"
-    },
-    {
-      "column_name": "created_at",
-      "data_type": "timestamp with time zone",
-      "character_maximum_length": null,
-      "column_default": "now()",
-      "is_nullable": "YES"
-    },
-    {
-      "column_name": "restaurant_id",
-      "data_type": "uuid",
-      "character_maximum_length": null,
-      "column_default": null,
-      "is_nullable": "YES"
-    },
-    {
-      "column_name": "deleted_at",
-      "data_type": "timestamp with time zone",
-      "character_maximum_length": null,
-      "column_default": null,
-      "is_nullable": "YES"
-    }
-  ],
   "shift_definitions": [
     {
       "column_name": "id",

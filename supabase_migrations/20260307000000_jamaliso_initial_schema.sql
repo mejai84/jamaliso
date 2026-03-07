@@ -425,16 +425,6 @@ CREATE TABLE IF NOT EXISTS public.cashbox_sessions (
   restaurant_id uuid
 );
 
-CREATE TABLE IF NOT EXISTS public.recipes (
-  id uuid NOT NULL DEFAULT gen_random_uuid(),
-  product_id uuid,
-  ingredient_id uuid,
-  quantity numeric NOT NULL,
-  notes text,
-  created_at timestamp with time zone DEFAULT now(),
-  restaurant_id uuid,
-  deleted_at timestamp with time zone
-);
 
 CREATE TABLE IF NOT EXISTS public.shift_definitions (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
@@ -729,7 +719,6 @@ ALTER TABLE public.cashbox_audits ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.role_permissions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.delivery_tracking ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.cashbox_sessions ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.recipes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.shift_definitions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.audit_logs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.delivery_drivers ENABLE ROW LEVEL SECURITY;
