@@ -6,7 +6,7 @@ import {
     ArrowRight, CheckCircle2, Star, Users, Receipt,
     MonitorSmartphone, Bell, QrCode, TrendingUp, Menu,
     MessageCircle, Play, Laptop, HardDrive, LayoutDashboard,
-    Clock, Rocket, Sparkles, ShieldCheck, Heart, Layers
+    Clock, Rocket, Sparkles, ShieldCheck, Heart, Layers, Database, Cloud
 } from "lucide-react"
 import { useState, useEffect } from "react"
 import Image from "next/image"
@@ -169,20 +169,20 @@ export default function LandingJamaliOS() {
                             <span className="text-[10px] font-black text-orange-600 uppercase tracking-[0.2em]">El primer OS Inteligente para Restaurantes</span>
                         </div>
 
-                        <h1 className="text-5xl md:text-8xl font-black italic uppercase tracking-tight leading-[0.85] text-slate-900">
-                            Toma el <span className="text-orange-500">control total</span> de tu negocio en 24h.
+                        <h1 className="text-4xl md:text-6xl font-black italic uppercase tracking-tight leading-[1] text-slate-900">
+                            El Cerebro Operativo de <br /><span className="text-orange-500">tu Restaurante.</span>
                         </h1>
 
-                        <p className="text-lg md:text-2xl text-slate-500 max-w-2xl mx-auto lg:mx-0 font-medium leading-relaxed">
-                            Gestiona mesas, inventarios por receta y pedidos QR con la plataforma más rápida basada en la nube. <span className="text-slate-900 font-bold decoration-orange-500 underline underline-offset-4 decoration-2">Sin hardware costoso ni contratos.</span>
+                        <p className="text-base md:text-xl text-slate-500 max-w-2xl mx-auto lg:mx-0 font-medium leading-relaxed">
+                            Controla Ventas, Inventarios y Nómina en un solo lugar. <br className="hidden md:block" />La plataforma en la nube sin hardware costoso ni contratos.
                         </p>
 
                         <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-5">
-                            <Link href="/register/wizard" className="w-full sm:w-auto px-12 py-6 bg-slate-900 text-white font-black uppercase text-sm tracking-widest rounded-[2rem] hover:bg-orange-500 transition-all shadow-2xl shadow-slate-900/20 flex items-center justify-center gap-4 active:scale-95 group">
-                                Pruébalo Gratis <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                            <Link href="/register/wizard" className="w-full sm:w-auto px-10 py-5 bg-slate-900 text-white font-black uppercase text-xs tracking-widest rounded-full hover:bg-orange-500 transition-all shadow-2xl shadow-slate-900/20 flex items-center justify-center gap-4 active:scale-95 group">
+                                Iniciar Prueba Gratis <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                             </Link>
-                            <a href="#demo" className="w-full sm:w-auto px-12 py-6 bg-white text-slate-900 font-black uppercase text-sm tracking-widest rounded-[2rem] border-2 border-slate-200 hover:border-orange-500 hover:text-orange-500 transition-all flex items-center justify-center gap-4">
-                                Ver Demo en Vivo <Play className="w-5 h-5" />
+                            <a href="https://wa.me/573000000000?text=Hola!%20Quiero%20Agendar%20una%20Demo%20de%20Jamali%20OS" target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto px-10 py-5 bg-white text-slate-900 font-black uppercase text-xs tracking-widest rounded-full border-2 border-slate-200 hover:border-orange-500 hover:text-orange-500 transition-all flex items-center justify-center gap-4">
+                                Agendar Demo en vivo <Play className="w-4 h-4" />
                             </a>
                         </div>
 
@@ -227,7 +227,38 @@ export default function LandingJamaliOS() {
                         </div>
                     </div>
                 </div>
-            </section>
+
+                {/* SOCIAL PROOF TECNOLOGICO */}
+                <div className="max-w-7xl mx-auto mt-32 border-t border-slate-100 pt-12">
+                    <p className="text-center text-xs font-black text-slate-400 uppercase tracking-widest mb-8">Diseñado para la eficiencia operativa en LatAm con tecnología de clase mundial</p>
+                    <div className="flex flex-wrap justify-center items-center gap-12 sm:gap-20 opacity-40 grayscale hover:grayscale-0 transition-all duration-500">
+                        {/* Next.js Logo */}
+                        <div className="flex items-center gap-2 font-bold text-xl text-slate-900">
+                            <svg className="w-6 h-6" viewBox="0 0 180 180" fill="currentColor">
+                                <path fillRule="evenodd" clipRule="evenodd" d="M89.9998 179.998C139.705 179.998 179.998 139.705 179.998 89.9989C179.998 40.2934 139.705 0 89.9998 0C40.2943 0 0 40.2934 0 89.9989C0 139.705 40.2943 179.998 89.9998 179.998ZM82.2599 122.378L52.8123 79.5085H63.3647L86.6346 113.844L113.845 79.5085H124.397L92.812 119.567V146.505H82.2599V122.378Z" />
+                            </svg>
+                            Next.js
+                        </div>
+                        {/* Vercel Logo */}
+                        <div className="flex items-center gap-2 font-bold text-xl text-slate-900">
+                            <svg className="w-6 h-6" viewBox="0 0 116 100" fill="currentColor">
+                                <path fillRule="evenodd" clipRule="evenodd" d="M57.5 0L115 100H0L57.5 0Z" />
+                            </svg>
+                            Vercel
+                        </div>
+                        {/* Supabase text */}
+                        <div className="flex items-center gap-2 font-bold text-xl text-emerald-500">
+                            <Database className="w-5 h-5" />
+                            Supabase
+                        </div>
+                        {/* Google Cloud text */}
+                        <div className="flex items-center gap-2 font-bold text-xl text-blue-500">
+                            <Cloud className="w-5 h-5" />
+                            Google Cloud
+                        </div>
+                    </div>
+                </div>
+            </section >
 
             {/* ══════════════════════════════════════════════════════ */}
             {/* THE PAIN POINT SECTION */}
@@ -237,8 +268,8 @@ export default function LandingJamaliOS() {
                     <div className="space-y-12 order-2 lg:order-1">
                         <div className="space-y-4">
                             <span className="text-[10px] font-black text-orange-500 uppercase tracking-[0.3em]">El Problema</span>
-                            <h2 className="text-4xl md:text-6xl font-black italic uppercase tracking-tighter leading-none">
-                                ¿Cansado de sistemas <span className="text-slate-400">lentos y complejos?</span>
+                            <h2 className="text-3xl md:text-5xl font-black italic uppercase tracking-tight leading-tight">
+                                ¿Cansado de sistemas <br className="hidden md:block" /><span className="text-slate-400">lentos y complejos?</span>
                             </h2>
                         </div>
 
@@ -279,8 +310,8 @@ export default function LandingJamaliOS() {
                 <div className="max-w-7xl mx-auto space-y-20">
                     <div className="text-center space-y-6">
                         <span className="text-[10px] font-black text-orange-500 uppercase tracking-[0.3em]">Módulos de Ecosistema</span>
-                        <h2 className="text-4xl md:text-7xl font-black italic uppercase tracking-tighter">
-                            Diseñado para la <span className="text-orange-500 underline decoration-8 decoration-orange-500/10 underline-offset-[12px]">operación real</span>
+                        <h2 className="text-3xl md:text-5xl font-black italic uppercase tracking-tight">
+                            Diseñado para la <span className="text-orange-500 underline decoration-4 decoration-orange-500/20 underline-offset-[8px]">operación real</span>
                         </h2>
                     </div>
 
@@ -308,8 +339,8 @@ export default function LandingJamaliOS() {
                     <div className="space-y-10">
                         <div className="space-y-4">
                             <span className="text-[10px] font-black text-orange-500 uppercase tracking-[0.3em]">Tu Ventaja Competitiva</span>
-                            <h2 className="text-4xl md:text-6xl font-black italic uppercase tracking-tighter leading-none">
-                                Cero Fricción, <span className="text-orange-500">Más Rentabilidad</span>
+                            <h2 className="text-3xl md:text-5xl font-black italic uppercase tracking-tight leading-loose">
+                                Cero Fricción, <br className="hidden md:block" /><span className="text-orange-500">Más Rentabilidad</span>
                             </h2>
                         </div>
 
@@ -345,7 +376,7 @@ export default function LandingJamaliOS() {
                 <div className="max-w-7xl mx-auto space-y-20">
                     <div className="text-center space-y-6">
                         <span className="text-[10px] font-black text-orange-500 uppercase tracking-[0.3em]">Planes Justos</span>
-                        <h2 className="text-4xl md:text-7xl font-black italic uppercase tracking-tighter">
+                        <h2 className="text-3xl md:text-5xl font-black italic uppercase tracking-tight">
                             Transparente desde el <span className="text-orange-500">día cero</span>
                         </h2>
                     </div>
@@ -425,18 +456,18 @@ export default function LandingJamaliOS() {
             {/* ══════════════════════════════════════════════════════ */}
             {/* FINAL CTA */}
             {/* ══════════════════════════════════════════════════════ */}
-            <section className="py-40 px-6 bg-slate-900 relative overflow-hidden">
+            <section className="py-32 px-6 bg-slate-900 relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-t from-orange-500/10 to-transparent" />
-                <div className="max-w-4xl mx-auto text-center relative z-10 space-y-12">
-                    <h2 className="text-5xl md:text-8xl font-black italic uppercase tracking-tighter text-white leading-tight">
+                <div className="max-w-4xl mx-auto text-center relative z-10 space-y-10">
+                    <h2 className="text-4xl md:text-6xl font-black italic uppercase tracking-tight text-white leading-tight">
                         Eleva tu operación <br /><span className="text-orange-500">al siguiente nivel.</span>
                     </h2>
-                    <p className="text-slate-400 text-xl md:text-2xl font-medium max-w-2xl mx-auto">
+                    <p className="text-slate-400 text-lg md:text-xl font-medium max-w-2xl mx-auto">
                         Únete a la revolución de la gestión gastronómica en Colombia. Setup instantáneo.
                     </p>
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-                        <Link href="/register/wizard" className="w-full sm:w-auto px-16 py-8 bg-orange-500 text-white font-black uppercase text-sm tracking-[0.2em] rounded-[2.5rem] hover:bg-orange-400 transition-all shadow-[0_20px_50px_rgba(249,115,22,0.3)] flex items-center justify-center gap-4 active:scale-95">
-                            Empezar Onboarding <Rocket className="w-6 h-6" />
+                        <Link href="/register/wizard" className="w-full sm:w-auto px-12 py-6 bg-orange-500 text-white font-black uppercase text-xs tracking-widest rounded-full hover:bg-orange-400 transition-all shadow-[0_20px_50px_rgba(249,115,22,0.3)] flex items-center justify-center gap-4 active:scale-95">
+                            Empezar Onboarding <Rocket className="w-5 h-5" />
                         </Link>
                     </div>
                     <div className="flex items-center justify-center gap-8 text-white/40 pt-8">
@@ -502,7 +533,7 @@ export default function LandingJamaliOS() {
                     </div>
                 </div>
             </footer>
-        </div>
+        </div >
     )
 }
 
