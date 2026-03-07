@@ -216,31 +216,6 @@ export default function LoginPage() {
                         </p>
                     </div>
 
-                    {/* Demo users */}
-                    <div className="space-y-4 pt-4">
-                        <div className="flex items-center gap-3">
-                            <div className="h-px flex-1 bg-slate-200" />
-                            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Demo · Acceso Rápido</span>
-                            <div className="h-px flex-1 bg-slate-200" />
-                        </div>
-                        <div className="grid grid-cols-2 gap-2">
-                            {demoUsers.map(user => (
-                                <button
-                                    key={user.email}
-                                    onClick={() => fillDemo(user.email, user.pass)}
-                                    className="flex items-center gap-3 p-3 rounded-xl bg-white border border-slate-100 hover:border-orange-200 hover:shadow-sm transition-all group text-left"
-                                >
-                                    <div className={cn("w-9 h-9 rounded-xl flex items-center justify-center shrink-0", user.bg)}>
-                                        <user.icon className={cn("w-4 h-4", user.color)} />
-                                    </div>
-                                    <div className="min-w-0">
-                                        <p className="text-[10px] font-black text-slate-700 uppercase truncate">{user.role}</p>
-                                        <p className="text-[8px] font-bold text-slate-400 truncate">{user.email.split('@')[0]}</p>
-                                    </div>
-                                </button>
-                            ))}
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

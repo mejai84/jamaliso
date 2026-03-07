@@ -7,6 +7,7 @@ import {
     MonitorSmartphone, Bell, QrCode, TrendingUp, Menu
 } from "lucide-react"
 import { useState } from "react"
+import Image from "next/image"
 
 const FEATURES = [
     {
@@ -170,35 +171,47 @@ export default function LandingJamaliOS() {
                     <h1 className="text-5xl md:text-8xl font-black italic uppercase tracking-tighter leading-[0.9]">
                         Tu restaurante,
                         <br />
-                        <span className="text-orange-500">100% digital</span>
+                        <span className="text-orange-500">en piloto automático</span>
                     </h1>
 
                     <p className="text-lg md:text-xl text-slate-500 max-w-2xl mx-auto leading-relaxed">
-                        Sistema operativo completo para restaurantes. KDS, meseros, POS, inventario,
-                        QR por mesa y reportes — todo en una sola plataforma.
+                        Control total desde la comanda hasta el cierre. JAMALI OS es el sistema operativo
+                        diseñado para maximizar la rentabilidad y eficiencia de tu cocina y salón.
                     </p>
 
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-                        <Link href="/register" className="px-10 py-5 bg-slate-900 text-white font-black uppercase text-sm tracking-wider rounded-2xl hover:bg-orange-500 transition-all shadow-2xl shadow-slate-900/20 flex items-center gap-3">
-                            Crear mi Restaurante <ArrowRight className="w-4 h-4" />
+                        <Link href="/register/wizard" className="px-10 py-5 bg-slate-900 text-white font-black uppercase text-sm tracking-wider rounded-2xl hover:bg-orange-500 transition-all shadow-2xl shadow-slate-900/20 flex items-center gap-3">
+                            Empezar mi Onboarding <ArrowRight className="w-4 h-4" />
                         </Link>
                         <a href="#demo" className="px-10 py-5 bg-white text-slate-900 font-black uppercase text-sm tracking-wider rounded-2xl border-2 border-slate-200 hover:border-orange-400 transition-all flex items-center gap-3">
-                            Ver Demo en Vivo <Zap className="w-4 h-4 text-orange-500" />
+                            Ver Ecosistema en Vivo <Zap className="w-4 h-4 text-orange-500" />
                         </a>
                     </div>
 
-                    <div className="flex items-center justify-center gap-8 pt-8 text-slate-400">
+                    <div className="relative mt-16 group">
+                        <div className="absolute inset-0 bg-orange-500/20 blur-[100px] rounded-full scale-75 group-hover:scale-100 transition-transform duration-1000" />
+                        <div className="relative aspect-video rounded-[3rem] overflow-hidden border-8 border-white shadow-[0_50px_100px_rgba(0,0,0,0.15)] bg-slate-100">
+                            <Image
+                                src="/jamali_os_dashboard_mockup_1772892029558.png"
+                                alt="Dashboard Mockup"
+                                fill
+                                className="object-cover"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="flex items-center justify-center gap-8 pt-12 text-slate-400">
                         <div className="flex items-center gap-2">
                             <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                            <span className="text-xs font-bold">Gratis para empezar</span>
+                            <span className="text-xs font-bold">Sin contratos forzosos</span>
                         </div>
                         <div className="flex items-center gap-2">
                             <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                            <span className="text-xs font-bold">Setup en 5 minutos</span>
+                            <span className="text-xs font-bold">Migración asistida</span>
                         </div>
                         <div className="flex items-center gap-2">
                             <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                            <span className="text-xs font-bold">Sin tarjeta requerida</span>
+                            <span className="text-xs font-bold">Multi-dispositivo</span>
                         </div>
                     </div>
                 </div>
@@ -301,15 +314,15 @@ export default function LandingJamaliOS() {
                             </div>
                             <h3 className="font-black italic uppercase text-sm mb-1">Pargo Rojo</h3>
                             <p className="text-[10px] text-slate-400 font-bold">Restaurante de mar · Caucasia</p>
-                            <p className="text-xs text-orange-500 font-bold mt-3 flex items-center gap-1">Ver carta <ArrowRight className="w-3 h-3" /></p>
+                            <p className="text-xs text-orange-500 font-bold mt-3 flex items-center gap-1">Ver carta digital <ArrowRight className="w-3 h-3" /></p>
                         </Link>
-                        <Link href="/el-fogon/menu" className="p-8 bg-white border-2 border-slate-100 rounded-3xl hover:border-red-400 hover:shadow-xl transition-all group text-left">
-                            <div className="w-12 h-12 bg-red-100 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                                <span className="text-2xl">🔥</span>
+                        <Link href="/admin/dashboard" className="p-8 bg-slate-900 border-2 border-slate-800 rounded-3xl hover:border-orange-400 hover:shadow-xl transition-all group text-left">
+                            <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                                <span className="text-2xl">⚡</span>
                             </div>
-                            <h3 className="font-black italic uppercase text-sm mb-1">El Fogón Criollo</h3>
-                            <p className="text-[10px] text-slate-400 font-bold">Carnes a la brasa · Colombia</p>
-                            <p className="text-xs text-red-600 font-bold mt-3 flex items-center gap-1">Ver carta <ArrowRight className="w-3 h-3" /></p>
+                            <h3 className="font-black italic uppercase text-sm mb-1 text-white">Panel Admin</h3>
+                            <p className="text-[10px] text-slate-500 font-bold">Gestión de cocina y ventas</p>
+                            <p className="text-xs text-orange-500 font-bold mt-3 flex items-center gap-1">Ver Backoffice <ArrowRight className="w-3 h-3" /></p>
                         </Link>
                     </div>
                 </div>
