@@ -23,78 +23,127 @@
   --radius-radius: var(--radius);
 }
 
+/* ============================================================
+   🎨 JAMALI OS — PIXORA LIGHT THEME (DEFINITIVO)
+   Desactivado permanentemente el modo oscuro.
+   Este sitio SIEMPRE se renderiza en modo claro,
+   sin importar la configuración del sistema operativo
+   del usuario ni de las librerías de UI.
+   ============================================================ */
+
 :root {
-  /* Pargo Rojo Brand Colors - Modern Coral Light Mode */
-  --background: #FFFFFF;
-  --foreground: #1a1a2e;
+  /* Forzar modo claro en el navegador */
+  color-scheme: light only;
 
+  /* ---- BACKGROUNDS ---- */
+  --background: #F8FAFC;
+  --foreground: #0F172A;
+
+  /* ---- CARDS & SURFACES ---- */
   --card: #FFFFFF;
-  --card-foreground: #1a1a2e;
+  --card-foreground: #0F172A;
 
+  /* ---- POPOVERS ---- */
   --popover: #FFFFFF;
-  --popover-foreground: #1a1a2e;
+  --popover-foreground: #0F172A;
 
-  --primary: #FF6B6B;
-  /* Coral moderno */
+  /* ---- BRAND PRIMARY: Naranja JAMALI OS ---- */
+  --primary: #EA580C;
+  /* orange-600 */
   --primary-foreground: #FFFFFF;
 
-  --secondary: #1a1a2e;
-  /* Azul oscuro elegante */
-  --secondary-foreground: #FFFFFF;
+  /* ---- SECONDARY ---- */
+  --secondary: #F1F5F9;
+  /* slate-100 */
+  --secondary-foreground: #0F172A;
 
-  --muted: #f8f9fa;
-  --muted-foreground: #6c757d;
+  /* ---- MUTED (placeholders, subtitles) ---- */
+  --muted: #F1F5F9;
+  /* slate-100 */
+  --muted-foreground: #64748B;
+  /* slate-500 */
 
-  --accent: #FF6B6B;
+  /* ---- ACCENT (igual al primary) ---- */
+  --accent: #EA580C;
   --accent-foreground: #FFFFFF;
 
-  --destructive: #dc3545;
+  /* ---- DESTRUCTIVE (rojo para eliminar/alertas) ---- */
+  --destructive: #DC2626;
   --destructive-foreground: #FFFFFF;
 
-  --border: #e9ecef;
-  --input: #e9ecef;
-  --ring: #FF6B6B;
+  /* ---- BORDERS & INPUTS ---- */
+  --border: #E2E8F0;
+  /* slate-200 */
+  --input: #E2E8F0;
+  --ring: #EA580C;
 
+  /* ---- BORDER RADIUS ---- */
   --radius: 1rem;
 }
 
-.dark {
-  --background: #020617;
-  /* Slate 950 */
-  --foreground: #f8fafc;
-  /* Slate 50 */
+/* ============================================================
+   🛡️ OVERRIDE MODO OSCURO DEL SISTEMA OPERATIVO
+   Si el usuario tiene su PC/Mac/Móvil en modo oscuro,
+   esta regla anula esa preferencia y mantiene el tema claro.
+   ============================================================ */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: light only;
+    --background: #F8FAFC;
+    --foreground: #0F172A;
+    --card: #FFFFFF;
+    --card-foreground: #0F172A;
+    --popover: #FFFFFF;
+    --popover-foreground: #0F172A;
+    --primary: #EA580C;
+    --primary-foreground: #FFFFFF;
+    --secondary: #F1F5F9;
+    --secondary-foreground: #0F172A;
+    --muted: #F1F5F9;
+    --muted-foreground: #64748B;
+    --accent: #EA580C;
+    --accent-foreground: #FFFFFF;
+    --destructive: #DC2626;
+    --destructive-foreground: #FFFFFF;
+    --border: #E2E8F0;
+    --input: #E2E8F0;
+    --ring: #EA580C;
+  }
+}
 
-  --card: #1e293b;
-  /* Slate 800 */
-  --card-foreground: #f8fafc;
-
-  --popover: #1e293b;
-  --popover-foreground: #f8fafc;
-
-  --muted: #0f172a;
-  --muted-foreground: #94a3b8;
-
-  --border: #334155;
-  --input: #334155;
+/* ============================================================
+   BASE STYLES
+   ============================================================ */
+html {
+  /* Evitar que cualquier librería externa active el modo oscuro */
+  color-scheme: light only;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Inter', 'Segoe UI', Arial, Helvetica, sans-serif;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Glassmorphism utility - Modo claro */
+/* ============================================================
+   UTILIDADES PIXORA LIGHT
+   ============================================================ */
+
+/* Glassmorphism - siempre en tono claro */
 .glass {
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
 }
 
+/* Gradiente de texto brand */
 .text-gradient {
-  background: linear-gradient(135deg, var(--primary), #ee5a5a);
+  background: linear-gradient(135deg, #EA580C, #F97316);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -115,22 +164,42 @@ body {
   transform: rotate(45deg);
 }
 
-/* Sombras suaves para cards */
+/* Sombra suave card */
 .card-shadow {
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
 }
 
-/* Hover effects */
+/* Hover lift */
 .hover-lift {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .hover-lift:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 20px 40px rgba(255, 107, 107, 0.15);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(234, 88, 12, 0.12);
 }
 
-/* 🖨️ SOPORTE IMPRESIÓN TÉRMICA ESC/POS (80mm) */
+/* Scrollbar personalizado — color claro */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(234, 88, 12, 0.3);
+}
+
+/* ============================================================
+   🖨️ SOPORTE IMPRESIÓN TÉRMICA ESC/POS (80mm)
+   ============================================================ */
 @media print {
   @page {
     margin: 0;
@@ -146,7 +215,7 @@ body {
     padding: 0;
   }
 
-  /* Ocultar todo por defecto */
+  /* Ocultar todo UI de la app al imprimir */
   header,
   footer,
   nav,
@@ -157,7 +226,7 @@ body {
     display: none !important;
   }
 
-  /* Mostrar solo el ticket */
+  /* Mostrar solo el ticket térmico */
   .ticket-thermal {
     display: block !important;
     width: 74mm !important;

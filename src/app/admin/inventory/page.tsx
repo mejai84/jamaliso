@@ -76,7 +76,7 @@ export default function InventoryPage() {
     const criticalCount = ingredients.filter(i => i.current_stock <= i.min_stock).length
 
     return (
-        <div className="min-h-screen bg-[#020406] text-white font-sans selection:bg-orange-500 overflow-hidden flex flex-col h-screen relative">
+        <div className="min-h-screen bg-[#F8FAFC] text-slate-900 font-sans selection:bg-orange-500 overflow-hidden flex flex-col h-screen relative">
 
             {/* 🌌 FONDO ESTRUCTURAL AURA */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -90,7 +90,7 @@ export default function InventoryPage() {
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-8">
                         <Link href="/admin/hub">
-                            <Button variant="ghost" size="icon" className="h-16 w-16 rounded-[1.5rem] bg-white/5 border border-white/5 hover:bg-orange-600 hover:text-black transition-all group">
+                            <Button variant="ghost" size="icon" className="h-16 w-16 rounded-[1.5rem] bg-white border border-slate-200 hover:bg-orange-600 hover:text-white transition-all group shadow-sm">
                                 <ArrowLeft className="w-6 h-6 group-hover:-translate-x-1 transition-transform" />
                             </Button>
                         </Link>
@@ -99,12 +99,12 @@ export default function InventoryPage() {
                                 <Signal className="w-4 h-4 text-orange-500 animate-pulse" />
                                 <span className="text-[10px] font-black uppercase tracking-[0.5em] text-orange-500 italic">Core Supply Intelligence</span>
                             </div>
-                            <h1 className="text-6xl font-black italic tracking-tighter uppercase leading-none text-white text-glow">Kernel <span className="text-orange-500">Inventory</span></h1>
+                            <h1 className="text-6xl font-black italic tracking-tighter uppercase leading-none text-slate-900 text-glow">Kernel <span className="text-orange-500">Inventory</span></h1>
                         </div>
                     </div>
                     <Button
                         onClick={() => toast.success("ABRIENDO EDITOR DE NUEVO INSUMO")}
-                        className="h-16 px-12 bg-orange-600 hover:bg-orange-500 text-black font-black uppercase text-xs italic tracking-widest rounded-2xl shadow-3xl shadow-orange-600/20 transition-all active:scale-95 gap-4"
+                        className="h-16 px-12 bg-orange-600 hover:bg-orange-500 text-white font-black uppercase text-xs italic tracking-widest rounded-2xl shadow-lg shadow-orange-600/20 transition-all active:scale-95 gap-4"
                     >
                         <Plus className="w-6 h-6" /> ADQUIRIR PROTOCOLO
                     </Button>
@@ -119,20 +119,20 @@ export default function InventoryPage() {
                         { label: 'PEDIDOS Y COMPRAS', icon: Warehouse, href: '/admin/inventory/purchases', sub: 'Supply_Chain' }
                     ].map((btn, i) => {
                         const Content = (
-                            <div className="w-full h-24 flex items-center justify-between p-8 bg-slate-900/40 backdrop-blur-3xl rounded-[2rem] border border-white/5 hover:border-orange-500/30 hover:bg-orange-600 group transition-all duration-500 cursor-pointer shadow-xl relative overflow-hidden">
-                                <div className="absolute top-0 right-0 p-6 opacity-[0.02] group-hover:rotate-12 transition-transform duration-1000">
-                                    <btn.icon className="w-16 h-16" />
+                            <div className="w-full h-24 flex items-center justify-between p-8 bg-white/60 backdrop-blur-3xl rounded-[2rem] border border-slate-200 hover:border-orange-500/30 hover:bg-orange-50 hover:shadow-xl group transition-all duration-500 cursor-pointer shadow-sm relative overflow-hidden">
+                                <div className="absolute top-0 right-0 p-6 opacity-[0.05] group-hover:rotate-12 transition-transform duration-1000">
+                                    <btn.icon className="w-16 h-16 text-slate-500" />
                                 </div>
                                 <div className="flex items-center gap-6 relative z-10 transition-all group-hover:translate-x-1">
-                                    <div className="p-4 bg-white/5 rounded-xl group-hover:bg-black/10 transition-colors">
-                                        <btn.icon className="w-6 h-6 text-orange-400 group-hover:text-black" />
+                                    <div className="p-4 bg-slate-50 border border-slate-100 rounded-xl group-hover:bg-white transition-colors">
+                                        <btn.icon className="w-6 h-6 text-orange-500" />
                                     </div>
                                     <div className="space-y-1 text-left">
-                                        <p className="text-[11px] font-black tracking-[0.2em] uppercase italic text-white group-hover:text-black leading-none">{btn.label}</p>
-                                        <p className="text-[8px] font-black uppercase tracking-[0.3em] text-slate-600 group-hover:text-black/50 leading-none">{btn.sub}</p>
+                                        <p className="text-[11px] font-black tracking-[0.2em] uppercase italic text-slate-900 group-hover:text-orange-600 leading-none">{btn.label}</p>
+                                        <p className="text-[8px] font-black uppercase tracking-[0.3em] text-slate-500 group-hover:text-slate-600 leading-none">{btn.sub}</p>
                                     </div>
                                 </div>
-                                <ChevronRight className="w-5 h-5 text-slate-800 group-hover:text-black/30 group-hover:translate-x-1 transition-all" />
+                                <ChevronRight className="w-5 h-5 text-slate-400 group-hover:text-orange-500 group-hover:translate-x-1 transition-all" />
                             </div>
                         );
                         return (
@@ -144,7 +144,7 @@ export default function InventoryPage() {
                 {/* KPI CARDS ELITE */}
                 <div className="grid grid-cols-4 gap-8">
                     {[
-                        { label: 'REFERENCIAS', val: ingredients.length, icon: Package, color: 'text-white', sub: 'Active_Nodes' },
+                        { label: 'REFERENCIAS', val: ingredients.length, icon: Package, color: 'text-slate-900', sub: 'Active_Nodes' },
                         {
                             label: 'STOCK CRÍTICO',
                             val: criticalCount,
@@ -153,7 +153,7 @@ export default function InventoryPage() {
                             sub: 'At_Risk',
                             action: criticalCount > 0 ? (
                                 <Link href="/admin/inventory/purchases">
-                                    <Button variant="ghost" className="h-8 mt-2 px-2 text-[8px] font-black bg-rose-500/10 text-rose-500 border border-rose-500/20 hover:bg-rose-500 hover:text-white rounded-lg transition-all animate-pulse">
+                                    <Button variant="ghost" className="h-8 mt-2 px-2 text-[8px] font-black bg-rose-50 text-rose-600 border border-rose-100 hover:bg-rose-500 hover:text-white rounded-lg transition-all animate-pulse">
                                         AUTOMATIZAR COMPRA
                                     </Button>
                                 </Link>
@@ -162,17 +162,17 @@ export default function InventoryPage() {
                         { label: 'VALORACIÓN', val: `$${(totalCost / 1000).toFixed(1)}k`, icon: DollarSign, color: 'text-orange-500', sub: 'Market_Index' },
                         { label: 'CATEGORÍAS', val: new Set(ingredients.map(i => i.category)).size, icon: Layers, color: 'text-blue-500', sub: 'Cluster_Map' }
                     ].map((card, i) => (
-                        <div key={i} className="bg-slate-900/40 backdrop-blur-3xl border border-white/5 rounded-[3rem] p-8 relative overflow-hidden group shadow-2xl transition-all duration-700 hover:border-orange-500/20">
-                            <div className="absolute top-0 right-0 p-8 opacity-[0.02] group-hover:rotate-12 transition-transform duration-1000">
-                                <card.icon className="w-20 h-20" />
+                        <div key={i} className="bg-white/60 backdrop-blur-3xl border border-slate-200 rounded-[3rem] p-8 relative overflow-hidden group shadow-sm transition-all duration-700 hover:border-orange-500/20 hover:shadow-xl">
+                            <div className="absolute top-0 right-0 p-8 opacity-[0.05] group-hover:rotate-12 transition-transform duration-1000">
+                                <card.icon className="w-20 h-20 text-slate-500" />
                             </div>
                             <div className="relative z-10 space-y-4">
                                 <div className="flex items-center gap-2">
                                     <div className={cn("w-1.5 h-1.5 rounded-full", card.color.replace('text', 'bg'))} />
                                     <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] italic leading-none">{card.label}</p>
                                 </div>
-                                <p className={cn("text-4xl font-black italic tracking-tighter text-white leading-none")}>{card.val}</p>
-                                <p className="text-[9px] font-black text-slate-700 uppercase tracking-[0.3em] italic group-hover:text-slate-500 transition-colors uppercase">{card.sub}</p>
+                                <p className={cn("text-4xl font-black italic tracking-tighter text-slate-900 leading-none")}>{card.val}</p>
+                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.3em] italic group-hover:text-slate-500 transition-colors uppercase">{card.sub}</p>
                                 {card.action && <div className="pt-2">{card.action}</div>}
                             </div>
                         </div>
@@ -180,22 +180,22 @@ export default function InventoryPage() {
                 </div>
 
                 {/* TABLA COMMAND ELITE */}
-                <div className="bg-slate-900/40 backdrop-blur-3xl border border-white/5 rounded-[4rem] overflow-hidden flex-1 flex flex-col shadow-3xl">
-                    <div className="p-10 border-b border-white/5 flex items-center justify-between bg-white/[0.01]">
+                <div className="bg-white/60 backdrop-blur-3xl border border-slate-200 rounded-[4rem] overflow-hidden flex-1 flex flex-col shadow-sm">
+                    <div className="p-10 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                         <div className="relative w-[500px] group">
-                            <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-700 group-focus-within:text-orange-500 transition-all font-black" />
+                            <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-orange-500 transition-all font-black" />
                             <input
                                 type="search"
                                 autoComplete="new-password"
                                 placeholder="ESCANEAR REGISTROS DE KERNEL..."
-                                className="w-full bg-white/[0.03] border border-white/10 rounded-2xl py-5 pl-16 pr-8 text-xs font-black uppercase tracking-[0.2em] italic focus:outline-none focus:border-orange-500/30 transition-all placeholder:text-slate-800"
+                                className="w-full bg-white border border-slate-200 rounded-2xl py-5 pl-16 pr-8 text-xs font-black uppercase tracking-[0.2em] italic focus:outline-none focus:border-orange-500/30 transition-all placeholder:text-slate-400 text-slate-900 shadow-sm"
                                 value={searchTerm}
                                 onChange={e => setSearchTerm(e.target.value)}
                             />
                         </div>
                         <Button
                             onClick={() => toast.info("FILTROS AVANZADOS")}
-                            variant="ghost" className="h-16 px-10 rounded-2xl bg-white/5 border border-white/5 text-slate-500 font-black uppercase italic text-[10px] tracking-[0.3em] transition-all hover:bg-white/10 hover:text-white"
+                            variant="ghost" className="h-16 px-10 rounded-2xl bg-white border border-slate-200 text-slate-500 font-black uppercase italic text-[10px] tracking-[0.3em] transition-all hover:bg-slate-50 hover:text-slate-900 shadow-sm"
                         >
                             <Filter className="w-5 h-5 mr-4" /> Filtrar
                         </Button>
@@ -204,47 +204,47 @@ export default function InventoryPage() {
                     <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse">
                             <thead>
-                                <tr className="bg-white/[0.02]">
-                                    <th className="p-6 text-[10px] font-bold text-slate-500 uppercase tracking-widest italic">Referencia_Item</th>
-                                    <th className="p-6 text-[10px] font-bold text-slate-500 uppercase tracking-widest italic">Cluster_Cat</th>
-                                    <th className="p-6 text-[10px] font-bold text-slate-500 uppercase tracking-widest italic">Availability_Metric</th>
-                                    <th className="p-6 text-[10px] font-bold text-slate-500 uppercase tracking-widest italic text-center">Health_Status</th>
-                                    <th className="p-6 text-[10px] font-bold text-slate-500 uppercase tracking-widest italic text-right">Command</th>
+                                <tr className="bg-slate-50/50">
+                                    <th className="p-6 text-[10px] font-bold text-slate-400 uppercase tracking-widest italic border-b border-slate-100">Referencia_Item</th>
+                                    <th className="p-6 text-[10px] font-bold text-slate-400 uppercase tracking-widest italic border-b border-slate-100">Cluster_Cat</th>
+                                    <th className="p-6 text-[10px] font-bold text-slate-400 uppercase tracking-widest italic border-b border-slate-100">Availability_Metric</th>
+                                    <th className="p-6 text-[10px] font-bold text-slate-400 uppercase tracking-widest italic text-center border-b border-slate-100">Health_Status</th>
+                                    <th className="p-6 text-[10px] font-bold text-slate-400 uppercase tracking-widest italic text-right border-b border-slate-100">Command</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {filtered.map((item) => {
                                     const status = getStatusInfo(item.current_stock, item.min_stock)
                                     return (
-                                        <tr key={item.id} className="border-b border-white/5 hover:bg-white/[0.01] transition-colors group">
+                                        <tr key={item.id} className="border-b border-slate-100 hover:bg-slate-50 transition-colors group">
                                             <td className="p-6">
-                                                <p className="font-bold text-slate-100">{item.name}</p>
+                                                <p className="font-bold text-slate-900">{item.name}</p>
                                             </td>
                                             <td className="p-6">
                                                 <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">{item.category}</span>
                                             </td>
                                             <td className="p-6">
                                                 <div className="flex items-center gap-3">
-                                                    <span className="text-sm font-bold text-slate-200">{item.current_stock} {item.unit}</span>
-                                                    <span className={cn("text-[10px] font-black uppercase tracking-tighter opacity-70", status.text)}>({status.label})</span>
+                                                    <span className="text-sm font-bold text-slate-900">{item.current_stock} {item.unit}</span>
+                                                    <span className={cn("text-[10px] font-black uppercase tracking-tighter opacity-70", status.text.replace('text-red-400', 'text-red-600').replace('text-yellow-400', 'text-yellow-600').replace('text-emerald-400', 'text-emerald-600'))}>({status.label})</span>
                                                 </div>
                                             </td>
                                             <td className="p-6">
                                                 <div className="flex justify-center">
-                                                    <div className={cn("w-3 h-3 rounded-full shadow-[0_0_10px_rgba(0,0,0,0.5)]", status.color, "animate-pulse")} />
+                                                    <div className={cn("w-3 h-3 rounded-full shadow-sm", status.color, "animate-pulse")} />
                                                 </div>
                                             </td>
                                             <td className="p-6 text-right">
                                                 <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                                     <button
                                                         onClick={() => toast.success(`EDITANDO: ${item.name}`)}
-                                                        className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-white border border-white/5"
+                                                        className="p-2 rounded-lg bg-white text-slate-400 hover:text-slate-900 border border-slate-200 shadow-sm"
                                                     >
                                                         <Edit className="w-4 h-4" />
                                                     </button>
                                                     <button
                                                         onClick={() => toast.info(`MÁS OPCIONES: ${item.name}`)}
-                                                        className="p-2 rounded-lg bg-slate-800 text-slate-400 hover:text-orange-500 border border-white/5"
+                                                        className="p-2 rounded-lg bg-white text-slate-400 hover:text-orange-500 border border-slate-200 shadow-sm"
                                                     >
                                                         <MoreHorizontal className="w-4 h-4" />
                                                     </button>
