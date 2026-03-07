@@ -75,12 +75,12 @@ export default function AdminDashboard() {
             {/* 🌫️ CAPA DE CRISTAL CLARO PIXORA */}
             <div className="absolute inset-0 backdrop-blur-[100px] bg-white/80 pointer-events-none" />
 
-            <div className="relative z-10 p-8 md:p-12 space-y-10 max-w-[1800px] mx-auto flex flex-col min-h-full">
+            <div className="relative z-10 p-4 md:p-8 space-y-6 md:space-y-8 max-w-[1600px] mx-auto flex flex-col min-h-full">
 
                 {/* HEADER EJECUTIVO */}
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 shrink-0">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6 shrink-0">
                     <div className="space-y-1">
-                        <h1 className="text-4xl md:text-6xl font-black italic tracking-tighter uppercase leading-tight md:leading-none">DASHBOARD <span className="text-orange-500">ADMINISTRATIVO</span></h1>
+                        <h1 className="text-3xl md:text-5xl font-black italic tracking-tighter uppercase leading-tight md:leading-none">DASHBOARD <span className="text-orange-500">ADMINISTRATIVO</span></h1>
                         <p className="text-[8px] md:text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] md:tracking-[0.5em] italic flex items-center gap-2 md:gap-4">
                             CENTRAL COMMAND HUB
                             <span className="w-1.5 h-1.5 bg-orange-500 rounded-full animate-pulse" />
@@ -88,14 +88,14 @@ export default function AdminDashboard() {
                         </p>
                     </div>
 
-                    <div className="flex items-center justify-between md:justify-end gap-4 md:gap-6 w-full md:w-auto">
+                    <div className="flex items-center justify-between md:justify-end gap-3 md:gap-5 w-full md:w-auto">
                         <div className="text-left md:text-right">
-                            <p className="text-xl md:text-3xl font-black italic tracking-tighter font-mono">
+                            <p className="text-lg md:text-2xl font-black italic tracking-tighter font-mono">
                                 {currentTime.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                             </p>
-                            <p className="text-[8px] md:text-[9px] font-bold text-slate-500 uppercase tracking-widest">TIEMPO REAL DE SISTEMA</p>
+                            <p className="text-[7px] md:text-[8px] font-bold text-slate-500 uppercase tracking-widest">TIEMPO REAL DE SISTEMA</p>
                         </div>
-                        <div className="flex gap-2 md:gap-3">
+                        <div className="flex gap-2">
                             <Button
                                 onClick={() => toast.info("CENTRO DE NOTIFICACIONES: Sin mensajes nuevos")}
                                 variant="ghost" size="icon" className="h-10 w-10 md:h-14 md:w-14 rounded-xl md:rounded-2xl bg-slate-800/40 border border-white/5"
@@ -139,22 +139,22 @@ export default function AdminDashboard() {
                 <div className="flex flex-col lg:grid lg:grid-cols-12 gap-8 lg:gap-10 flex-1 min-h-0">
 
                     {/* MODULOS DE CONTROL */}
-                    <div className="lg:col-span-8 flex flex-col space-y-6">
-                        <h2 className="text-[10px] md:text-xs font-black uppercase tracking-[0.2em] md:tracking-[0.4em] text-slate-400 italic px-2">Módulos de Control Operativo</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 flex-1 lg:overflow-y-auto lg:pr-4 custom-scrollbar">
+                    <div className="lg:col-span-8 flex flex-col space-y-4">
+                        <h2 className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] md:tracking-[0.4em] text-slate-400 italic px-2">Módulos de Control Operativo</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 flex-1 lg:overflow-y-auto lg:pr-2 custom-scrollbar">
                             {navItems.map((item, i) => (
                                 <Link key={i} href={item.href}>
-                                    <div className="group bg-white/40 backdrop-blur-2xl border border-slate-200 rounded-3xl md:rounded-[2.5rem] p-6 md:p-8 h-full transition-all hover:border-orange-500/40 hover:bg-white/60 cursor-pointer overflow-hidden relative shadow-sm">
-                                        <div className="absolute top-0 right-0 p-10 opacity-5 group-hover:opacity-10 group-hover:scale-110 transition-all">
-                                            <item.icon className="w-24 h-24 md:w-32 md:h-32 text-slate-900" />
+                                    <div className="group bg-white/40 backdrop-blur-2xl border border-slate-200 rounded-2xl md:rounded-[2rem] p-5 md:p-6 h-full transition-all hover:border-orange-500/40 hover:bg-white/60 cursor-pointer overflow-hidden relative shadow-sm">
+                                        <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 group-hover:scale-110 transition-all">
+                                            <item.icon className="w-16 h-16 md:w-20 md:h-20 text-slate-900" />
                                         </div>
-                                        <div className="relative z-10 flex flex-col h-full justify-between gap-4">
-                                            <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-orange-500/10 flex items-center justify-center border border-orange-500/20 group-hover:bg-orange-500 group-hover:text-white transition-all">
-                                                <item.icon className="w-5 h-5 md:w-6 md:h-6" />
+                                        <div className="relative z-10 flex flex-col h-full justify-between gap-3">
+                                            <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-orange-500/10 flex items-center justify-center border border-orange-500/20 group-hover:bg-orange-500 group-hover:text-white transition-all">
+                                                <item.icon className="w-4 h-4 md:w-5 md:h-5" />
                                             </div>
                                             <div>
-                                                <h3 className="text-xl md:text-3xl font-black italic tracking-tighter uppercase group-hover:text-orange-600 transition-colors leading-none">{item.label}</h3>
-                                                <p className="text-[10px] md:text-xs font-medium text-slate-400 uppercase tracking-widest mt-2">{item.desc}</p>
+                                                <h3 className="text-lg md:text-xl font-black italic tracking-tighter uppercase group-hover:text-orange-600 transition-colors leading-none">{item.label}</h3>
+                                                <p className="text-[9px] md:text-[10px] font-medium text-slate-400 uppercase tracking-widest mt-1.5">{item.desc}</p>
                                             </div>
                                         </div>
                                     </div>

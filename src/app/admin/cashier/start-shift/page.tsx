@@ -162,7 +162,7 @@ export default function StartShiftPage() {
 
     if (fetchingShifts) {
         return (
-            <div className="h-screen flex items-center justify-center bg-[#020406]">
+            <div className="h-screen flex items-center justify-center bg-[#F8FAFC]">
                 <div className="flex flex-col items-center gap-6">
                     <Loader2 className="w-12 h-12 animate-spin text-orange-500" />
                     <p className="text-[10px] font-black uppercase tracking-[0.4em] text-orange-500/40 italic animate-pulse">Sincronizando Protocolos de Turno...</p>
@@ -175,12 +175,12 @@ export default function StartShiftPage() {
         const elapsedMs = new Date().getTime() - new Date(activeShift.started_at).getTime()
 
         return (
-            <div className="min-h-screen bg-[#020406] flex flex-col items-center justify-center p-6 pb-20 relative overflow-hidden">
+            <div className="min-h-screen bg-[#F8FAFC] flex flex-col items-center justify-center p-6 pb-20 relative overflow-hidden text-slate-900">
                 <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-orange-500/5 to-transparent pointer-events-none" />
                 <div className="max-w-4xl w-full space-y-8 animate-in zoom-in duration-500 relative z-10">
 
                     {/* Tarjeta Principal de Bienvenida */}
-                    <div className="bg-slate-900/40 backdrop-blur-3xl rounded-[4rem] p-10 md:p-16 shadow-2xl border border-white/5 relative overflow-hidden group">
+                    <div className="bg-white/60 backdrop-blur-3xl rounded-[4rem] p-10 md:p-16 shadow-2xl border border-slate-200 relative overflow-hidden group">
                         <div className="absolute top-0 right-0 w-64 h-64 bg-orange-500/5 rounded-full -mr-20 -mt-20 blur-3xl group-hover:bg-orange-500/10 transition-colors" />
 
                         <div className="relative z-10 flex flex-col items-center text-center space-y-6">
@@ -260,7 +260,7 @@ export default function StartShiftPage() {
     }
 
     return (
-        <div className="min-h-screen bg-[#020406] flex flex-col items-center justify-center p-6 relative overflow-hidden">
+        <div className="min-h-screen bg-[#F8FAFC] flex flex-col items-center justify-center p-6 relative overflow-hidden text-slate-900">
             <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-orange-500/5 to-transparent pointer-events-none" />
             <div className="max-w-5xl w-full space-y-12 animate-in fade-in zoom-in-95 duration-500 relative z-10">
 

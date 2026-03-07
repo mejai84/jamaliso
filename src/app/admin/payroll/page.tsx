@@ -124,23 +124,23 @@ export default function PayrollPage() {
     ]
 
     return (
-        <div className="min-h-screen text-white font-sans relative overflow-hidden flex flex-col">
-            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center scale-105 pointer-events-none" />
-            <div className="absolute inset-0 backdrop-blur-[80px] bg-slate-950/90 pointer-events-none" />
+        <div className="min-h-screen text-slate-900 font-sans relative overflow-hidden flex flex-col bg-[#F8FAFC]">
+            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center scale-105 pointer-events-none opacity-20" />
+            <div className="absolute inset-0 backdrop-blur-[80px] bg-white/80 pointer-events-none" />
 
-            <div className="relative z-10 p-8 md:p-12 space-y-8 max-w-[1800px] mx-auto flex flex-col min-h-screen w-full">
+            <div className="relative z-10 p-4 md:p-8 space-y-6 md:space-y-8 max-w-[1600px] mx-auto flex flex-col min-h-screen w-full">
 
                 {/* HEADER */}
                 <div className="flex items-center justify-between shrink-0">
-                    <div className="flex items-center gap-6">
+                    <div className="flex items-center gap-4 md:gap-6">
                         <Link href="/admin">
-                            <Button variant="ghost" size="icon" className="h-14 w-14 rounded-2xl bg-slate-800/40 border border-white/5">
-                                <ArrowLeft className="w-6 h-6 text-slate-400" />
+                            <Button variant="ghost" size="icon" className="h-10 w-10 md:h-12 md:w-12 rounded-xl bg-white/60 border border-slate-200">
+                                <ArrowLeft className="w-5 h-5 text-slate-400" />
                             </Button>
                         </Link>
                         <div>
-                            <h1 className="text-4xl font-black italic tracking-tighter uppercase leading-none">JAMALI <span className="text-orange-500">PAYROLL</span></h1>
-                            <p className="text-[9px] font-bold text-slate-500 uppercase tracking-[0.4em] mt-2 italic shadow-sm flex items-center gap-2">
+                            <h1 className="text-2xl md:text-4xl font-black italic tracking-tighter uppercase leading-none">JAMALI <span className="text-orange-500">PAYROLL</span></h1>
+                            <p className="text-[8px] md:text-[9px] font-bold text-slate-500 uppercase tracking-[0.4em] mt-1 md:mt-2 italic shadow-sm flex items-center gap-2">
                                 <ShieldCheck className="w-3 h-3 text-emerald-500" /> Motor de Liquidación de Élite
                             </p>
                         </div>
@@ -163,16 +163,16 @@ export default function PayrollPage() {
                 </div>
 
                 {/* NAVIGATION TABS */}
-                <div className="flex items-center gap-4 bg-slate-900/40 p-2 rounded-3xl border border-white/5 shrink-0">
+                <div className="flex flex-wrap items-center gap-2 md:gap-4 bg-white/40 p-2 rounded-2xl border border-slate-200 shrink-0">
                     {menuTabs.map(tab => (
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id as any)}
                             className={cn(
-                                "flex-1 flex items-center justify-center gap-3 py-4 rounded-2xl transition-all font-black uppercase italic text-[10px] tracking-widest",
+                                "flex-1 flex items-center justify-center gap-2 max-md:py-3 py-3 rounded-xl transition-all font-black uppercase italic text-[9px] tracking-widest",
                                 activeTab === tab.id
-                                    ? "bg-orange-500 text-black shadow-lg shadow-orange-500/20"
-                                    : "text-slate-500 hover:text-white hover:bg-white/5"
+                                    ? "bg-orange-500 text-white shadow-md shadow-orange-500/20"
+                                    : "text-slate-500 hover:text-slate-800 hover:bg-white/60"
                             )}
                         >
                             <tab.icon className="w-4 h-4" />
@@ -182,15 +182,15 @@ export default function PayrollPage() {
                 </div>
 
                 {/* KPI ROW */}
-                <div className="grid grid-cols-3 gap-6 shrink-0">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 shrink-0">
                     {stats.map((s, i) => (
-                        <div key={i} className="bg-slate-800/40 backdrop-blur-xl border border-white/5 rounded-3xl p-6 flex items-center justify-between group hover:bg-slate-700/50 transition-all border-l-4 border-l-orange-500">
+                        <div key={i} className="bg-white/60 backdrop-blur-xl border border-slate-200 rounded-2xl p-5 flex items-center justify-between group hover:bg-white/80 transition-all border-l-4 border-l-orange-500 shadow-sm">
                             <div>
-                                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">{s.label}</p>
-                                <p className={cn("text-3xl font-black italic", s.color)}>{s.val}</p>
+                                <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">{s.label}</p>
+                                <p className={cn("text-2xl font-black italic", s.color)}>{s.val}</p>
                             </div>
-                            <div className="p-4 bg-slate-900/40 rounded-2xl">
-                                <s.icon className={cn("w-6 h-6 opacity-40 group-hover:opacity-80 transition-opacity", s.color)} />
+                            <div className="p-3 bg-slate-50 rounded-xl">
+                                <s.icon className={cn("w-5 h-5 opacity-40 group-hover:opacity-80 transition-opacity", s.color)} />
                             </div>
                         </div>
                     ))}
@@ -199,20 +199,20 @@ export default function PayrollPage() {
                 {/* CONTENT AREA */}
                 <div className="flex-1 overflow-hidden min-h-0 flex flex-col">
                     {activeTab === 'dashboard' && (
-                        <div className="flex-1 grid grid-cols-12 gap-10 overflow-hidden">
-                            <div className="col-span-8 flex flex-col space-y-6 overflow-hidden">
-                                <h2 className="text-xs font-black uppercase tracking-[0.4em] text-slate-500 flex items-center gap-3 italic shrink-0">
-                                    <Activity className="w-4 h-4 text-orange-500" /> Operación en Tiempo Real (Shifts)
+                        <div className="flex-1 flex flex-col lg:grid lg:grid-cols-12 gap-8 overflow-hidden">
+                            <div className="lg:col-span-8 flex flex-col space-y-4 overflow-hidden">
+                                <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 flex items-center gap-2 italic shrink-0">
+                                    <Activity className="w-4 h-4 text-orange-500" /> Operación en Tiempo Real
                                 </h2>
-                                <div className="flex-1 overflow-y-auto pr-4 custom-scrollbar">
-                                    <div className="grid grid-cols-2 gap-6 pb-10">
+                                <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-10">
                                         {activeShifts.length > 0 ? activeShifts.map((shift, i) => (
-                                            <div key={i} className="bg-slate-800/30 backdrop-blur-2xl border border-white/5 rounded-[2.5rem] p-8 flex items-start gap-6 group hover:border-orange-500/40 transition-all">
+                                            <div key={i} className="bg-white/60 backdrop-blur-2xl border border-slate-200 rounded-3xl p-6 flex items-start gap-5 group hover:border-orange-500/40 transition-all shadow-sm">
                                                 <div className="relative">
-                                                    <div className="w-20 h-20 rounded-[1.75rem] bg-slate-700 flex items-center justify-center border-2 border-white/5 overflow-hidden">
-                                                        <Users className="w-8 h-8 text-slate-400" />
+                                                    <div className="w-16 h-16 rounded-2xl bg-slate-50 flex items-center justify-center border border-slate-200 overflow-hidden">
+                                                        <Users className="w-6 h-6 text-slate-400" />
                                                     </div>
-                                                    <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-emerald-500 rounded-full border-4 border-slate-900 flex items-center justify-center">
+                                                    <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-500 rounded-full border-[3px] border-white flex items-center justify-center">
                                                         <div className="w-1.5 h-1.5 bg-white rounded-full animate-ping" />
                                                     </div>
                                                 </div>
@@ -230,27 +230,27 @@ export default function PayrollPage() {
                                                 </div>
                                             </div>
                                         )) : (
-                                            <div className="col-span-2 py-20 text-center bg-slate-950/40 rounded-[2.5rem] border border-dashed border-white/10">
-                                                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 italic">Central de turnos vacía</p>
+                                            <div className="col-span-1 md:col-span-2 py-12 text-center bg-slate-50/50 rounded-3xl border border-dashed border-slate-200">
+                                                <p className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-400 italic">Central de turnos vacía</p>
                                             </div>
                                         )}
                                     </div>
                                 </div>
                             </div>
-                            <div className="col-span-4 flex flex-col space-y-6 overflow-hidden">
-                                <h2 className="text-xs font-black uppercase tracking-[0.4em] text-slate-500 italic shrink-0">Últimas Liquidaciones</h2>
-                                <div className="flex-1 bg-slate-900/40 backdrop-blur-3xl border border-white/5 rounded-[3rem] p-8 overflow-y-auto custom-scrollbar">
-                                    <div className="space-y-4">
+                            <div className="lg:col-span-4 flex flex-col space-y-4 overflow-hidden">
+                                <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 italic shrink-0">Últimas Liquidaciones</h2>
+                                <div className="flex-1 bg-white/60 backdrop-blur-3xl border border-slate-200 rounded-[2rem] p-6 overflow-y-auto custom-scrollbar shadow-sm">
+                                    <div className="space-y-3">
                                         {employees.slice(0, 10).map((emp, i) => (
-                                            <div key={i} className="flex items-center justify-between p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
-                                                <div className="flex items-center gap-4">
-                                                    <div className="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center font-black italic text-orange-500">{emp.full_name[0]}</div>
+                                            <div key={i} className="flex items-center justify-between p-3 rounded-2xl bg-white border border-slate-100 hover:border-orange-500/30 transition-colors shadow-sm">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center font-black italic text-orange-500">{emp.full_name[0]}</div>
                                                     <div>
-                                                        <p className="text-xs font-black italic uppercase tracking-tight">{emp.full_name}</p>
-                                                        <p className="text-[9px] font-bold text-emerald-500 uppercase tracking-widest">PAGO PROCESADO</p>
+                                                        <p className="text-[11px] font-black italic uppercase tracking-tight">{emp.full_name}</p>
+                                                        <p className="text-[8px] font-bold text-emerald-500 uppercase tracking-widest">PAGO PROCESADO</p>
                                                     </div>
                                                 </div>
-                                                <TrendingUp className="w-4 h-4 text-emerald-500/40" />
+                                                <TrendingUp className="w-3 h-3 text-emerald-500/40" />
                                             </div>
                                         ))}
                                     </div>
@@ -261,66 +261,66 @@ export default function PayrollPage() {
 
                     {activeTab === 'employees' && (
                         <div className="flex-1 animate-in fade-in slide-in-from-bottom-4 duration-500 overflow-hidden flex flex-col">
-                            <div className="bg-slate-900/40 backdrop-blur-3xl border border-white/5 rounded-[3rem] p-8 h-full flex flex-col">
-                                <div className="flex items-center justify-between mb-8 shrink-0">
-                                    <h2 className="text-xl font-black italic uppercase tracking-tighter">SUELDOS & <span className="text-orange-500">CONTRATOS</span></h2>
+                            <div className="bg-white/60 backdrop-blur-3xl border border-slate-200 rounded-[2rem] p-6 h-full flex flex-col shadow-sm">
+                                <div className="flex items-center justify-between mb-6 shrink-0">
+                                    <h2 className="text-lg font-black italic uppercase tracking-tighter">SUELDOS & <span className="text-orange-500">CONTRATOS</span></h2>
                                     <div className="flex gap-4">
-                                        <div className="relative">
-                                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                                        <div className="relative hidden md:block">
+                                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3 h-3 text-slate-400" />
                                             <input
                                                 type="text"
                                                 placeholder="BUSCAR COLABORADOR..."
-                                                className="bg-slate-950 border border-white/10 rounded-xl py-3 pl-12 pr-6 text-[10px] font-black uppercase italic outline-none focus:border-orange-500/50 transition-all w-64"
+                                                className="bg-white border border-slate-200 rounded-xl py-2 pl-9 pr-4 text-[9px] font-black uppercase italic outline-none focus:border-orange-500/50 transition-all w-48 text-slate-900"
                                             />
                                         </div>
                                     </div>
                                 </div>
                                 <div className="flex-1 overflow-y-auto custom-scrollbar pr-2">
-                                    <table className="w-full text-left border-separate border-spacing-y-3">
+                                    <table className="w-full text-left border-separate border-spacing-y-2">
                                         <thead>
-                                            <tr className="text-[10px] font-black uppercase text-slate-500 tracking-[0.2em] italic">
-                                                <th className="px-6 py-4">COLABORADOR</th>
-                                                <th className="px-6 py-4">CONTRATO</th>
-                                                <th className="px-6 py-4">SUELDO BASE</th>
-                                                <th className="px-6 py-4">COMISIÓN %</th>
-                                                <th className="px-6 py-4">ESTADO</th>
+                                            <tr className="text-[9px] font-black uppercase text-slate-400 tracking-[0.2em] italic">
+                                                <th className="px-4 py-3">COLABORADOR</th>
+                                                <th className="px-4 py-3 hidden md:table-cell">CONTRATO</th>
+                                                <th className="px-4 py-3">SUELDO BASE</th>
+                                                <th className="px-4 py-3 hidden md:table-cell">COMISIÓN %</th>
+                                                <th className="px-4 py-3">ESTADO</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {employees.map((emp: any, i) => (
-                                                <tr key={i} className="bg-white/[0.03] hover:bg-white/[0.08] transition-colors rounded-2xl group">
-                                                    <td className="px-6 py-5 first:rounded-l-2xl">
-                                                        <div className="flex items-center gap-4">
-                                                            <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center font-black italic text-orange-500 border border-orange-500/20">
+                                                <tr key={i} className="bg-white hover:bg-slate-50 shadow-sm border border-slate-100 transition-colors rounded-xl group">
+                                                    <td className="px-4 py-3 first:rounded-l-xl border-y border-l border-slate-100">
+                                                        <div className="flex items-center gap-3">
+                                                            <div className="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center font-black italic text-orange-500 border border-orange-100">
                                                                 {emp.full_name?.charAt(0) || 'U'}
                                                             </div>
                                                             <div>
-                                                                <p className="text-sm font-black italic uppercase tracking-tight text-white">{emp.full_name}</p>
-                                                                <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest">{emp.email}</p>
+                                                                <p className="text-xs font-black italic uppercase tracking-tight text-slate-900">{emp.full_name}</p>
+                                                                <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">{emp.email}</p>
                                                             </div>
                                                         </div>
                                                     </td>
-                                                    <td className="px-6 py-5">
-                                                        <span className="px-3 py-1.5 bg-blue-500/10 text-blue-400 text-[9px] font-black uppercase italic rounded-lg border border-blue-500/20">
+                                                    <td className="px-4 py-3 border-y border-slate-100 hidden md:table-cell">
+                                                        <span className="px-2 py-1 bg-blue-50 text-blue-600 text-[8px] font-black uppercase italic rounded-md border border-blue-100">
                                                             {emp.contract_type || 'INDEFINIDO'}
                                                         </span>
                                                     </td>
-                                                    <td className="px-6 py-5">
-                                                        <p className="text-sm font-black italic text-white">{formatPrice(emp.base_salary || 0)}</p>
-                                                        <p className="text-[8px] font-bold text-slate-600 uppercase tracking-widest italic">VALOR MENSUAL</p>
+                                                    <td className="px-4 py-3 border-y border-slate-100">
+                                                        <p className="text-xs font-black italic text-slate-900">{formatPrice(emp.base_salary || 0)}</p>
+                                                        <p className="text-[7px] font-bold text-slate-400 uppercase tracking-widest italic">VALOR MENSUAL</p>
                                                     </td>
-                                                    <td className="px-6 py-5">
-                                                        <div className="flex items-center gap-3">
-                                                            <div className="h-1.5 w-12 bg-slate-800 rounded-full overflow-hidden">
+                                                    <td className="px-4 py-3 border-y border-slate-100 hidden md:table-cell">
+                                                        <div className="flex items-center gap-2">
+                                                            <div className="h-1.5 w-8 bg-slate-200 rounded-full overflow-hidden">
                                                                 <div className="h-full bg-orange-500" style={{ width: `${emp.commission_percentage || 0}%` }} />
                                                             </div>
-                                                            <span className="text-xs font-black italic text-orange-500">{emp.commission_percentage || 0}%</span>
+                                                            <span className="text-[10px] font-black italic text-orange-600">{emp.commission_percentage || 0}%</span>
                                                         </div>
                                                     </td>
-                                                    <td className="px-6 py-5 last:rounded-r-2xl">
-                                                        <div className="flex items-center gap-2">
-                                                            <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
-                                                            <span className="text-[10px] font-black text-slate-400 uppercase italic">ACTIVO</span>
+                                                    <td className="px-4 py-3 border-y border-r border-slate-100 last:rounded-r-xl">
+                                                        <div className="flex items-center gap-1.5">
+                                                            <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_5px_rgba(16,185,129,0.3)]" />
+                                                            <span className="text-[8px] font-black text-slate-500 uppercase italic">ACTIVO</span>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -334,40 +334,40 @@ export default function PayrollPage() {
 
                     {activeTab === 'concepts' && (
                         <div className="flex-1 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                            <div className="bg-slate-900/40 backdrop-blur-3xl border border-white/5 rounded-[3rem] p-10 h-full flex flex-col">
-                                <div className="flex items-center justify-between mb-10 shrink-0">
+                            <div className="bg-white/60 backdrop-blur-3xl border border-slate-200 rounded-[2rem] p-6 md:p-8 h-full flex flex-col shadow-sm">
+                                <div className="flex items-center justify-between mb-8 shrink-0">
                                     <div>
-                                        <h2 className="text-2xl font-black italic uppercase tracking-tighter">CONFIGURACIÓN LEGAL</h2>
-                                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1 italic">Catálogo de Devengados y Deducciones</p>
+                                        <h2 className="text-xl font-black italic uppercase tracking-tighter">CONFIGURACIÓN LEGAL</h2>
+                                        <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1 italic">Catálogo de Devengados y Deducciones</p>
                                     </div>
-                                    <Button className="bg-white/5 border border-white/10 text-white font-black uppercase text-[10px] tracking-widest h-12 px-6 rounded-xl hover:bg-white/10">
+                                    <Button className="bg-white border border-slate-200 text-slate-900 font-black uppercase text-[9px] tracking-widest h-10 px-4 rounded-xl hover:bg-slate-50 shadow-sm">
                                         AÑADIR CONCEPTO
                                     </Button>
                                 </div>
-                                <div className="flex-1 overflow-y-auto custom-scrollbar space-y-4 pr-4">
+                                <div className="flex-1 overflow-y-auto custom-scrollbar space-y-3 pr-2">
                                     {concepts.length > 0 ? concepts.map((c, i) => (
-                                        <div key={i} className="flex items-center justify-between p-6 rounded-2xl bg-white/5 border border-white/5 group hover:bg-white/10 transition-all">
-                                            <div className="flex items-center gap-6">
+                                        <div key={i} className="flex items-center justify-between p-4 rounded-xl bg-white border border-slate-100 group hover:border-orange-500/30 transition-all shadow-sm">
+                                            <div className="flex items-center gap-4">
                                                 <div className={cn(
-                                                    "w-12 h-12 rounded-xl flex items-center justify-center font-black",
-                                                    c.type === 'EARNING' ? "bg-emerald-500/20 text-emerald-500" : "bg-rose-500/20 text-rose-500"
+                                                    "w-10 h-10 rounded-lg flex items-center justify-center font-black",
+                                                    c.type === 'EARNING' ? "bg-emerald-50 text-emerald-600" : "bg-rose-50 text-rose-600"
                                                 )}>
                                                     {c.type === 'EARNING' ? '+' : '-'}
                                                 </div>
                                                 <div>
-                                                    <p className="text-sm font-black italic uppercase tracking-tight">{c.name}</p>
-                                                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{c.category}</p>
+                                                    <p className="text-xs font-black italic uppercase tracking-tight">{c.name}</p>
+                                                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{c.category}</p>
                                                 </div>
                                             </div>
                                             <div className="text-right">
-                                                <p className="text-sm font-black italic">{c.percentage ? `${c.percentage}%` : 'VALOR FIJO'}</p>
-                                                <p className="text-[9px] font-bold text-slate-600 uppercase tracking-widest">{c.is_legal ? 'REGLA DE LEY' : 'BENEFICIO EXTRA'}</p>
+                                                <p className="text-xs font-black italic">{c.percentage ? `${c.percentage}%` : 'VALOR FIJO'}</p>
+                                                <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">{c.is_legal ? 'REGLA DE LEY' : 'BENEFICIO EXTRA'}</p>
                                             </div>
                                         </div>
                                     )) : (
-                                        <div className="flex flex-col items-center justify-center py-20 text-center opacity-40">
-                                            <ShieldCheck className="w-16 h-16 mb-4" />
-                                            <p className="text-xs font-black uppercase tracking-[0.3em]">Cargando configuración legal...</p>
+                                        <div className="flex flex-col items-center justify-center py-16 text-center opacity-40">
+                                            <ShieldCheck className="w-12 h-12 mb-3 text-slate-400" />
+                                            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">Cargando configuración legal...</p>
                                         </div>
                                     )}
                                 </div>

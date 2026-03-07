@@ -70,7 +70,7 @@ export default function OpenBoxPage() {
 
     if (validating) {
         return (
-            <div className="min-h-screen bg-[#020406] flex items-center justify-center">
+            <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center">
                 <div className="flex flex-col items-center gap-6">
                     <Loader2 className="w-12 h-12 animate-spin text-orange-500" />
                     <p className="text-[10px] font-black uppercase tracking-[0.4em] text-orange-500/40 italic animate-pulse">Autenticando Acceso a Bóveda...</p>
@@ -80,7 +80,7 @@ export default function OpenBoxPage() {
     }
 
     return (
-        <div className="min-h-screen bg-[#020406] text-white flex items-center justify-center p-4 relative overflow-hidden">
+        <div className="min-h-screen bg-[#F8FAFC] text-slate-900 flex items-center justify-center p-4 relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-orange-500/5 to-transparent pointer-events-none" />
             <div className="max-w-lg w-full space-y-8 animate-in fade-in zoom-in-95 duration-500 relative z-10">
 
@@ -106,7 +106,7 @@ export default function OpenBoxPage() {
                                 autoFocus
                                 required
                                 min="0"
-                                className="w-full h-32 bg-white/[0.02] border border-white/5 group-focus-within:border-orange-500/40 rounded-[2.5rem] pl-16 pr-8 outline-none text-6xl font-black text-white text-center transition-all placeholder:text-slate-800 shadow-2xl backdrop-blur-3xl"
+                                className="w-full h-32 bg-white/60 border border-slate-200 group-focus-within:border-orange-500/40 rounded-[2.5rem] pl-16 pr-8 outline-none text-6xl font-black text-slate-900 text-center transition-all placeholder:text-slate-300 shadow-2xl backdrop-blur-3xl"
                                 placeholder="0"
                                 value={amount}
                                 onChange={(e) => setAmount(e.target.value)}
