@@ -112,11 +112,41 @@
 }
 
 /* ============================================================
-   BASE STYLES
+   BASE STYLES & RESPONSIVE GLOBAL ZOOM
+   Este bloque auto-adapta el tamaño de todos los componentes
+   reduciendo el rem. Es como usar el zoom del navegador a 65%
+   en pantallas grandes.
    ============================================================ */
 html {
   /* Evitar que cualquier librería externa active el modo oscuro */
   color-scheme: light only;
+
+  /* Zoom Base normal (Mobile) = 16px */
+  font-size: 100%;
+}
+
+@media (min-width: 768px) {
+
+  /* Tablet = Reducción al 85% */
+  html {
+    font-size: 85%;
+  }
+}
+
+@media (min-width: 1024px) {
+
+  /* Desktop normal = Reducción al 75% */
+  html {
+    font-size: 75%;
+  }
+}
+
+@media (min-width: 1536px) {
+
+  /* Monitores Grandes (1080p en adelante) = Reducción al 65% */
+  html {
+    font-size: 65%;
+  }
 }
 
 body {
