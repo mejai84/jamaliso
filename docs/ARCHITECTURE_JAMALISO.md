@@ -131,14 +131,74 @@ El sistema solo habilita el acceso total al POS una vez completado el pago exito
 
 ---
 
+## 9. Patrón de Acceso a Datos (Híbrido)
+Para garantizar integridad en operaciones complejas, JAMALI OS utiliza dos capas:
+
+1.  **Capa Supabase (Client-Side):**
+    *   Lecturas rápidas (`SELECT`) y actualizaciones simples.
+    *   Respeta **RLS (Row Level Security)**.
+    *   Ideal para mapa de mesas, lista de productos.
+
+2.  **Capa PG Direct (Server-Side - `pg` library):**
+    *   Ubicación: `src/actions/orders-fixed.ts`.
+    *   **Bypass de RLS controlado** con soporte de **Transacciones SQL**.
+    *   Operaciones como **Split Check** o **Merge Tables** requieren modificar múltiples tablas simultáneamente con `ROLLBACK` automático si falla.
+
+```mermaid
+graph TD
+    A[Waiter Portal] -- Server Action --> B[Server: PostgreSQL Transaction]
+    B -- Commit --> C[Database Table: orders]
+    C -- Realtime Broadcast --> D[Kitchen KDS]
+    C -- Realtime Broadcast --> E[Admin Dashboard]
+    D -- Update Status --> C
+```
+
+> [!CAUTION]
+> No modificar `src/actions/orders-fixed.ts` sin comprender el manejo de transacciones, ya que podrías duplicar ítems en una factura.
+
 ---
 
-## 9. Interfaz y Diseño (Pixora Light Theme)
-Desde marzo de 2026, JAMALI OS implementa el estándar **Pixora Light** de forma obligatoria para garantizar una estética premium, corporativa y de marca blanca:
-*   **Color System:** Basado en `Slate-900` para textos y `Orange-600` (`#EA580C`) para acciones principales.
-*   **Escalado Inteligente:** Implementación de `font-size` dinámico en el `html` vía CSS (100% móvil, 85% tablet, 75% laptop, 65% monitores grandes) para asegurar que la densidad de información sea óptima en cualquier dispositivo.
-*   **Branding Dinámico:** Los colores y logos se inyectan mediante el `RestaurantProvider` manteniendo la consistencia visual.
+## 10. Perímetro de Seguridad (Edge & Network)
+*   **Edge Middleware (`src/middleware.ts`):** Rate Limiter asíncrono (100 req/min/IP) que bloquea IPs maliciosas y valida JWT perimetralmente antes de tocar la DB.
+*   **Strict CORS & Security Headers:** `X-Frame-Options`, `Strict-Transport-Security`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy` en `next.config.ts`.
 
 ---
 
-*Última actualización: 07 Marzo 2026 (Migración Final Branding JAMALI OS & Pixora Light)*
+## 11. Resiliencia Offline (PWA)
+*   Utiliza `@ducanh2912/next-pwa` para registrar un **Service Worker** (`sw.js`).
+*   Mantiene en caché los assets de UI. Si cae la red, POS, KDS y portal de meseros evitan pantalla de error.
+*   Motor offline (`src/lib/offline-engine.ts`): guarda pedidos en localStorage, sincroniza al reconectar.
+
+---
+
+## 12. Seguridad y Antifraude (Escenarios)
+*   **Mesero anula pedido cobrado:** Solo Manager puede anular (`void`). Se guarda registro en `audit_logs` con motivo.
+*   **Cajero abre caja sin registrar venta:** Auditoría de sesiones y movimientos no cuadra.
+*   **Descuentos excesivos:** Permiso `discount` requerido, registrado en `audit_logs` con `old_values`/`new_values`.
+
+---
+
+## 13. Riesgos Técnicos y Mitigaciones
+1.  **Caída de Supabase** → Modo Offline Emergencia (pedidos en localStorage + sync).
+2.  **Lentitud en reportes** → Vistas materializadas (`materialized views`) para dashboards históricos.
+3.  **Pool exhaustion** → Supabase Transaction Pooler (Puerto 6543) + `client.release()` estricto.
+
+---
+
+## 14. Patrón de Refactorización Atómica (SaaS Enterprise)
+1.  **Límite de LOC:** `page.tsx` ≤ 150-200 líneas.
+2.  **Extracción de Tipos:** Interfaces en `types.ts` dentro de cada módulo.
+3.  **Componentes Discretos:** UI en `src/components/admin/[module_name]/`.
+4.  **Orquestación:** `page.tsx` solo hace: fetch → state → render componentes.
+
+---
+
+## 15. Interfaz y Diseño (Pixora Light Theme)
+Desde marzo de 2026, JAMALI OS implementa el estándar **Pixora Light**:
+*   **Color System:** `Slate-900` textos + `Orange-600` (`#EA580C`) acciones principales.
+*   **Escalado Inteligente:** `font-size` dinámico (100% móvil, 85% tablet, 75% laptop, 65% monitores grandes).
+*   **Branding Dinámico:** CSS Variables (`--primary`) inyectadas vía `RestaurantProvider`.
+
+---
+
+*Última actualización: 07 Marzo 2026 — Documento unificado (ex ARCHITECTURE_BLUEPRINT + ARCHITECTURE_ENTERPRISE + ARCHITECTURE_JAMALISO).*
