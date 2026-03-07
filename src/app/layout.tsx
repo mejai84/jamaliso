@@ -8,8 +8,11 @@ import LayoutClientWrapper from "@/components/layout-client-wrapper";
 const outfit = Outfit({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-    title: "JAMALI SO | Restaurante",
-    description: "Sistema de gestión para restaurantes. Con tecnología Antigravity.",
+    title: "JAMALI OS | El sistema operativo de tu restaurante",
+    description: "Sistema de gestión integral para restaurantes. Con tecnología Antigravity.",
+    icons: {
+        icon: '/favicon.png',
+    },
 };
 
 export default function RootLayout({

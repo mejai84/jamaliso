@@ -133,13 +133,13 @@ export function Navbar() {
                 <div className="container mx-auto px-6 h-20 flex items-center justify-between">
                     <Link href="/" className="flex items-center gap-3 group">
                         {businessInfo.logo_url ? (
-                            <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-gray-100 group-hover:border-primary/50 transition-colors">
+                            <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-gray-100 group-hover:border-primary/50 transition-colors">
                                 <img src={businessInfo.logo_url} className="w-full h-full object-contain" alt="Logo" />
                             </div>
                         ) : (
-                            <div className="w-12 h-12 bg-primary flex items-center justify-center rounded-full text-white font-black italic">P</div>
+                            <div className="w-14 h-14 bg-primary flex items-center justify-center rounded-full text-white font-black italic text-xl">P</div>
                         )}
-                        <span className="text-xl font-bold tracking-tighter text-gradient uppercase">
+                        <span className="text-2xl font-bold tracking-tighter text-gradient uppercase">
                             {businessInfo.name}
                         </span>
                     </Link>

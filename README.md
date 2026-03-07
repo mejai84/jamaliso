@@ -1,6 +1,6 @@
-# 🚩 PARGO ROJO OS - Sistema de Operación Gastronómica Industrial
+# 🚀 JAMALI OS - Sistema de Operación Gastronómica Inteligente
 
-Ecosistema completo de control transaccional, gestión de inventarios y fidelización para la cadena de restaurantes Pargo Rojo.
+Ecosistema completo de control transaccional, gestión de inventarios y fidelización para restaurantes modernos. JAMALI OS es el "Punto Medio Perfecto" entre la agilidad de una startup y la robustez de un sistema Enterprise.
 
 ![Next.js](https://img.shields.io/badge/Next.js-16.1.3-black?style=for-the-badge&logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript)
@@ -25,23 +25,20 @@ Ecosistema completo de control transaccional, gestión de inventarios y fideliza
 ## ✨ Características
 
 ### Para Clientes:
-- 🛒 Catálogo completo de productos
-- 🛍️ Carrito de compras con localStorage
-- 💳 Checkout con información de contacto
-- 📱 Diseño completamente responsive
-- 🎨 UI moderna con animaciones
+- 🛒 Catálogo completo de productos (Carta Digital)
+- 🛍️ Pedidos QR desde la mesa
+- 💳 Checkout sin registro obligatorio
+- 📱 Diseño ultra-responsivo
+- 🎨 UI moderna con micro-animaciones (Framer Motion)
 
 ### Para Administradores:
-- 📊 **Dashboard** con métricas en tiempo real
-- 🛒 **Gestión de Pedidos** completa
-- 👨‍🍳 **KDS (Kitchen Display System)** para cocina
-- 🍔 **Gestión de Productos** (CRUD completo)
-- 👥 **Gestión de Clientes** con historial
-- 👨‍💼 **Gestión de Empleados** y roles
-- 📈 **Reportes** con exportación CSV/PDF
-- ⚙️ **Configuración** del negocio
-- 🔔 **Notificaciones** en tiempo real
-- 🌐 **Integración Instagram** (UI preparada)
+- 📊 **Dashboard Core** con métricas en vivo.
+- 🪄 **Onboarding Wizard**: Configura tu restaurante, menú y mesas en minutos.
+- 💳 **Pagos Integrados**: Suscripciones vía **Mercado Pago**.
+- 👨‍🍳 **KDS (Kitchen Display System)** avanzado.
+- 🥓 **Gestión de Recetas** e Inventario (Food Cost).
+- 💼 **Motor de Nómina (Payroll Engine)** integrado.
+- 📈 **Reportes BI** con proyecciones.
 
 ---
 
@@ -75,8 +72,8 @@ Ecosistema completo de control transaccional, gestión de inventarios y fideliza
 
 1. **Clonar el repositorio:**
 ```bash
-git clone https://github.com/mejai84/pargorojo.git
-cd pargorojo
+git clone https://github.com/mejai84/jamali-os.git
+cd jamali-os
 ```
 
 2. **Instalar dependencias:**
@@ -411,4 +408,4 @@ Este proyecto es privado y pertenece a Pargo Rojo Restaurante.
 
 ---
 
-*Desarrollado para el ecosistema Pargo Rojo*
+*Desarrollado para el ecosistema JAMALI OS*

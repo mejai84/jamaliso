@@ -7,7 +7,7 @@ import { supabase } from "@/lib/supabase/client"
 
 export function Footer() {
     const [info, setInfo] = useState<any>({
-        name: "JAMALI SO",
+        name: "JAMALI OS",
         logo_url: "",
         address: "",
         phone: "",

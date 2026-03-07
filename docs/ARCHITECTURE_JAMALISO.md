@@ -1,9 +1,9 @@
-# Arquitectura del Sistema - JAMALISO
+# Arquitectura del Sistema - JAMALI OS
 
-Este documento describe la arquitectura a alto nivel de JAMALISO, su estructura de directorios, las tecnologías involucradas y cómo interactúan las diferentes capas de la aplicación. Su propósito es permitir a cualquier desarrollador nuevo (o inversor/comprador) entender el sistema en menos de 1 hora.
+Este documento describe la arquitectura a alto nivel de JAMALI OS, su estructura de directorios, las tecnologías involucradas y cómo interactúan las diferentes capas de la aplicación. Su propósito es permitir a cualquier desarrollador nuevo (o inversor/comprador) entender el sistema en menos de 1 hora.
 
 ## 1. ¿Qué hace el sistema?
-JAMALISO es un sistema integral de punto de venta (POS) y ERP especializado en el sector gastronómico (restaurantes, bares, cafeterías). Está diseñado con una arquitectura **Multi-Tenant (Multi-inquilino)**, lo que significa que un solo despliegue puede servir a múltiples restaurantes, manteniendo los datos estricta y criptográficamente aislados.
+JAMALI OS es un sistema integral de punto de venta (POS) y ERP especializado en el sector gastronómico (restaurantes, bares, cafeterías). Está diseñado con una arquitectura **Multi-Tenant (Multi-inquilino)**, lo que significa que un solo despliegue puede servir a múltiples restaurantes, manteniendo los datos estricta y criptográficamente aislados.
 
 ## 2. Tecnologías y Stack (Tech Stack)
 *   **Frontend / Framework:** [Next.js 16 (App Router)](https://nextjs.org/) + [React 19](https://react.dev/)
@@ -114,3 +114,19 @@ JAMALISO ahora integra un motor ERP para la gestión de talento humano y adaptac
 *   **Concepts:** Catálogo de devengados (Earning) y deducciones (Deduction).
 *   **Comisiones:** Automatizadas mediante el trigger `process_sale_commission` en ventas POS.
 *   **Novedades:** Registro de pagos extras, mermas o préstamos en `payroll_novelties`.
+
+---
+
+## 8. Onboarding Automático y Pagos (Wizard)
+JAMALI OS cuenta con un asistente de configuración inteligente (`Wizard`) a nivel de aplicación (`/register/wizard`):
+1.  **Información del Restaurante:** Nombre, branding (Logo/Colores), tipo de cocina.
+2.  **Configuración de Mesas:** Creación visual del salón y asignación de códigos QR.
+3.  **Configuración del Menú:** Categorías (Entradas, Platos Fuertes, Bebidass) y primeros productos.
+4.  **Detalles de Cuenta Admin:** Creación del usuario dueño (`Owner`).
+5.  **Suscripción y Pago:** Pasarela de pago nativa con **Mercado Pago** (Starter, Pro, Enterprise).
+
+El sistema solo habilita el acceso total al POS una vez completado el pago exitoso, activando el flag `isPaid` en la tabla `restaurants`.
+
+---
+
+*Última actualización: Marzo 2026 (Refactor Branding & Payment Gateway)*

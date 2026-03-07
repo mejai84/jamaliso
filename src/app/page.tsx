@@ -34,16 +34,21 @@ export default function Home() {
     try {
       const hostname = typeof window !== 'undefined' ? window.location.hostname : ''
 
-      // Si estamos en el dominio principal (jamaliso.vercel.app o localhost), ir al Landing SaaS
-      const isMainDomain = hostname === 'jamaliso.vercel.app' || hostname === 'localhost' || hostname === '127.0.0.1'
+      // Si estamos en el dominio principal, ir al Landing SaaS
+      const isMainDomain = hostname.includes('jamaliso.vercel.app') ||
+        hostname.includes('jamali-os.vercel.app') ||
+        hostname === 'localhost' ||
+        hostname === '127.0.0.1'
 
       if (isMainDomain) {
         router.replace('/landing')
         return
       }
 
-      // Si hay un subdominio (ej: pizzeriapaco.jamaliso.com)
-      const subdomain = hostname.includes('.jamaliso.com') ? hostname.split('.')[0] : null
+      // Si hay un subdominio (ej: pizzeriapaco.jamali.so o pizzeriapaco.jamali-os.com)
+      const subdomain = hostname.includes('.jamaliso.com') || hostname.includes('.jamali-os.com')
+        ? hostname.split('.')[0]
+        : null
 
       let query = supabase.from('restaurants').select('*')
       if (subdomain) {
@@ -70,11 +75,17 @@ export default function Home() {
   }
 
   if (loading) return (
-    <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center gap-6">
-      <Zap className="w-16 h-16 text-primary animate-pulse" />
+    <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center gap-8">
+      <div className="relative w-64 h-28 animate-pulse">
+        <Image
+          src="/images/jamali-os-logo.png"
+          alt="JAMALI OS"
+          fill
+          className="object-contain brightness-0 invert"
+        />
+      </div>
       <div className="text-center">
-        <p className="text-white font-black uppercase tracking-[0.5em] italic text-xs">Pargo OS</p>
-        <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest mt-2">Elevando la gastronomía costera</p>
+        <p className="text-slate-500 text-[10px] font-bold uppercase tracking-[0.4em] mt-2">Iniciando Ecosistema Gastronómico</p>
       </div>
     </div>
   )

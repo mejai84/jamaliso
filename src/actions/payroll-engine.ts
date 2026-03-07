@@ -16,7 +16,7 @@ export interface PayrollRunResult {
 }
 
 /**
- * 🚀 JAMALISO CORE: Motor de Cálculo de Nómina
+ * 🚀 JAMALI OS CORE: Motor de Cálculo de Nómina
  * Ejecuta el cálculo completo para un periodo específico utilizando transacciones ACID
  * en PostgreSQL para total seguridad financiera.
  */

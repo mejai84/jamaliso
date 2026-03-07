@@ -179,12 +179,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-background">
-                <div className="flex flex-col items-center gap-6">
-                    <Zap className="w-12 h-12 text-primary animate-pulse" />
-                    <div className="space-y-2 text-center">
-                        <p className="font-black italic uppercase text-[10px] tracking-[0.4em] text-primary">Encriptando Sesión</p>
-                        <p className="text-muted-foreground text-[9px] font-bold uppercase tracking-widest">Jamali Cloud Framework</p>
+            <div className="min-h-screen flex items-center justify-center bg-white">
+                <div className="flex flex-col items-center gap-8">
+                    <div className="relative w-40 h-16 animate-pulse opacity-20">
+                        <Image
+                            src="/images/jamali-os-logo.png"
+                            alt="JAMALI OS"
+                            fill
+                            className="object-contain"
+                        />
                     </div>
                 </div>
             </div>
@@ -218,7 +221,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                                     {restaurant?.logo_url ? (
                                         <img src={restaurant.logo_url} alt="Logo" className="w-full h-full object-cover" />
                                     ) : (
-                                        <Zap className="w-6 h-6 text-primary" />
+                                        <Image src="/images/jamali-os-logo.png" alt="JAMALI OS" fill className="object-contain p-2" />
                                     )}
                                 </div>
                             </div>
@@ -329,7 +332,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                         {/* Logout / System Action */}
                         <Button
                             variant="ghost"
-                            className="w-full justify-start gap-4 h-12 text-[9px] font-black uppercase italic tracking-[0.3em] text-rose-500/70 hover:bg-rose-50 hover:text-rose-600 rounded-xl transition-all border border-rose-100 group"
+                            className="w-full justify-start gap-4 h-12 text-[9px] font-black uppercase italic tracking-[0.3em] text-rose-500/70 hover:bg-rose-50 hover:text-rose-600 rounded-xl transition-all border border-rose-100 group mb-6"
                             onClick={async () => {
                                 await supabase.auth.signOut()
                                 router.push("/login")
@@ -338,6 +341,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                             <LogOut className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
                             CERRAR SESIÓN
                         </Button>
+
+                        <div className="flex flex-col items-center gap-2 pt-4 border-t border-slate-100 opacity-20 hover:opacity-50 transition-opacity">
+                            <span className="text-[7px] font-black text-slate-400 uppercase tracking-widest">Powered by</span>
+                            <div className="relative w-16 h-4 grayscale transition-all hover:grayscale-0">
+                                <Image src="/images/jamali-os-logo.png" alt="JAMALI OS" fill className="object-contain" />
+                            </div>
+                        </div>
                     </div>
                 </aside>
 
@@ -349,7 +359,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                             {restaurant?.logo_url ? (
                                 <img src={restaurant.logo_url} className="w-6 h-6 object-contain" alt="Logo" />
                             ) : (
-                                <Zap className="w-5 h-5 text-primary" />
+                                <div className="relative w-6 h-6">
+                                    <Image src="/images/jamali-os-logo.png" alt="JAMALI OS" fill className="object-contain" />
+                                </div>
                             )}
                             <span className="font-black italic text-sm tracking-tighter uppercase text-slate-900">
                                 {restaurant?.name || "JAMALI OS"} <span className="text-primary italic">JAMALI OS</span>
@@ -378,8 +390,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
                                 <div className="p-8 border-b border-slate-100 flex items-center justify-between relative z-10">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center">
-                                            <Zap className="w-5 h-5 text-primary" />
+                                        <div className="w-8 h-8 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-center relative overflow-hidden">
+                                            <Image src="/images/jamali-os-logo.png" alt="JAMALI OS" fill className="object-contain p-1.5" />
                                         </div>
                                         <span className="font-black italic text-base tracking-tighter uppercase text-slate-900">JAMALI <span className="text-primary">OS</span></span>
                                     </div>
@@ -437,7 +449,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                                 <div className="p-8 border-t border-slate-100 bg-slate-50 relative z-10">
                                     <Button
                                         variant="ghost"
-                                        className="w-full justify-start gap-4 h-14 text-[10px] font-black uppercase italic tracking-[0.3em] text-rose-500/70 hover:bg-rose-50 hover:text-rose-600 rounded-xl transition-all border border-rose-100 group"
+                                        className="w-full justify-start gap-4 h-14 text-[10px] font-black uppercase italic tracking-[0.3em] text-rose-500/70 hover:bg-rose-50 hover:text-rose-600 rounded-xl transition-all border border-rose-100 group mb-6"
                                         onClick={async () => {
                                             await supabase.auth.signOut()
                                             router.push("/login")
@@ -446,6 +458,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                                         <LogOut className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
                                         CERRAR SESIÓN
                                     </Button>
+
+                                    <div className="flex flex-col items-center gap-2 pt-4 border-t border-slate-100 opacity-20 transition-opacity">
+                                        <span className="text-[7px] font-black text-slate-400 uppercase tracking-widest">Powered by</span>
+                                        <div className="relative w-16 h-4 grayscale">
+                                            <Image src="/images/jamali-os-logo.png" alt="JAMALI OS" fill className="object-contain" />
+                                        </div>
+                                    </div>
                                 </div>
                             </aside>
                         </div>

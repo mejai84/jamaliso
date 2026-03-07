@@ -1,6 +1,6 @@
-# Estructura de Base de Datos - JAMALISO
+# Estructura de Base de Datos - JAMALI OS
 
-La base de datos de JAMALISO está construida sobre PostgreSQL, usando Supabase. Está diseñada para manejar alto volumen transaccional de múltiples sucursales/restaurantes de forma concurrente, segura (usando Row Level Security) y con referencialidad íntegra.
+La base de datos de JAMALI OS está construida sobre PostgreSQL, usando Supabase. Está diseñada para manejar alto volumen transaccional de múltiples sucursales/restaurantes de forma concurrente, segura (usando Row Level Security) y con referencialidad íntegra.
 
 Se divide lógicamente en los siguientes subsistemas principales:
 

@@ -1,6 +1,7 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
+import { useSearchParams } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import {
     Rocket,
@@ -29,11 +30,39 @@ const STEPS = [
     { id: 1, title: 'Identidad', icon: Store, desc: 'Nombre y URL de tu negocio' },
     { id: 2, title: 'Infraestructura', icon: Layers, desc: 'Mesas y puntos de servicio' },
     { id: 3, title: 'Branding', icon: Palette, desc: 'Tu estilo visual' },
-    { id: 4, title: 'Finalizar', icon: Rocket, desc: 'Crear tu cuenta maestra' }
+    { id: 4, title: 'Cuenta', icon: Rocket, desc: 'Tus credenciales maestras' },
+    { id: 5, title: 'Plan', icon: CreditCard, desc: 'Elige tu plan y activa' }
+]
+
+const PLANS = [
+    {
+        id: 'emprende',
+        name: 'Emprende',
+        price: 199000,
+        features: ['Hasta 15 mesas', 'KDS Cocina included', 'Pedidos QR Ilimitados', 'Soporte vía Ticket'],
+        color: 'blue'
+    },
+    {
+        id: 'pro',
+        name: 'Pro',
+        price: 349000,
+        features: ['Mesas Ilimitadas', 'Gestión de Inventariosv2', 'Reportes Avanzados', 'Soporte prioritario WhatsApp'],
+        color: 'orange',
+        popular: true
+    }
 ]
 
 export default function RegisterWizard() {
+    return (
+        <Suspense fallback={<div className="min-h-screen bg-slate-50 flex items-center justify-center"><Loader2 className="w-12 h-12 text-orange-500 animate-spin" /></div>}>
+            <WizardContent />
+        </Suspense>
+    )
+}
+
+function WizardContent() {
     const router = useRouter()
+    const searchParams = useSearchParams()
     const [currentStep, setCurrentStep] = useState(1)
     const [loading, setLoading] = useState(false)
     const [percent, setPercent] = useState(25)
@@ -49,20 +78,97 @@ export default function RegisterWizard() {
         primaryColor: '#ff4d00',
         ownerName: '',
         email: '',
-        password: ''
+        password: '',
+        selectedPlan: 'pro',
+        paymentId: ''
     })
+
+    const [isPaid, setIsPaid] = useState(false)
 
     useEffect(() => {
         setPercent((currentStep / STEPS.length) * 100)
     }, [currentStep])
+
+    useEffect(() => {
+        const step = searchParams.get('step')
+        const status = searchParams.get('status')
+        if (step) {
+            setCurrentStep(parseInt(step))
+            if (status === 'success') {
+                setIsPaid(true)
+                toast.success("Pago verificado con éxito. ¡Vamos al último paso!")
+            }
+        }
+    }, [searchParams])
+
+    // Persistir datos del formulario para el redirect de pago
+    useEffect(() => {
+        const savedData = localStorage.getItem('wizard_form_data')
+        if (savedData) {
+            try {
+                setFormData(JSON.parse(savedData))
+            } catch (e) {
+                console.error("Error restoration wizard data", e)
+            }
+        }
+    }, [])
+
+    useEffect(() => {
+        localStorage.setItem('wizard_form_data', JSON.stringify(formData))
+    }, [formData])
 
     const handleNext = () => {
         if (currentStep === 1 && !formData.restaurantName) {
             toast.error("Por favor ingresa el nombre de tu restaurante")
             return
         }
+        if (currentStep === 4) {
+            if (!formData.email || !formData.password || !formData.ownerName) {
+                toast.error("Por favor completa tus datos de acceso")
+                return
+            }
+        }
+        if (currentStep === 5 && !isPaid) {
+            toast.error("Por favor completa el pago para despegar")
+            return
+        }
         if (currentStep < STEPS.length) {
             setCurrentStep(prev => prev + 1)
+        }
+    }
+
+    const handlePayment = async () => {
+        if (!formData.email) {
+            toast.error("Ingresa el email en el siguiente paso para asociar el pago (o vuelve a branding)")
+            // Opcional: mover validación de email antes del pago
+            setCurrentStep(5) // Saltamos a pedir email si no hay
+            return
+        }
+
+        setLoading(true)
+        try {
+            const plan = PLANS.find(p => p.id === formData.selectedPlan)
+            const response = await fetch('/api/mercadopago/preference', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    planName: plan?.name,
+                    price: plan?.price,
+                    restaurantName: formData.restaurantName,
+                    email: formData.email
+                })
+            })
+
+            const data = await response.json()
+            if (data.init_point) {
+                window.location.href = data.init_point
+            } else {
+                throw new Error("No se pudo generar el link de pago")
+            }
+        } catch (error: any) {
+            toast.error(error.message)
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -124,6 +230,8 @@ export default function RegisterWizard() {
             }))
 
             await supabase.from('tables').insert(tableInserts)
+
+            localStorage.removeItem('wizard_form_data')
 
             toast.success("¡Bienvenido a JAMALI OS! Tu restaurante está listo.")
             router.push('/admin/dashboard')
@@ -367,6 +475,76 @@ export default function RegisterWizard() {
                                 </div>
                             )}
 
+                            {currentStep === 5 && (
+                                <div className="space-y-10">
+                                    <div className="space-y-2">
+                                        <h1 className="text-4xl md:text-5xl font-black italic uppercase tracking-tighter leading-none">ACTIVA TU <span className="text-orange-500 decoration-4 underline-offset-8">PLAN</span></h1>
+                                        <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.4em] italic mb-8">Selecciona la potencia de tu sistema</p>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        {PLANS.map((plan) => (
+                                            <div
+                                                key={plan.id}
+                                                onClick={() => setFormData({ ...formData, selectedPlan: plan.id })}
+                                                className={cn(
+                                                    "relative p-8 rounded-[2.5rem] border-2 cursor-pointer transition-all flex flex-col gap-6",
+                                                    formData.selectedPlan === plan.id ? "bg-white border-orange-500 ring-4 ring-orange-500/10 shadow-2xl scale-[1.02]" : "bg-slate-50 border-slate-100 hover:border-slate-300 opacity-70"
+                                                )}
+                                            >
+                                                {plan.popular && (
+                                                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-orange-500 text-white text-[9px] font-black px-4 py-1.5 rounded-full shadow-lg italic tracking-widest">MÁS POPULAR</div>
+                                                )}
+                                                <div className="flex justify-between items-start">
+                                                    <div className={cn("w-14 h-14 rounded-2x flex items-center justify-center rotate-3", plan.color === 'orange' ? "bg-orange-500 text-white" : "bg-blue-500 text-white")}>
+                                                        {plan.color === 'orange' ? <Rocket className="w-8 h-8" /> : <Layers className="w-8 h-8" />}
+                                                    </div>
+                                                    <div className="text-right">
+                                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Costo Mensual</p>
+                                                        <p className="text-2xl font-black italic text-slate-900 leading-none">${plan.price.toLocaleString()}</p>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <h3 className="text-2xl font-black italic uppercase tracking-tighter">{plan.name}</h3>
+                                                    <ul className="mt-4 space-y-2">
+                                                        {plan.features.map((f, i) => (
+                                                            <li key={i} className="flex items-center gap-2 text-[10px] font-bold text-slate-600 uppercase tracking-tight">
+                                                                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
+                                                                {f}
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    <div className="p-8 bg-slate-900 rounded-[3rem] text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl">
+                                        <div className="flex items-center gap-6">
+                                            <div className="w-16 h-16 bg-white/5 border border-white/20 rounded-3xl flex items-center justify-center">
+                                                <CreditCard className="w-8 h-8 text-orange-400" />
+                                            </div>
+                                            <div>
+                                                <h4 className="text-xl font-black italic uppercase tracking-tighter">PAGO SEGURO VÍA MERCADO PAGO</h4>
+                                                <p className="text-[9px] font-black text-white/30 uppercase tracking-[0.3em] italic leading-tight">ENLACE CIFRADO AES-256</p>
+                                            </div>
+                                        </div>
+                                        <Button
+                                            onClick={handlePayment}
+                                            disabled={loading || isPaid}
+                                            className={cn(
+                                                "rounded-2xl h-16 px-10 font-black italic uppercase text-lg tracking-widest w-full md:w-auto shadow-lg active:scale-95 transition-all",
+                                                isPaid ? "bg-emerald-500 hover:bg-emerald-600 text-white shadow-emerald-500/20" : "bg-orange-500 hover:bg-orange-600 text-white shadow-orange-500/20"
+                                            )}
+                                        >
+                                            {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : (
+                                                isPaid ? "PLAN ACTIVADO ✓" : "ACTIVAR AHORA"
+                                            )}
+                                        </Button>
+                                    </div>
+                                </div>
+                            )}
+
                             {currentStep === 4 && (
                                 <div className="space-y-10">
                                     <div className="space-y-2">
@@ -428,11 +606,14 @@ export default function RegisterWizard() {
                             <ChevronLeft className="w-5 h-5" /> ATRÁS
                         </Button>
 
-                        {currentStep === STEPS.length ? (
+                        {currentStep === 5 ? (
                             <Button
                                 onClick={handleFinalize}
-                                disabled={loading || !formData.email || !formData.password}
-                                className="h-14 md:h-16 px-12 rounded-2xl bg-slate-900 text-white font-black uppercase text-lg italic tracking-widest flex items-center gap-4 hover:bg-orange-600 shadow-2xl active:scale-95 transition-all w-full md:w-auto"
+                                disabled={loading || !isPaid}
+                                className={cn(
+                                    "h-14 md:h-16 px-12 rounded-2xl font-black uppercase text-lg italic tracking-widest flex items-center gap-4 shadow-2xl active:scale-95 transition-all w-full md:w-auto",
+                                    isPaid ? "bg-slate-900 text-white hover:bg-orange-600" : "bg-slate-200 text-slate-400 opacity-50 cursor-not-allowed"
+                                )}
                             >
                                 {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : (
                                     <>DESPEGAR <Rocket className="w-6 h-6 animate-bounce" /></>

@@ -1,4 +1,4 @@
-# 🐟 JAMALI OS - Sistema Integral de Gestión Gastronómica
+# 🚀 JAMALI OS - Sistema de Operación Gastronómica Inteligente
 ¡Sistema de alto rendimiento implementado! Aquí encontrarás la guía para todas las funcionalidades de nivel empresarial.
 
 ## 📖 MANUAL DE OPERACIÓN PRO (NUEVO)
@@ -29,8 +29,9 @@ Este documento es la referencia definitiva para:
 - Gestión de ingredientes y recetas.
 - Descuento automático de stock.
 
-### 5. 💳 Pagos Locales (Wompi)
-- Integración con Wompi Colombia (Tarjetas, Nequi, PSE).
+### 5. 💳 Pagos Integrados (**Mercado Pago**)
+- Integración nativa con **Mercado Pago** para planes Starter, Pro y Enterprise.
+- Webhooks de validación y control de suscripciones.
 
 ### 6. 💼 [Motor de Nómina (Payroll)](/admin/payroll)
 - Dashboard Financiero de sueldos y contratos.

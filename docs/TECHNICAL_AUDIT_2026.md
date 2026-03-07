@@ -1,4 +1,4 @@
-# 📑 Auditoría Técnica JAMALISO - Marzo 2026
+# 📑 Auditoría Técnica JAMALI OS - Marzo 2026
 
 ## 🎯 Resumen Ejecutivo
 Análisis detallado de la infraestructura, seguridad y lógica de negocio (POS/Payroll) para la transición de prototipo avanzado a Producto SaaS (PaaS) de nivel industrial.
@@ -25,5 +25,10 @@ Para que el motor sea funcional 100%, debe cumplir:
   - [x] Comisiones automáticas de ventas POS.
 - [ ] **Desprendibles:** Generación de PDF/CSV con `jspdf`.
 
+## 🚀 Próximos Pasos (Q2 2026)
+1.  **Producción Mercado Pago:** Cambiar Sandbox a Credenciales Reales.
+2.  **Branding Consistente:** Asegurar que toda la plataforma use `JAMALI OS` y no nombres antiguos.
+3.  **App Móvil Nativa:** Lanzamiento en Android/iOS vía WebView dedicada.
+
 ---
-*Análisis generado para la estabilización de JAMALISO OS.*
+*Análisis generado para la estabilización de JAMALI OS.*

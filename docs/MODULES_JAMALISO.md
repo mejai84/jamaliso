@@ -1,4 +1,4 @@
-# Módulos del Sistema - JAMALISO
+# Módulos del Sistema - JAMALI OS
 
 JAMALISO está construido con una arquitectura modular. Cada módulo es semi-independiente pero comparte la misma base de datos (PostgreSQL) y el mismo proveedor de autenticación y multi-tenencia (Supabase). 
 
