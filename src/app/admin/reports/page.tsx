@@ -26,17 +26,21 @@ import {
     Zap,
     Sparkles,
     Presentation,
-    Globe
+    Globe,
+    Wallet
 } from "lucide-react"
 import Link from "next/link"
 import { cn, formatPrice } from "@/lib/utils"
 import { toast } from "sonner"
+import { getBusinessIntelligenceData } from "./actions"
+import { useRestaurant } from "@/providers/RestaurantProvider"
 
 type KPI = {
     total_revenue_month: number
     total_orders_month: number
     avg_ticket: number
     total_customers: number
+    current_cash_balance?: number
 }
 
 type DailySales = {
@@ -49,52 +53,47 @@ type TopProduct = {
     product_name: string
     total_quantity: number
     total_revenue: number
+    contribution_margin?: number
+}
+
+type WasteData = {
+    day: string
+    amount: number
 }
 
 export default function ReportsPagePremium() {
+    const { restaurant } = useRestaurant()
     const [kpis, setKpis] = useState<KPI | null>(null)
     const [dailySales, setDailySales] = useState<DailySales[]>([])
     const [topProducts, setTopProducts] = useState<TopProduct[]>([])
+    const [weeklyWaste, setWeeklyWaste] = useState<WasteData[]>([])
     const [loading, setLoading] = useState(true)
     const [currentTime, setCurrentTime] = useState(new Date())
 
     useEffect(() => {
         const timer = setInterval(() => setCurrentTime(new Date()), 1000)
-        loadData()
+        if (restaurant?.id) {
+            loadData()
+        }
         return () => clearInterval(timer)
-    }, [])
+    }, [restaurant?.id])
 
     const loadData = async () => {
+        if (!restaurant?.id) return
         setLoading(true)
         try {
-            // Mock de datos para el diseño visual premium
-            const mockKpis: KPI = {
-                total_revenue_month: 45800000,
-                total_orders_month: 1240,
-                avg_ticket: 36935,
-                total_customers: 850
+            const res = await getBusinessIntelligenceData(restaurant.id)
+            if (res.success && res.data) {
+                setKpis(res.data.kpis)
+                setDailySales(res.data.dailySales)
+                setTopProducts(res.data.topProducts)
+                setWeeklyWaste(res.data.weeklyWaste || [])
+            } else {
+                toast.error("Error al cargar datos reales: " + res.error)
             }
-            setKpis(mockKpis)
-
-            const mockSales: DailySales[] = [
-                { day: 'Lun', total_sales: 1200000, order_count: 35 },
-                { day: 'Mar', total_sales: 1450000, order_count: 42 },
-                { day: 'Mie', total_sales: 1100000, order_count: 31 },
-                { day: 'Jue', total_sales: 2100000, order_count: 55 },
-                { day: 'Vie', total_sales: 3500000, order_count: 88 },
-                { day: 'Sab', total_sales: 4200000, order_count: 110 },
-                { day: 'Dom', total_sales: 3800000, order_count: 95 },
-            ]
-            setDailySales(mockSales)
-
-            const mockProducts: TopProduct[] = [
-                { product_name: 'Hamburguesa Royale', total_quantity: 450, total_revenue: 12150000 },
-                { product_name: 'Pargo Rojo Especial', total_quantity: 320, total_revenue: 15360000 },
-                { product_name: 'Tacos al Pastor x3', total_quantity: 280, total_revenue: 7840000 },
-                { product_name: 'Soda Artesanal', total_quantity: 600, total_revenue: 5400000 },
-            ]
-            setTopProducts(mockProducts)
-
+        } catch (err) {
+            console.error(err)
+            toast.error("Error de conexión al servidor")
         } finally {
             setLoading(false)
         }
@@ -141,10 +140,10 @@ export default function ReportsPagePremium() {
                     </div>
                 </div>
 
-                <div className="p-8 md:p-12 flex-1 flex flex-col gap-8 max-w-[1800px] mx-auto w-full">
+                <div className="p-8 md:p-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-[1800px] mx-auto w-full">
                     {[
                         { label: 'INGRESOS MES', val: formatPrice(kpis?.total_revenue_month || 0), icon: DollarSign, trend: '+12.5%', color: 'text-orange-500' },
-                        { label: 'TRANSACCIONES', val: kpis?.total_orders_month || 0, icon: ShoppingBag, trend: '+8.2%', color: 'text-white' },
+                        { label: 'CONCILIACIÓN CAJA', val: formatPrice(kpis?.current_cash_balance || 0), icon: Wallet, trend: 'Fuerte', color: 'text-emerald-400' },
                         { label: 'TICKET PROMEDIO', val: formatPrice(kpis?.avg_ticket || 0), icon: Target, trend: '-2.1%', color: 'text-emerald-400' },
                         { label: 'CLIENTES ÚNICOS', val: kpis?.total_customers || 0, icon: Users, trend: '+15.4%', color: 'text-blue-400' },
                     ].map((card, i) => (
@@ -153,7 +152,7 @@ export default function ReportsPagePremium() {
                                 <div className="p-3 bg-white/5 rounded-xl">
                                     <card.icon className={cn("w-5 h-5", card.color)} />
                                 </div>
-                                <span className={cn("text-[10px] font-black px-2 py-1 rounded-full", card.trend.startsWith('+') ? "bg-emerald-500/10 text-emerald-500" : "bg-red-500/10 text-red-500")}>
+                                <span className={cn("text-[10px] font-black px-2 py-1 rounded-full", card.trend.startsWith('+') || card.trend === 'Fuerte' ? "bg-emerald-500/10 text-emerald-500" : "bg-red-500/10 text-red-500")}>
                                     {card.trend}
                                 </span>
                             </div>
@@ -169,50 +168,72 @@ export default function ReportsPagePremium() {
                 </div>
 
                 {/* 2. SALES CHATS / TRENDING (Centro de Atención) */}
-                <div className="grid grid-cols-12 gap-8 flex-1">
+                <div className="grid grid-cols-12 gap-8 flex-1 p-8 md:px-12">
 
                     {/* CHART AREA */}
-                    <div className="col-span-8 bg-slate-900/40 backdrop-blur-3xl border border-white/5 rounded-[3rem] p-10 flex flex-col relative overflow-hidden">
-                        <div className="flex items-center justify-between mb-12">
-                            <div>
-                                <h2 className="text-3xl font-black italic uppercase tracking-tighter leading-none mb-2">Revenue <span className="text-orange-500">Analytics</span></h2>
-                                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest italic">Análisis Comparativo de Ventas Semanales</p>
+                    <div className="col-span-8 flex flex-col gap-8">
+                        <div className="flex-1 bg-slate-900/40 backdrop-blur-3xl border border-white/5 rounded-[3rem] p-10 flex flex-col relative overflow-hidden">
+                            <div className="flex items-center justify-between mb-12">
+                                <div>
+                                    <h2 className="text-3xl font-black italic uppercase tracking-tighter leading-none mb-2">Revenue <span className="text-orange-500">Analytics</span></h2>
+                                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest italic">Análisis Comparativo de Ventas Semanales</p>
+                                </div>
                             </div>
-                            <div className="flex gap-2 p-1 bg-white/5 rounded-xl border border-white/10">
-                                {['7D', '30D', '90D', '1Y'].map(t => (
-                                    <button
-                                        key={t}
-                                        onClick={() => toast.info(`FILTRANDO DATOS POR ${t}`)}
-                                        className={cn("px-4 py-1.5 rounded-lg text-[10px] font-black transition-all", t === '7D' ? "bg-orange-500 text-black" : "text-slate-500 hover:text-white")}
-                                    >
-                                        {t}
-                                    </button>
-                                ))}
+
+                            {/* Simulación de Gráfico Pro */}
+                            <div className="flex-1 flex items-end gap-6 relative">
+                                {/* Grid Lines */}
+                                <div className="absolute inset-0 flex flex-col justify-between opacity-5">
+                                    {[1, 2, 3, 4, 5].map(l => <div key={l} className="h-px bg-white w-full" />)}
+                                </div>
+
+                                {dailySales.map((s, i) => {
+                                    const maxVal = Math.max(...dailySales.map(d => d.total_sales), 1000)
+                                    const height = (s.total_sales / maxVal) * 100
+                                    return (
+                                        <div key={i} className="flex-1 flex flex-col items-center gap-4 relative z-10 group">
+                                            <div className="absolute -top-12 bg-orange-500 text-black px-2 py-1 rounded-lg text-[9px] font-black opacity-0 group-hover:opacity-100 transition-all shadow-xl shadow-orange-500/40 -translate-y-2 group-hover:translate-y-0">
+                                                {formatPrice(s.total_sales)}
+                                            </div>
+                                            <div
+                                                className="w-full bg-gradient-to-t from-orange-600/80 to-orange-400 rounded-2xl group-hover:brightness-125 transition-all shadow-lg group-hover:shadow-orange-500/20"
+                                                style={{ height: `${height}%` }}
+                                            />
+                                            <span className="text-[11px] font-black uppercase text-slate-500 group-hover:text-white transition-colors italic tracking-widest">{s.day}</span>
+                                        </div>
+                                    )
+                                })}
                             </div>
                         </div>
 
-                        {/* Simulación de Gráfico Pro */}
-                        <div className="flex-1 flex items-end gap-6 relative">
-                            {/* Grid Lines */}
-                            <div className="absolute inset-0 flex flex-col justify-between opacity-5">
-                                {[1, 2, 3, 4, 5].map(l => <div key={l} className="h-px bg-white w-full" />)}
+                        {/* MERMA SEMANAL WIDGET */}
+                        <div className="bg-slate-900/40 backdrop-blur-3xl border border-white/5 rounded-[3rem] p-10 flex flex-col relative overflow-hidden h-64">
+                            <div className="flex items-center justify-between mb-8">
+                                <div>
+                                    <h2 className="text-2xl font-black italic uppercase tracking-tighter leading-none mb-1 text-red-500">Waste <span className="text-white">Merma Semanal</span></h2>
+                                    <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest italic">Pérdida por Ingredientes en Pesos</p>
+                                </div>
                             </div>
 
-                            {dailySales.map((s, i) => {
-                                const height = (s.total_sales / 4500000) * 100
-                                return (
-                                    <div key={i} className="flex-1 flex flex-col items-center gap-4 relative z-10 group">
-                                        <div className="absolute -top-12 bg-orange-500 text-black px-2 py-1 rounded-lg text-[9px] font-black opacity-0 group-hover:opacity-100 transition-all shadow-xl shadow-orange-500/40 -translate-y-2 group-hover:translate-y-0">
-                                            {formatPrice(s.total_sales)}
+                            <div className="flex-1 flex items-end gap-10">
+                                {weeklyWaste.length > 0 ? weeklyWaste.map((w, i) => {
+                                    const maxW = Math.max(...weeklyWaste.map(x => x.amount), 1000)
+                                    const h = (w.amount / maxW) * 100
+                                    return (
+                                        <div key={i} className="flex-1 flex flex-col items-center gap-2 relative group">
+                                            <div className="absolute -top-8 bg-red-600 text-white px-2 py-0.5 rounded text-[8px] font-black opacity-0 group-hover:opacity-100 transition-all">
+                                                {formatPrice(w.amount)}
+                                            </div>
+                                            <div className="w-full bg-slate-800 rounded-t-lg overflow-hidden h-full flex flex-col justify-end">
+                                                <div className="bg-red-500/40 group-hover:bg-red-500 transition-all w-full" style={{ height: `${h}%` }} />
+                                            </div>
+                                            <span className="text-[9px] font-bold text-slate-500 uppercase italic">{w.day}</span>
                                         </div>
-                                        <div
-                                            className="w-full bg-gradient-to-t from-orange-600/80 to-orange-400 rounded-2xl group-hover:brightness-125 transition-all shadow-lg group-hover:shadow-orange-500/20"
-                                            style={{ height: `${height}%` }}
-                                        />
-                                        <span className="text-[11px] font-black uppercase text-slate-500 group-hover:text-white transition-colors italic tracking-widest">{s.day}</span>
-                                    </div>
-                                )
-                            })}
+                                    )
+                                }) : (
+                                    <div className="flex-1 flex items-center justify-center text-slate-700 font-bold uppercase tracking-widest text-[10px]">Sin reportes de merma esta semana</div>
+                                )}
+                            </div>
                         </div>
                     </div>
 
@@ -224,8 +245,8 @@ export default function ReportsPagePremium() {
                                     <Trophy className="w-6 h-6 text-yellow-500" />
                                 </div>
                                 <div>
-                                    <h2 className="text-2xl font-black italic uppercase tracking-tighter leading-none">Top <span className="text-orange-500">Products</span></h2>
-                                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest italic">Basado en volumen de venta</p>
+                                    <h2 className="text-2xl font-black italic uppercase tracking-tighter leading-none">Margen de <span className="text-orange-500">Contribución</span></h2>
+                                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest italic">Ingreso Real vs Costo Receta</p>
                                 </div>
                             </div>
 
@@ -236,10 +257,13 @@ export default function ReportsPagePremium() {
                                             <span className="text-xl font-black italic text-slate-700 group-hover:text-orange-500/40 transition-colors">0{i + 1}</span>
                                             <div>
                                                 <p className="text-sm font-black italic uppercase tracking-tight text-white">{p.product_name}</p>
-                                                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{p.total_quantity} UNID vendidas</p>
+                                                <p className="text-[9px] font-bold text-emerald-500 uppercase tracking-widest">Utilidad: {formatPrice(p.contribution_margin || 0)}</p>
                                             </div>
                                         </div>
-                                        <p className="text-sm font-black italic font-mono text-white">{formatPrice(p.total_revenue)}</p>
+                                        <div className="text-right">
+                                            <p className="text-sm font-black italic font-mono text-white">{formatPrice(p.total_revenue)}</p>
+                                            <p className="text-[8px] font-bold text-slate-500 uppercase">Rev.</p>
+                                        </div>
                                     </div>
                                 ))}
                             </div>

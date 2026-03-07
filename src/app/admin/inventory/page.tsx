@@ -114,9 +114,9 @@ export default function InventoryPage() {
                 <div className="grid grid-cols-4 gap-8">
                     {[
                         { label: 'LIBRO DE RECETAS', icon: ChefHat, href: '/admin/inventory/recipes', sub: 'Recipe_Engine' },
-                        { label: 'PROVEEDORES', icon: Truck, onClick: () => toast.info("MÓDULO DE PROVEEDORES"), sub: 'Vendor_Matrix' },
-                        { label: 'CONTROL DE MERMAS', icon: Activity, onClick: () => toast.info("CONTRO DE MERMAS: Registro Activo"), sub: 'Loss_Analysis' },
-                        { label: 'ENTRADA SUMINISTROS', icon: Warehouse, onClick: () => toast.info("MODULO DE ENTRADA: Supply Chain"), sub: 'Ingress_Portal' }
+                        { label: 'PROVEEDORES', icon: Truck, href: '/admin/inventory/suppliers', sub: 'Vendor_Matrix' },
+                        { label: 'HISTORIAL MOVIMIENTOS', icon: Activity, href: '/admin/inventory/movements', sub: 'Loss_Analysis' },
+                        { label: 'PEDIDOS Y COMPRAS', icon: Warehouse, href: '/admin/inventory/purchases', sub: 'Supply_Chain' }
                     ].map((btn, i) => {
                         const Content = (
                             <div className="w-full h-24 flex items-center justify-between p-8 bg-slate-900/40 backdrop-blur-3xl rounded-[2rem] border border-white/5 hover:border-orange-500/30 hover:bg-orange-600 group transition-all duration-500 cursor-pointer shadow-xl relative overflow-hidden">
@@ -135,10 +135,8 @@ export default function InventoryPage() {
                                 <ChevronRight className="w-5 h-5 text-slate-800 group-hover:text-black/30 group-hover:translate-x-1 transition-all" />
                             </div>
                         );
-                        return btn.href ? (
-                            <Link key={i} href={btn.href} className="block">{Content}</Link>
-                        ) : (
-                            <button key={i} onClick={btn.onClick} className="block w-full">{Content}</button>
+                        return (
+                            <Link key={i} href={btn.href} className="block w-full">{Content}</Link>
                         );
                     })}
                 </div>
@@ -147,7 +145,20 @@ export default function InventoryPage() {
                 <div className="grid grid-cols-4 gap-8">
                     {[
                         { label: 'REFERENCIAS', val: ingredients.length, icon: Package, color: 'text-white', sub: 'Active_Nodes' },
-                        { label: 'STOCK CRÍTICO', val: criticalCount, icon: AlertCircle, color: 'text-rose-500', sub: 'At_Risk' },
+                        {
+                            label: 'STOCK CRÍTICO',
+                            val: criticalCount,
+                            icon: AlertCircle,
+                            color: 'text-rose-500',
+                            sub: 'At_Risk',
+                            action: criticalCount > 0 ? (
+                                <Link href="/admin/inventory/purchases">
+                                    <Button variant="ghost" className="h-8 mt-2 px-2 text-[8px] font-black bg-rose-500/10 text-rose-500 border border-rose-500/20 hover:bg-rose-500 hover:text-white rounded-lg transition-all animate-pulse">
+                                        AUTOMATIZAR COMPRA
+                                    </Button>
+                                </Link>
+                            ) : null
+                        },
                         { label: 'VALORACIÓN', val: `$${(totalCost / 1000).toFixed(1)}k`, icon: DollarSign, color: 'text-orange-500', sub: 'Market_Index' },
                         { label: 'CATEGORÍAS', val: new Set(ingredients.map(i => i.category)).size, icon: Layers, color: 'text-blue-500', sub: 'Cluster_Map' }
                     ].map((card, i) => (
@@ -161,7 +172,8 @@ export default function InventoryPage() {
                                     <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] italic leading-none">{card.label}</p>
                                 </div>
                                 <p className={cn("text-4xl font-black italic tracking-tighter text-white leading-none")}>{card.val}</p>
-                                <p className="text-[9px] font-black text-slate-700 uppercase tracking-[0.3em] italic group-hover:text-slate-500 transition-colors">{card.sub}</p>
+                                <p className="text-[9px] font-black text-slate-700 uppercase tracking-[0.3em] italic group-hover:text-slate-500 transition-colors uppercase">{card.sub}</p>
+                                {card.action && <div className="pt-2">{card.action}</div>}
                             </div>
                         </div>
                     ))}

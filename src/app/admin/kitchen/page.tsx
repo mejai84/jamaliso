@@ -127,11 +127,18 @@ export default function KitchenPage() {
             .on('postgres_changes', { event: '*', schema: 'public', table: 'order_items' }, () => fetchData())
             .subscribe()
 
-        // Alert sound for red orders
+        // 🔊 ALERT SYSTEM: Beep if orders are late (>10 mins)
         const alertInterval = setInterval(() => {
-            const hasRedOrders = orders.some(o => getMinutes(o.created_at) >= 10 && o.status !== 'ready')
-            if (hasRedOrders) playSound('alert')
-        }, 120000) // Every 2 minutes if orders are late
+            if (isMuted) return
+            const lateOrders = orders.filter(o => {
+                const minutes = Math.floor((new Date().getTime() - new Date(o.created_at).getTime()) / 60000)
+                return minutes >= 10 && (o.status === 'pending' || o.status === 'preparing')
+            })
+            if (lateOrders.length > 0) {
+                playSound('alert')
+                toast.error("HAY COMANDAS EN CRÍTICO (RETRASADAS)", { duration: 5000 })
+            }
+        }, 30000) // Every 30 seconds check for critical delays
 
         return () => {
             clearInterval(timer)
@@ -516,8 +523,8 @@ export default function KitchenPage() {
                                                                                     )}>{item.products?.name}</span>
                                                                                     <div className="flex items-center gap-2 mt-1">
                                                                                         {station && activeStationId === 'TODAS' && (
-                                                                                            <span className="text-[9px] font-black text-slate-700 uppercase tracking-[0.2em] bg-slate-200 px-2 py-0.5 rounded">
-                                                                                                // {station.name}
+                                                                                            <span className="text-[9px] font-black text-white px-2 py-0.5 rounded bg-orange-600 shadow-sm">
+                                                                                                {station.name.toUpperCase()}
                                                                                             </span>
                                                                                         )}
                                                                                         {item.products?.preparation_time && (

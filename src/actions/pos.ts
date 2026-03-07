@@ -367,6 +367,8 @@ export async function performPartialAudit(
     return { ...data, difference: countedAmount - systemAmount }
 }
 
+import { deductInventoryFromOrder } from './inventory-actions'
+
 /**
  * Procesa el pago de una orden existente de forma atómica.
  */
@@ -391,8 +393,9 @@ export async function processOrderPayment(
         }
 
         const sessionId = posStatus.activeCashboxSession?.id || null
+        const restaurantId = posStatus.activeCashboxSession?.restaurant_id
 
-        // 2. Ejecutar RPC
+        // 2. Ejecutar RPC de Pago
         const { data, error } = await supabase.rpc('pay_order_atomic', {
             p_order_id: orderId,
             p_user_id: userId,
@@ -405,6 +408,11 @@ export async function processOrderPayment(
         if (error) {
             console.error("Error paying order (RPC):", error)
             return { success: false, error: error.message }
+        }
+
+        // 3. 🚀 DEDUCCIÓN AUTOMÁTICA DE INVENTARIO (Recetas)
+        if (restaurantId) {
+            await deductInventoryFromOrder(orderId, restaurantId)
         }
 
         revalidatePath('/admin/orders')
@@ -423,4 +431,34 @@ export async function processOrderPayment(
             error: e.message || "Error interno inesperado al procesar el pago"
         }
     }
+}
+/**
+ * Transfiere dinero de la Caja Principal a la Caja Menor.
+ */
+export async function transferToPettyCash(
+    sessionId: string,
+    userId: string,
+    amount: number,
+    description: string
+) {
+    const supabase = await createClient()
+
+    // 1. Obtener restaurante de la sesión
+    const { data: session } = await supabase.from('cashbox_sessions').select('restaurant_id').eq('id', sessionId).single()
+    if (!session) throw new Error("Sesión no encontrada")
+
+    // 2. Registrar retiro en Caja Principal
+    const { error: moveError } = await supabase.from('cash_movements').insert({
+        cashbox_session_id: sessionId,
+        user_id: userId,
+        restaurant_id: session.restaurant_id,
+        movement_type: 'WITHDRAWAL',
+        amount,
+        description: `TRANSFERENCIA A CAJA MENOR: ${description}`
+    })
+
+    if (moveError) throw new Error("Error al registrar movimiento: " + moveError.message)
+
+    revalidatePath('/admin/cashier')
+    return { success: true }
 }

@@ -5,7 +5,7 @@
 -- =====================================================
 
 -- ============================================================================
--- 1. FUNCIÓN: Completar venta de forma atómica
+-- 1. FUNCIÓN: Completar venta de forma atómica (MULTI-TENANT)
 -- ============================================================================
 
 CREATE OR REPLACE FUNCTION complete_sale_atomic(
@@ -29,23 +29,30 @@ DECLARE
     v_item JSONB;
     v_product RECORD;
     v_cashbox_open BOOLEAN;
+    v_restaurant_id UUID;
     v_result JSONB;
 BEGIN
-    -- 1. VALIDACIÓN: Verificar que la caja esté abierta (si existe la tabla)
-    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'cashbox_sessions') THEN
-        SELECT (status = 'OPEN')
-        INTO v_cashbox_open
-        FROM cashbox_sessions
-        WHERE id = p_cashbox_session_id;
-        
-        IF NOT v_cashbox_open THEN
-            RAISE EXCEPTION 'La caja no está abierta. No se puede procesar la venta.';
-        END IF;
+    -- 0. OBTENER TENANT ID
+    SELECT restaurant_id INTO v_restaurant_id FROM public.profiles WHERE id = p_user_id;
+    
+    IF v_restaurant_id IS NULL THEN
+        RAISE EXCEPTION 'Usuario sin restaurante asignado. Operación abortada.';
+    END IF;
+
+    -- 1. VALIDACIÓN: Verificar que la caja esté abierta
+    SELECT (status = 'OPEN' AND restaurant_id = v_restaurant_id)
+    INTO v_cashbox_open
+    FROM cashbox_sessions
+    WHERE id = p_cashbox_session_id;
+    
+    IF NOT COALESCE(v_cashbox_open, false) THEN
+        RAISE EXCEPTION 'La caja no está abierta o no pertenece a tu restaurante.';
     END IF;
 
     -- 2. CREAR LA ORDEN
     INSERT INTO orders (
         user_id,
+        restaurant_id,
         order_type,
         status,
         subtotal,
@@ -56,8 +63,9 @@ BEGIN
         created_at
     ) VALUES (
         p_user_id,
+        v_restaurant_id,
         CASE WHEN p_table_id IS NOT NULL THEN 'dine_in' ELSE 'pickup' END,
-        'delivered', -- Orden completada
+        'delivered', 
         p_subtotal,
         p_total,
         p_payment_method,
@@ -67,18 +75,19 @@ BEGIN
     )
     RETURNING id INTO v_order_id;
 
-    -- 3. INSERTAR ITEMS Y ACTUALIZAR STOCK
+    -- 3. INSERTAR ITEMS
     FOR v_item IN SELECT * FROM jsonb_array_elements(p_items)
     LOOP
-        -- 3.1 Obtener info del producto
+        -- 3.1 Obtener info del producto (Validando Tenancy)
         SELECT id, name, price
         INTO v_product
         FROM products
         WHERE id = (v_item->>'product_id')::UUID
+          AND restaurant_id = v_restaurant_id
           AND is_available = true;
         
         IF v_product.id IS NULL THEN
-            RAISE EXCEPTION 'Producto no disponible: %', v_item->>'product_id';
+            RAISE EXCEPTION 'Producto no disponible o no pertenece a tu inventario: %', v_item->>'product_id';
         END IF;
 
         -- 3.2 Insertar item de la orden
@@ -95,47 +104,28 @@ BEGIN
         );
     END LOOP;
 
-    -- 4. REGISTRAR PAGO (si existe la tabla payments)
-    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'payments') THEN
-        INSERT INTO payments (
-            order_id,
-            cashbox_session_id,
-            payment_method,
-            amount,
-            status,
-            created_at
-        ) VALUES (
-            v_order_id,
-            p_cashbox_session_id,
-            p_payment_method,
-            p_total,
-            'completed',
-            NOW()
-        );
-    END IF;
-
-    -- 5. REGISTRAR MOVIMIENTO DE CAJA (si existe la tabla)
-    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'cash_movements') THEN
-        INSERT INTO cash_movements (
-            cashbox_session_id,
-            user_id,
-            movement_type,
-            amount,
-            payment_method,
-            description,
-            reference_id,
-            created_at
-        ) VALUES (
-            p_cashbox_session_id,
-            p_user_id,
-            'SALE',
-            p_total,
-            p_payment_method,
-            'Venta POS #' || v_order_id,
-            v_order_id,
-            NOW()
-        );
-    END IF;
+    -- 5. REGISTRAR MOVIMIENTO DE CAJA
+    INSERT INTO cash_movements (
+        cashbox_session_id,
+        user_id,
+        restaurant_id,
+        movement_type,
+        amount,
+        payment_method,
+        description,
+        reference_id,
+        created_at
+    ) VALUES (
+        p_cashbox_session_id,
+        p_user_id,
+        v_restaurant_id,
+        'SALE',
+        p_total,
+        p_payment_method,
+        'Venta POS #' || v_order_id,
+        v_order_id,
+        NOW()
+    );
 
     -- 6. AUDITORÍA (si existe la tabla)
     IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'audit_logs') THEN
@@ -178,7 +168,7 @@ END;
 $$;
 
 -- ============================================================================
--- 2. FUNCIÓN: Revertir venta completa (anulación atómica)
+-- 2. FUNCIÓN: Revertir venta completa (MULTI-TENANT)
 -- ============================================================================
 
 CREATE OR REPLACE FUNCTION revert_sale_atomic(
@@ -195,17 +185,21 @@ DECLARE
     v_order RECORD;
     v_cashbox_session_id UUID;
     v_minutes_elapsed INTEGER;
+    v_restaurant_id UUID;
     v_result JSONB;
 BEGIN
-    -- 1. OBTENER ORDEN Y VALIDAR
+    -- 0. OBTENER TENANT ID
+    SELECT restaurant_id INTO v_restaurant_id FROM public.profiles WHERE id = p_user_id;
+
+    -- 1. OBTENER ORDEN Y VALIDAR (Multi-tenant check)
     SELECT o.*, 
            EXTRACT(EPOCH FROM (NOW() - o.created_at))/60 as minutes_elapsed
     INTO v_order
     FROM orders o
-    WHERE o.id = p_order_id;
+    WHERE o.id = p_order_id AND o.restaurant_id = v_restaurant_id;
     
     IF v_order.id IS NULL THEN
-        RAISE EXCEPTION 'Orden no encontrada';
+        RAISE EXCEPTION 'Orden no encontrada o no pertenece a tu restaurante.';
     END IF;
 
     IF v_order.status = 'cancelled' THEN
@@ -219,35 +213,27 @@ BEGIN
         RAISE EXCEPTION 'Requiere autorización de supervisor para anular después de 30 minutos';
     END IF;
 
-    -- 3. OBTENER SESIÓN DE CAJA (si existe)
-    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'payments') THEN
-        SELECT p.cashbox_session_id
-        INTO v_cashbox_session_id
-        FROM payments p
-        WHERE p.order_id = p_order_id
-        LIMIT 1;
-    END IF;
+    -- 3. OBTENER SESIÓN DE CAJA
+    SELECT cm.cashbox_session_id
+    INTO v_cashbox_session_id
+    FROM cash_movements cm
+    WHERE cm.reference_id = p_order_id 
+      AND cm.movement_type = 'SALE'
+      AND cm.restaurant_id = v_restaurant_id
+    LIMIT 1;
 
     -- 4. MARCAR ORDEN COMO CANCELADA
     UPDATE orders
     SET status = 'cancelled',
         updated_at = NOW()
-    WHERE id = p_order_id;
+    WHERE id = p_order_id AND restaurant_id = v_restaurant_id;
 
-    -- 5. MARCAR PAGOS COMO REFUNDED (si existe)
-    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'payments') THEN
-        UPDATE payments
-        SET status = 'refunded',
-            updated_at = NOW()
-        WHERE order_id = p_order_id;
-    END IF;
-
-    -- 6. REGISTRAR MOVIMIENTO NEGATIVO EN CAJA (si existe)
-    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'cash_movements') 
-       AND v_cashbox_session_id IS NOT NULL THEN
+    -- 6. REGISTRAR MOVIMIENTO NEGATIVO EN CAJA
+    IF v_cashbox_session_id IS NOT NULL THEN
         INSERT INTO cash_movements (
             cashbox_session_id,
             user_id,
+            restaurant_id,
             movement_type,
             amount,
             description,
@@ -256,6 +242,7 @@ BEGIN
         ) VALUES (
             v_cashbox_session_id,
             p_user_id,
+            v_restaurant_id,
             'REFUND',
             v_order.total,
             'Anulación: ' || p_reason,

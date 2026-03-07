@@ -22,6 +22,8 @@ import {
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { useRestaurant } from "@/providers/RestaurantProvider"
+import { getRecipes, getIngredients, saveRecipe } from "./actions"
+import { toast } from "sonner"
 
 type Recipe = {
     id: string
@@ -40,28 +42,35 @@ export default function RecipesPage() {
     const [searchTerm, setSearchTerm] = useState("")
 
     useEffect(() => {
-        // Simulación de datos pro para el mockup visual basado en la arquitectura real
-        const mockRecipes: Recipe[] = [
-            {
-                id: '1', name: 'HAMBURGUESA ESPECIAL', total_cost: 8500, margin: 68,
-                components_count: 12, main_ingredients: ['Carne de Res', 'Queso Cheddar', 'Pan Brioche'], status: 'optimal'
-            },
-            {
-                id: '2', name: 'PASTA CARBONARA', total_cost: 6200, margin: 72,
-                components_count: 8, main_ingredients: ['Espagueti', 'Guanciale', 'Pecorino Romano'], status: 'optimal'
-            },
-            {
-                id: '3', name: 'SALSA BBQ ARTESANAL', total_cost: 2100, margin: 60,
-                components_count: 5, main_ingredients: ['Tomate', 'Miel', 'Especias'], status: 'optimal'
-            },
-            {
-                id: '4', name: 'POLLO AL CURRY', total_cost: 10500, margin: 45,
-                components_count: 15, main_ingredients: ['Pechuga', 'Leche de Coco', 'Curry'], status: 'high_cost'
+        if (restaurant?.id) {
+            loadData()
+        }
+    }, [restaurant?.id])
+
+    const loadData = async () => {
+        if (!restaurant?.id) return
+        setLoading(true)
+        try {
+            const res = await getRecipes(restaurant.id)
+            if (res.success && res.data) {
+                // Mapear datos reales al formato de la UI
+                const mapped: Recipe[] = res.data.map((r: any) => ({
+                    id: r.id,
+                    name: r.name,
+                    total_cost: r.total_cost,
+                    margin: 70, // TODO: Calcular margen real vs precio de venta
+                    components_count: r.components_count,
+                    main_ingredients: [], // Opcional: cargar ingredientes principales
+                    status: 'optimal'
+                }))
+                setRecipes(mapped)
             }
-        ]
-        setRecipes(mockRecipes)
-        setLoading(false)
-    }, [])
+        } catch (err) {
+            toast.error("Error al cargar recetas")
+        } finally {
+            setLoading(false)
+        }
+    }
 
     const filtered = recipes.filter(r => r.name.toLowerCase().includes(searchTerm.toLowerCase()))
 

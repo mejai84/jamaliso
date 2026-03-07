@@ -86,6 +86,7 @@ La aplicación se divide en áreas funcionales cohesionadas.
 | **Cajas y Turnos** | Control de efectivo, descuadres, movimientos manuales. | `/src/app/admin/cashier/*` |
 | **Reportes y B.I.** | Inteligencia de negocios, proyecciones IA, márgenes. | `/src/app/admin/reports` |
 | **Identidad Visual** | Configuración dinámica de marca blanca (logos, colores). | `/src/app/admin/settings` |
+| **Nómina (Payroll)** | Gestión de sueldos, contratos, comisiones e impuestos. | `/src/app/admin/payroll` |
 
 ---
 
@@ -97,3 +98,18 @@ Todas las consultas hechas por el cliente pasan por políticas estrictas que val
 3. El registro consultado pertenece ÚNICAMENTE al identificador del inquilino (`restaurant_id`).
 
 Esto hace que sea criptográficamente imposible que el restaurante A consulte las ventas o inventario del restaurante B.
+
+---
+
+## 7. Esquema de Datos — Nómina y Regionalización (Novedad 2026)
+JAMALI OS ahora integra un motor ERP para la gestión de talento humano y adaptación global.
+
+### A. Configuración Regional
+*   **Moneda:** Adaptación dinámica vía `formatPrice`.
+*   **Impuestos:** Tabla `regional_taxes` (IVA, Impoconsumo, Sales Tax) vinculada al país.
+
+### B. Módulo de Nómina (Payroll Engine)
+*   **Profiles (Staff):** Sueldo base, % comisiones, tipo de contrato.
+*   **Concepts:** Catálogo de devengados (Earning) y deducciones (Deduction).
+*   **Comisiones:** Automatizadas mediante el trigger `process_sale_commission` en ventas POS.
+*   **Novedades:** Registro de pagos extras, mermas o préstamos en `payroll_novelties`.

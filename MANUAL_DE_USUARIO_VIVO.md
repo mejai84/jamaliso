@@ -76,30 +76,54 @@ Aquí se explica cómo deberían interactuar los módulos en un servicio normal:
 
 ---
 
-## ❓ 5. Preguntas Frecuentes (FAQ)
-*   **¿Qué pasa si un producto no aparece en el Portal de Meseros?**
-    *   Probablemente fue marcado como **"AGOTADO"** en el KDS. El chef debe volver a habilitarlo cuando haya stock.
-*   **¿Por qué una mesa parpadea en ROJO?**
-    *   Significa que el pedido ha superado los **20 minutos** de espera. Es una alerta crítica de servicio.
-*   **¿Puedo unir dos mesas si una ya ha pagado?**
-    *   No, solo se pueden unir mesas con órdenes en estado `pending`, `preparing` o `ready`.
+## 📊 5. Módulo de Analytics (Business Intelligence)
+El sistema extrae datos de la operación para presentar KPIs estratégicos:
+1. **Ingresos Live**: Cálculo en tiempo real de ventas cerradas.
+2. **Margen de Contribución**: Compara precio de venta vs costo de receta (Food Cost).
+3. **Análisis de Merma**: Gráfico semanal de pérdidas financieras por ingredientes.
+4. **Pareto de Productos**: Identifica el 20% de platos que generan el 80% de ingresos.
+5. **Conciliación de Caja Live**: Widget que muestra el saldo teórico esperado en caja en todo momento.
 
 ---
 
-## 🧪 6. Guía de Pruebas Extendida (Q&A de Calidad)
-Ejecuta estos escenarios para asegurar la robustez del sistema:
+## 💰 6. Control de Caja Inteligente (Smart Cashier)
+Blindaje financiero y auditoría de flujo:
+1. **Arqueo a Ciegas**: El cajero reporta el físico sin ver el sistema para evitar "ajustes" manuales sospechosos.
+2. **Alerta de Excedente**: Notificación visual cuando la caja supera el límite de seguridad establecido.
+3. **Integración Caja Menor**: Registro fluido de traslados para gastos operativos menores.
+4. **Z-Report (Cierre)**: Comprobante térmico detallado con auditoría de movimientos.
 
-*   **Escenario A: Error de Dedo**
-    *   [ ] Marchar una Coca-Cola a la Mesa 1 por error.
-    *   [ ] Usar la función "Transferir Ítem" para mover esa Coca-Cola a la Mesa 2 sin cancelar nada.
-    *   [ ] Confirmar en "Pre-cuenta" de Mesa 2 que el ítem aparece allí.
-*   **Escenario B: El Cliente "Sabelotodo"**
-    *   [ ] Un cliente pide la cuenta por separado después de que todo se marchó.
-    *   [ ] Usar "Split Check", seleccionar solo su hamburguesa y su bebida.
-    *   [ ] Verificar que se cree una nueva "Sub-cuenta" sin afectar el resto de la mesa.
-*   **Escenario C: Estrés de Cocina**
-    *   [ ] Enviar 5 pedidos diferentes al mismo tiempo.
-    *   [ ] Verificar que el botón de "Total de Producción" en el KDS sume correctamente todos los ingredientes de las 5 órdenes.
+---
+
+## 🛒 7. Terminal POS Premium (Venta Directa)
+Estación de alto rendimiento para cobros y gestión de pedidos inmediatos.
+- **Venta Atómica**: Sincronización íntegra de orden, pago y caja en una transacción protegida.
+- **Impresión Térmica**: Tickets de 80mm optimizados para impresoras locales.
+- **Smart Checkout**: Gestión de medios de pago con validación de turno activo.
+
+---
+
+## 🗺️ 8. Geometría del Salón (Arquitectura 2D)
+Replicación visual de la estructura física del restaurante.
+- **Editor Drag & Drop**: Disposición personalizada de mesas con rotación y escala real.
+- **Mapas de Calor**: Análisis térmico para identificar las mesas con mayor rotación y gasto.
+- **Arquitectura de Salón**: Sincronización en tiempo real entre el mapa administrativo y el portal del mesero.
+
+---
+
+## 📦 9. Inventario Inteligente (Kernel Supply)
+Gestión proactiva de la cadena de suministro.
+- **Auto-Pedido**: Botón de "Automatizar Compra" inteligente cuando los niveles cruzan el umbral crítico.
+- **Fichas Técnicas**: Descuento por receta automático en cada venta procesada.
+- **Vendor Matrix**: Gestión centralizada de proveedores y costos de adquisición.
+
+---
+
+## 🎨 10. Personalización Marca Blanca (White Label)
+Gestión de la identidad corporativa:
+- **Logo Dinámico**: Aplicado en Sidebar, Dashboard y Tickets.
+- **Motor de Color**: Inyecta el color institucional en toda la experiencia del usuario.
+- **Contexto Multi-Tenant**: Cada restaurante vive en su propia burbuja de datos y estética.
 
 ---
 > [!IMPORTANT]

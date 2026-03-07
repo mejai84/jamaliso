@@ -23,7 +23,8 @@ import {
     SearchIcon,
     Trash2,
     Smartphone,
-    UserCircle2
+    UserCircle2,
+    List
 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useRestaurant } from "@/providers/RestaurantProvider"
@@ -59,16 +60,20 @@ export default function PosPremiumPage() {
 
     // UI State
     const [loading, setLoading] = useState(true)
+    const [isProcessing, setIsProcessing] = useState(false)
     const [searchTerm, setSearchTerm] = useState("")
     const [activeCategory, setActiveCategory] = useState<string>('all')
     const [cart, setCart] = useState<CartItem[]>([])
-    const [paymentModal, setPaymentModal] = useState(false)
+    const [receiptModal, setReceiptModal] = useState<any>(null)
     const [currentTime, setCurrentTime] = useState(new Date())
     const [showCartMobile, setShowCartMobile] = useState(false)
+    const [activeSession, setActiveSession] = useState<any>(null)
 
     // Data State
     const [categories, setCategories] = useState<Category[]>([])
     const [products, setProducts] = useState<Product[]>([])
+    const [regionalConfig, setRegionalConfig] = useState<any>(null)
+    const [taxes, setTaxes] = useState<any[]>([])
 
     useEffect(() => {
         const timer = setInterval(() => setCurrentTime(new Date()), 1000)
@@ -78,12 +83,87 @@ export default function PosPremiumPage() {
 
     const fetchData = async () => {
         setLoading(true)
-        const { data: cats } = await supabase.from('categories').select('*').eq('restaurant_id', restaurant?.id)
-        const { data: prods } = await supabase.from('products').select('*').eq('restaurant_id', restaurant?.id).eq('is_available', true)
+        const { data: { user } } = await supabase.auth.getUser()
+
+        // 1. Cargar Sesión de Caja Activa
+        if (user) {
+            const { data: session } = await supabase
+                .from('cashbox_sessions')
+                .select('*, cashboxes(name)')
+                .eq('user_id', user.id)
+                .eq('status', 'OPEN')
+                .maybeSingle()
+
+            if (session) setActiveSession(session)
+        }
+
+        // 2. Cargar Categorías y Productos
+        const { data: cats } = await supabase.from('categories').select('*').eq('restaurant_id', restaurant?.id).is('deleted_at', null)
+        const { data: prods } = await supabase.from('products').select('*').eq('restaurant_id', restaurant?.id).eq('is_available', true).is('deleted_at', null)
+
+        // 3. Cargar Configuración Regional
+        const { data: config } = await supabase.from('settings').select('value').eq('key', 'regional_config').maybeSingle()
+        if (config?.value) {
+            setRegionalConfig(config.value)
+            const { data: taxData } = await supabase.from('regional_taxes').select('*').eq('country', config.value.country).eq('is_active', true)
+            if (taxData) setTaxes(taxData)
+        }
 
         if (cats) setCategories(cats)
         if (prods) setProducts(prods as any)
         setLoading(false)
+    }
+
+    const handleCheckout = async (method: string) => {
+        if (!activeSession) {
+            toast.error("ERROR: Debes abrir turno/caja antes de vender.")
+            router.push('/admin/cashier')
+            return
+        }
+
+        setIsProcessing(true)
+        const { data: { user } } = await supabase.auth.getUser()
+
+        if (!user) {
+            toast.error("Sesión expirada")
+            return
+        }
+
+        try {
+            const orderData = {
+                p_user_id: user.id,
+                p_cashbox_session_id: activeSession.id,
+                p_payment_method: method,
+                p_subtotal: subtotal,
+                p_total: total,
+                p_items: cart.map(item => ({
+                    product_id: item.product.id,
+                    quantity: item.qty,
+                    unit_price: item.product.price
+                }))
+            }
+
+            const { data, error } = await supabase.rpc('complete_sale_atomic', orderData)
+
+            if (error) throw error
+
+            if (data?.success) {
+                toast.success("Venta Procesada Correctamente")
+                setReceiptModal({
+                    orderId: data.order_id,
+                    total: total,
+                    items: [...cart],
+                    method: method,
+                    date: new Date()
+                })
+                setCart([])
+            }
+        } catch (error: any) {
+            console.error("Checkout Error:", error)
+            toast.error(error.message || "Error al procesar el pago")
+        } finally {
+            setIsProcessing(false)
+        }
     }
 
     const addToCart = (product: Product) => {
@@ -109,7 +189,10 @@ export default function PosPremiumPage() {
         toast.info("Carrito vaciado")
     }
 
-    const total = cart.reduce((acc, curr) => acc + (curr.product.price * curr.qty), 0)
+    const subtotal = cart.reduce((acc, curr) => acc + (curr.product.price * curr.qty), 0)
+    const taxRate = taxes.reduce((acc, t) => acc + (t.tax_percentage / 100), 0)
+    const taxAmount = subtotal * taxRate
+    const total = subtotal + taxAmount
 
     const filteredProducts = products.filter(p => {
         const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -305,11 +388,11 @@ export default function PosPremiumPage() {
                         <div className="space-y-3 md:space-y-4 mb-6 md:mb-8">
                             <div className="flex justify-between text-slate-500 font-bold uppercase text-[8px] md:text-[10px] tracking-widest">
                                 <span>Subtotal</span>
-                                <span>{formatPrice(total)}</span>
+                                <span>{formatPrice(subtotal)}</span>
                             </div>
                             <div className="flex justify-between text-slate-500 font-bold uppercase text-[8px] md:text-[10px] tracking-widest">
-                                <span>Impuestos Incluidos</span>
-                                <span>$0.00</span>
+                                <span>Impuestos ({taxes.map(t => `${t.tax_name} ${t.tax_percentage}%`).join(' + ') || 'IVA 0%'})</span>
+                                <span>{formatPrice(taxAmount)}</span>
                             </div>
                             <div className="h-px bg-white/5" />
                             <div className="flex justify-between items-end">
@@ -320,21 +403,39 @@ export default function PosPremiumPage() {
                             </div>
                         </div>
 
-                        <div className="flex gap-2 md:gap-3">
+                        <div className="flex flex-col gap-4">
                             <Button
-                                onClick={() => toast.info("PROCESANDO TERMINAL DE PAGO...")}
-                                className="flex-1 h-16 md:h-20 bg-orange-600 hover:bg-orange-700 text-black font-black uppercase text-base md:text-lg italic tracking-[0.1em] md:tracking-[0.2em] rounded-2xl md:rounded-3xl shadow-2xl shadow-orange-600/30 group active:scale-95 transition-all"
+                                onClick={() => toast.info("GESTIÓN DE CUENTA: Cargando módulo de división y unión de mesas...")}
+                                variant="ghost"
+                                className="w-full h-12 bg-white/5 border border-white/10 text-orange-400 font-black uppercase italic text-[10px] tracking-[0.3em] hover:bg-orange-500 hover:text-black transition-all rounded-2xl gap-3"
                                 disabled={cart.length === 0}
                             >
-                                <Banknote className="w-5 h-5 md:w-7 md:h-7 mr-2 md:mr-4 group-hover:scale-110 transition-transform" />
-                                PAGAR AHORA
+                                <List className="w-4 h-4" /> Gestión de Cuenta (Split / Merge)
                             </Button>
-                            <Button
-                                onClick={() => toast.info("LINK DE PAGO DIGITAL ENVIADO")}
-                                variant="ghost" className="h-16 w-16 md:h-20 md:w-20 bg-white/5 border border-white/10 rounded-2xl md:rounded-3xl hover:bg-white/10"
-                            >
-                                <Smartphone className="w-6 h-6 md:w-8 md:h-8 text-slate-400" />
-                            </Button>
+
+                            <div className="flex gap-2 md:gap-3">
+                                <Button
+                                    onClick={() => handleCheckout('CASH')}
+                                    className="flex-1 h-16 md:h-20 bg-orange-600 hover:bg-orange-700 text-black font-black uppercase text-base md:text-lg italic tracking-[0.1em] md:tracking-[0.2em] rounded-2xl md:rounded-3xl shadow-2xl shadow-orange-600/30 group active:scale-95 transition-all"
+                                    disabled={cart.length === 0 || isProcessing}
+                                >
+                                    {isProcessing ? (
+                                        <Loader2 className="w-5 h-5 animate-spin" />
+                                    ) : (
+                                        <>
+                                            <Banknote className="w-5 h-5 md:w-7 md:h-7 mr-2 md:mr-4 group-hover:scale-110 transition-transform" />
+                                            PAGAR AHORA
+                                        </>
+                                    )}
+                                </Button>
+                                <Button
+                                    onClick={() => handleCheckout('DEBIT')}
+                                    variant="ghost" className="h-16 w-16 md:h-20 md:w-20 bg-white/5 border border-white/10 rounded-2xl md:rounded-3xl hover:bg-white/10"
+                                    disabled={cart.length === 0 || isProcessing}
+                                >
+                                    <Smartphone className="w-6 h-6 md:w-8 md:h-8 text-slate-400" />
+                                </Button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -353,6 +454,82 @@ export default function PosPremiumPage() {
                 )}
 
             </div>
+
+            {/* 🧾 MODAL DE ÉXITO / TICKET (PRINTABLE) */}
+            {receiptModal && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-300">
+                    <div className="bg-white text-slate-900 w-full max-w-sm rounded-[2rem] overflow-hidden shadow-2xl no-print">
+                        <div className="p-8 text-center space-y-6">
+                            <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto">
+                                <CheckCircle2 className="w-10 h-10" />
+                            </div>
+                            <div>
+                                <h3 className="text-2xl font-black italic tracking-tighter uppercase">¡VENTA EXITOSA!</h3>
+                                <p className="text-sm font-bold text-slate-500 uppercase tracking-widest mt-2">ORDEN #{receiptModal.orderId.slice(0, 8)}</p>
+                            </div>
+
+                            <div className="bg-slate-50 p-6 rounded-2xl border border-dashed border-slate-200 text-left space-y-3">
+                                {receiptModal.items.map((item: any) => (
+                                    <div key={item.product.id} className="flex justify-between text-xs font-bold uppercase">
+                                        <span>{item.qty}x {item.product.name}</span>
+                                        <span>{formatPrice(item.product.price * item.qty)}</span>
+                                    </div>
+                                ))}
+                                <div className="pt-3 border-t border-slate-200 flex justify-between font-black text-lg">
+                                    <span>TOTAL</span>
+                                    <span>{formatPrice(receiptModal.total)}</span>
+                                </div>
+                            </div>
+
+                            <div className="flex flex-col gap-3">
+                                <Button
+                                    onClick={() => window.print()}
+                                    className="h-14 bg-slate-900 hover:bg-slate-800 text-white font-black italic rounded-xl"
+                                >
+                                    <Receipt className="w-5 h-5 mr-3" /> IMPRIMIR RECIBO
+                                </Button>
+                                <Button
+                                    variant="ghost"
+                                    onClick={() => setReceiptModal(null)}
+                                    className="h-14 font-black italic rounded-xl text-slate-400 hover:text-slate-900"
+                                >
+                                    NUEVA VENTA
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* STRUCTURE FOR THERMAL PRINTER (Hidden on screen via CSS) */}
+                    <div className="ticket-thermal">
+                        <div className="ticket-header">
+                            <h2 style={{ fontSize: '14pt', fontWeight: 'bold' }}>{restaurant?.name}</h2>
+                            <p>JAMALI OS SMART TERMINAL</p>
+                            <p>{receiptModal.date.toLocaleString()}</p>
+                            <p>Orden: #{receiptModal.orderId.slice(0, 12)}</p>
+                        </div>
+
+                        <div className="ticket-body">
+                            {receiptModal.items.map((item: any) => (
+                                <div key={item.product.id} className="ticket-item">
+                                    <span>{item.qty}x {item.product.name}</span>
+                                    <span>{formatPrice(item.product.price * item.qty)}</span>
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className="ticket-total">
+                            <span>TOTAL</span>
+                            <span>{formatPrice(receiptModal.total)}</span>
+                        </div>
+
+                        <div className="ticket-footer">
+                            <p>¡GRACIAS POR SU COMPRA!</p>
+                            <p>Powered by JAMALI OS</p>
+                            <p>www.jamalios.com</p>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <style jsx global>{`
                 .custom-scrollbar::-webkit-scrollbar { width: 4px; }

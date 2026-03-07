@@ -32,12 +32,15 @@ import {
     TrendingUp,
     TrendingDown,
     Calculator,
-    Target
+    Target,
+    Printer,
+    ShieldCheck
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { toast } from "sonner"
+import { transferToPettyCash } from "@/actions/pos"
 
 // Types aligned with DB Schema
 type Movement = {
@@ -81,7 +84,7 @@ export default function CashierPage() {
     })
 
     // Modal State
-    const [modalOpen, setModalOpen] = useState<'income' | 'expense' | 'audit' | 'close' | 'z-report' | null>(null)
+    const [modalOpen, setModalOpen] = useState<'income' | 'expense' | 'audit' | 'close' | 'z-report' | 'petty-cash-transfer' | null>(null)
     const [modalData, setModalData] = useState({
         amount: 0,
         reason: "",
@@ -251,6 +254,31 @@ export default function CashierPage() {
         }
     }
 
+    const handlePettyCashTransfer = async (e: React.FormEvent) => {
+        e.preventDefault()
+        if (!status?.activeCashboxSession || modalData.amount <= 0) return
+
+        setSubmittingModal(true)
+        try {
+            await transferToPettyCash(
+                status.activeCashboxSession.id,
+                currentUser.id,
+                modalData.amount,
+                modalData.reason
+            )
+            setModalOpen(null)
+            setModalData({ amount: 0, reason: "", payment_method: 'CASH' })
+            fetchDashboardData(status.activeCashboxSession.id)
+            toast.success("Transferencia a Caja Menor exitosa")
+        } catch (error: any) {
+            toast.error("Error: " + error.message)
+        } finally {
+            setSubmittingModal(false)
+        }
+    }
+
+    const CASH_LIMIT = 1000000 // Límite de 1 millón antes de pedir recogida
+
     if (loading) return (
         <div className="min-h-screen flex items-center justify-center bg-transparent">
             <div className="flex flex-col items-center gap-8 animate-in fade-in duration-1000">
@@ -322,11 +350,19 @@ export default function CashierPage() {
                             </div>
 
                             <div className="space-y-8 relative z-10">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center text-black shadow-2xl">
-                                        <Wallet className="w-6 h-6" />
+                                <div className="flex items-center justify-between gap-4">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center text-black shadow-2xl">
+                                            <Wallet className="w-6 h-6" />
+                                        </div>
+                                        <p className="text-[11px] font-black text-primary uppercase tracking-[0.4em] italic leading-none">SALDO ESTIMADO</p>
                                     </div>
-                                    <p className="text-[11px] font-black text-primary uppercase tracking-[0.4em] italic leading-none">SALDO ESTIMADO</p>
+                                    {balance.total > CASH_LIMIT && (
+                                        <div className="flex items-center gap-2 bg-rose-500/20 px-3 py-1 rounded-full animate-pulse">
+                                            <AlertTriangle className="w-4 h-4 text-rose-500" />
+                                            <span className="text-[10px] font-black text-rose-500 uppercase italic">RECOGIDA RECOMENDADA</span>
+                                        </div>
+                                    )}
                                 </div>
                                 <h2 className="text-7xl font-black italic tracking-tighter text-background leading-none drop-shadow-2xl">
                                     {balance.total.toLocaleString('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 })}
@@ -372,16 +408,23 @@ export default function CashierPage() {
                                 <span className="font-black uppercase text-[10px] tracking-[0.3em] italic text-foreground">EGRESO CAJA</span>
                             </Button>
                             <Button
+                                onClick={() => setModalOpen('petty-cash-transfer')}
+                                className="h-28 rounded-[3rem] bg-card border border-border hover:bg-amber-500/10 hover:border-amber-500/40 transition-all flex flex-col gap-3 shadow-3xl group active:scale-95 border-none"
+                            >
+                                <HandCoins className="w-6 h-6 text-amber-500 group-hover:scale-110 transition-transform" />
+                                <span className="font-black uppercase text-[9px] tracking-[0.2em] italic text-foreground text-center px-4">TRANF. CAJA MENOR</span>
+                            </Button>
+                            <Button
                                 onClick={() => { setBillCounts({}); setModalData(prev => ({ ...prev, amount: 0 })); setModalOpen('audit') }}
                                 className="h-28 rounded-[3rem] bg-card border border-border hover:bg-indigo-500/10 hover:border-indigo-500/40 transition-all flex flex-col gap-3 shadow-3xl group active:scale-95 border-none"
                             >
                                 <Scale className="w-6 h-6 text-indigo-500 group-hover:scale-110 transition-transform" />
-                                <span className="font-black uppercase text-[9px] tracking-[0.3em] italic text-foreground">ARQUEO PARCIAL</span>
+                                <span className="font-black uppercase text-[9px] tracking-[0.3em] italic text-foreground text-center">ARQUEO PARCIAL</span>
                             </Button>
-                            <Link href="/admin/cashier/close-shift" className="col-span-1">
-                                <Button className="w-full h-28 rounded-[3rem] bg-card border border-border hover:bg-rose-500/10 hover:border-rose-500/40 transition-all flex flex-col gap-3 shadow-3xl group active:scale-95 border-none">
-                                    <Lock className="w-6 h-6 text-rose-500 group-hover:scale-110 transition-transform" />
-                                    <span className="font-black uppercase text-[9px] tracking-[0.3em] italic text-foreground">CERRAR TURNO</span>
+                            <Link href="/admin/cashier/close-shift" className="col-span-2">
+                                <Button className="w-full h-24 rounded-[2.5rem] bg-rose-500/10 border border-rose-500/20 hover:bg-rose-500 hover:text-white transition-all flex items-center justify-center gap-4 shadow-xl group active:scale-95">
+                                    <Lock className="w-6 h-6 group-hover:rotate-12 transition-transform" />
+                                    <span className="font-black uppercase text-[11px] tracking-[0.5em] italic">CERRAR TURNO Y JORNADA</span>
                                 </Button>
                             </Link>
                         </div>
@@ -500,11 +543,11 @@ export default function CashierPage() {
             </div>
 
             {/* I/O MODALS REFINED */}
-            {modalOpen && (modalOpen === 'income' || modalOpen === 'expense') && (
+            {modalOpen && (modalOpen === 'income' || modalOpen === 'expense' || modalOpen === 'petty-cash-transfer') && (
                 <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-3xl flex items-center justify-center p-6 animate-in fade-in duration-300">
                     <div className="bg-card border-4 border-primary/20 rounded-[4.5rem] w-full max-w-2xl p-16 shadow-[0_0_100px_rgba(255,77,0,0.1)] relative overflow-hidden group/modal animate-in zoom-in-95 duration-500">
                         <div className="absolute top-0 right-0 p-16 opacity-[0.03] pointer-events-none -mr-16 -mt-16 group-hover/modal:scale-110 transition-transform duration-1000 rotate-12">
-                            {modalOpen === 'income' ? <Plus className="w-[400px] h-[400px]" /> : <Minus className="w-[400px] h-[400px]" />}
+                            {modalOpen === 'income' ? <Plus className="w-[400px] h-[400px]" /> : modalOpen === 'expense' ? <Minus className="w-[400px] h-[400px]" /> : <HandCoins className="w-[400px] h-[400px]" />}
                         </div>
 
                         <div className="flex justify-between items-start mb-16 relative z-10">
@@ -512,22 +555,24 @@ export default function CashierPage() {
                                 <div className="flex items-center gap-5">
                                     <div className={cn(
                                         "w-16 h-16 rounded-2xl flex items-center justify-center shadow-3xl",
-                                        modalOpen === 'income' ? "bg-emerald-500 text-white" : "bg-rose-500 text-white"
+                                        modalOpen === 'income' ? "bg-emerald-500 text-white" : modalOpen === 'expense' ? "bg-rose-500 text-white" : "bg-amber-500 text-white"
                                     )}>
-                                        {modalOpen === 'income' ? <TrendingUp className="w-8 h-8" /> : <TrendingDown className="w-8 h-8" />}
+                                        {modalOpen === 'income' ? <Plus className="w-8 h-8" /> : modalOpen === 'expense' ? <Minus className="w-8 h-8" /> : <HandCoins className="w-8 h-8" />}
                                     </div>
                                     <h2 className="text-5xl font-black italic uppercase tracking-tighter text-foreground leading-none">
-                                        REPORTE DE <span className={cn("italic", modalOpen === 'income' ? "text-emerald-500" : "text-rose-500")}> {modalOpen === 'income' ? 'INGRESO' : 'EGRESO'}</span>
+                                        {modalOpen === 'petty-cash-transfer' ? 'TRANSFERIR A' : 'REPORTE DE'} <span className={cn("italic", modalOpen === 'income' ? "text-emerald-500" : modalOpen === 'expense' ? "text-rose-500" : "text-amber-500")}> {modalOpen === 'income' ? 'INGRESO' : modalOpen === 'expense' ? 'EGRESO' : 'CAJA MENOR'}</span>
                                     </h2>
                                 </div>
-                                <p className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-[0.4em] italic pl-20 italic">REGISTRO DE FLUJO MANUAL EN KERNEL POS</p>
+                                <p className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-[0.4em] italic pl-20 italic">
+                                    {modalOpen === 'petty-cash-transfer' ? 'MOVIMIENTO INTERNO DE CAJA PRINCIPAL A MENOR' : 'REGISTRO DE FLUJO MANUAL EN KERNEL POS'}
+                                </p>
                             </div>
                             <Button variant="ghost" className="h-16 w-16 rounded-[1.5rem] bg-muted/40 hover:bg-primary hover:text-white transition-all active:scale-90" onClick={() => setModalOpen(null)}>
                                 <X className="w-8 h-8" />
                             </Button>
                         </div>
 
-                        <form onSubmit={handleMovement} className="space-y-12 relative z-10">
+                        <form onSubmit={modalOpen === 'petty-cash-transfer' ? handlePettyCashTransfer : handleMovement} className="space-y-12 relative z-10">
                             <div className="space-y-6 group/input">
                                 <label className="text-[11px] font-black text-muted-foreground/60 uppercase tracking-[0.5em] ml-10 italic">TOTAL DEL MOVIMIENTO (COP)</label>
                                 <div className="relative">
@@ -546,14 +591,14 @@ export default function CashierPage() {
                                 <label className="text-[11px] font-black text-muted-foreground/60 uppercase tracking-[0.5em] ml-10 italic">PROTOCOLO DE JUSTIFICACIÓN</label>
                                 <textarea
                                     className="w-full h-40 bg-muted/30 border-4 border-border rounded-[3.5rem] p-10 font-black text-lg italic text-foreground placeholder:text-muted-foreground/10 outline-none resize-none transition-all shadow-inner uppercase tracking-tight"
-                                    placeholder="DEFINE EL ORIGEN O DESTINO DE LOS RECURSOS..."
+                                    placeholder={modalOpen === 'petty-cash-transfer' ? 'JUSTIFICA EL REABASTECIMIENTO DE CAJA MENOR...' : "DEFINE EL ORIGEN O DESTINO DE LOS RECURSOS..."}
                                     value={modalData.reason}
                                     onChange={e => setModalData({ ...modalData, reason: e.target.value })}
                                 />
                             </div>
                             <div className="flex gap-8">
-                                <Button variant="ghost" className="flex-1 h-24 rounded-[2.5rem] font-black uppercase tracking-[0.5em] italic text-muted-foreground/40 hover:bg-muted/10" onClick={() => setModalOpen(null)}>ABORTAR</Button>
-                                <Button disabled={submittingModal || modalData.amount <= 0} className="flex-[2] h-24 rounded-[2.5rem] bg-foreground text-background font-black uppercase tracking-[0.5em] italic hover:bg-primary hover:text-white transition-all shadow-3xl text-xl border-none">
+                                <Button type="button" variant="ghost" className="flex-1 h-24 rounded-[2.5rem] font-black uppercase tracking-[0.5em] italic text-muted-foreground/40 hover:bg-muted/10" onClick={() => setModalOpen(null)}>ABORTAR</Button>
+                                <Button type="submit" disabled={submittingModal || modalData.amount <= 0} className="flex-[2] h-24 rounded-[2.5rem] bg-foreground text-background font-black uppercase tracking-[0.5em] italic hover:bg-primary hover:text-white transition-all shadow-3xl text-xl border-none">
                                     {submittingModal ? <Loader2 className="w-10 h-10 animate-spin" /> : 'AUTORIZAR REGISTRO'}
                                 </Button>
                             </div>
@@ -736,13 +781,22 @@ export default function CashierPage() {
                             </div>
                         </div>
 
-                        <Button
-                            onClick={() => router.push('/admin')}
-                            className="w-full h-28 rounded-[3rem] bg-foreground text-background font-black uppercase italic tracking-[0.5em] hover:bg-primary hover:text-black transition-all hover:scale-105 active:scale-95 border-none text-2xl shadow-3xl relative group/exit overflow-hidden"
-                        >
-                            <div className="absolute inset-x-0 bottom-0 h-2 bg-primary/20 opacity-0 group-hover/exit:opacity-100 transition-opacity" />
-                            LIBERAR TERMINAL POS
-                        </Button>
+                        <div className="flex gap-6 mt-16">
+                            <Button
+                                onClick={() => window.print()}
+                                className="flex-1 h-28 rounded-[3rem] bg-white/5 border-4 border-white/5 text-white font-black uppercase italic tracking-[0.3em] hover:bg-white/10 transition-all flex items-center justify-center gap-4"
+                            >
+                                <Printer className="w-8 h-8" />
+                                IMPRIMIR REPORTE
+                            </Button>
+                            <Button
+                                onClick={() => router.push('/admin')}
+                                className="flex-1 h-28 rounded-[3rem] bg-foreground text-background font-black uppercase italic tracking-[0.5em] hover:bg-primary hover:text-black transition-all hover:scale-105 active:scale-95 border-none text-xl shadow-3xl relative group/exit overflow-hidden"
+                            >
+                                <div className="absolute inset-x-0 bottom-0 h-2 bg-primary/20 opacity-0 group-hover/exit:opacity-100 transition-opacity" />
+                                LIBERAR TERMINAL
+                            </Button>
+                        </div>
                     </div>
                 </div>
             )}

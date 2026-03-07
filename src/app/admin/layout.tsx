@@ -195,6 +195,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
     return (
         <ShiftGuard>
+            <style dangerouslySetInnerHTML={{
+                __html: `
+                :root {
+                    ${restaurant?.primary_color ? `--primary: ${restaurant.primary_color} !important;` : ''}
+                    ${restaurant?.primary_color ? `--accent: ${restaurant.primary_color} !important;` : ''}
+                }
+            `}} />
             <div className="flex min-h-screen bg-[#F8FAFC] text-slate-900 transition-colors duration-300 selection:bg-primary selection:text-white">
                 {/* 🏰 JAMALI OS ELITE SIDEBAR (PIXORA LIGHT MODE) */}
                 <aside className="w-72 border-r border-slate-200 bg-white/80 backdrop-blur-[40px] hidden lg:flex flex-col sticky top-0 h-screen z-50 relative overflow-hidden">
@@ -207,15 +214,19 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                         <div className="flex items-center gap-3">
                             <div className="relative group">
                                 <div className="absolute inset-0 bg-primary/10 blur-md rounded-full scale-0 group-hover:scale-150 transition-transform duration-500" />
-                                <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center relative z-10 transition-colors group-hover:bg-white">
-                                    <Zap className="w-6 h-6 text-primary" />
+                                <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center relative z-10 transition-colors group-hover:bg-white overflow-hidden">
+                                    {restaurant?.logo_url ? (
+                                        <img src={restaurant.logo_url} alt="Logo" className="w-full h-full object-cover" />
+                                    ) : (
+                                        <Zap className="w-6 h-6 text-primary" />
+                                    )}
                                 </div>
                             </div>
                             <div className="flex flex-col">
                                 <span className="text-xl font-black italic uppercase tracking-tighter text-slate-900 leading-none">
-                                    JAMALI<span className="text-primary italic">OS</span>
+                                    {restaurant?.name?.split(' ')[0] || "JAMALI"}<span className="text-primary italic">{restaurant?.name?.split(' ').slice(1).join(' ') || "OS"}</span>
                                 </span>
-                                <span className="text-[8px] font-black text-slate-400 tracking-[0.4em] uppercase mt-1">Aura Enterprise</span>
+                                <span className="text-[8px] font-black text-slate-400 tracking-[0.4em] uppercase mt-1">Smart Framework</span>
                             </div>
                         </div>
                     </div>

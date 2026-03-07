@@ -129,3 +129,79 @@ body {
   transform: translateY(-5px);
   box-shadow: 0 20px 40px rgba(255, 107, 107, 0.15);
 }
+
+/* 🖨️ SOPORTE IMPRESIÓN TÉRMICA ESC/POS (80mm) */
+@media print {
+  @page {
+    margin: 0;
+    size: 80mm auto;
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 10pt;
+    width: 80mm;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Ocultar todo por defecto */
+  header,
+  footer,
+  nav,
+  aside,
+  button,
+  .no-print,
+  [role="dialog"] {
+    display: none !important;
+  }
+
+  /* Mostrar solo el ticket */
+  .ticket-thermal {
+    display: block !important;
+    width: 74mm !important;
+    margin: 0 auto !important;
+    padding: 5mm 0 !important;
+    color: black !important;
+    background: white !important;
+    font-family: 'Courier New', Courier, monospace;
+    line-height: 1.2;
+  }
+
+  .ticket-thermal * {
+    color: black !important;
+    background: transparent !important;
+  }
+
+  .ticket-header {
+    text-align: center;
+    border-bottom: 1px dashed black;
+    margin-bottom: 3mm;
+    padding-bottom: 3mm;
+  }
+
+  .ticket-footer {
+    text-align: center;
+    border-top: 1px dashed black;
+    margin-top: 3mm;
+    padding-top: 3mm;
+    font-size: 8pt;
+  }
+
+  .ticket-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1mm;
+  }
+
+  .ticket-total {
+    font-weight: bold;
+    font-size: 12pt;
+    border-top: 1px solid black;
+    margin-top: 2mm;
+    padding-top: 2mm;
+    display: flex;
+    justify-content: space-between;
+  }
+}

@@ -5,11 +5,17 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function formatPrice(price: number) {
-  return new Intl.NumberFormat('es-CO', {
-    style: 'currency',
-    currency: 'COP',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(price);
+// 🌍 Helper de Formateo de Moneda (Personalizable)
+export function formatPrice(price: number, locale = 'es-CO', currency = 'COP', digits = 0) {
+  try {
+    return new Intl.NumberFormat(locale, {
+      style: 'currency',
+      currency: currency,
+      minimumFractionDigits: digits,
+      maximumFractionDigits: digits,
+    }).format(price || 0);
+  } catch (e) {
+    // Fallback en caso de error de locale
+    return `$${(price || 0).toLocaleString()}`;
+  }
 }

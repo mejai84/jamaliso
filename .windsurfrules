@@ -1,0 +1,47 @@
+# Reglas de Código Limpio y Arquitectura Enterprise (Jamali OS)
+
+> **⚠️ INSTRUCCIÓN CRÍTICA DE SISTEMA PARA LA IA Y DESARROLLADORES:**
+> Lee este documento OBLIGATORIAMENTE antes de generar, modificar o sugerir cualquier código en Jamali OS. El incumplimiento de estas reglas reduce el valor comercial del software.
+
+---
+
+## 🏗️ 1. Arquitectura Modular Estricta
+Jamali OS utiliza un diseño modular bajo el App Router de Next.js. **NUNCA mezcles dominios**.
+- El módulo de Caja (`/src/app/admin/cashier`) NO debe importar componentes ni lógica directa de Cocina (`/src/app/admin/kitchen`).
+- Usa **Base de Datos (PostgreSQL)** como la única fuente de la verdad para comunicar estados entre módulos.
+- La estructura central Frontend es: `/app`, `/components`, `/actions` (Server Actions), `/lib` (Lógica Pura).
+
+## 🏷️ 2. Naming Conventions (Nombres Claros)
+Prohibido el uso de abreviaciones ambiguas o nombres genéricos.
+- **MAL:** `function calcFn(data) {}`, `const x = res.val`, `updateDB()`
+- **BIEN:** `function calculateFoodCost(recipeId) {}`, `const orderItems = response.data`, `updateCashboxSession()`
+
+## 📝 3. Comentarios Estratégicos (No redundantes)
+No comentes lo obvio. Comenta la **lógica de negocio o el por qué**.
+- **MAL:** `// Guarda el usuario en la BD` (Antes de un insert de usuario).
+- **BIEN:** `// Descuenta inventario usando el costo de compra más reciente (average cost method)` (Antes del update de inventory_movements).
+
+## 🧩 4. Variables Consistentes por Dominio
+Para evitar confusión cognitiva a futuros compradores/devs, usa exactamente estos nombres de entidades a lo largo de todo el código:
+- Ventas: `orders`, `orderItems`, `salePayments`
+- Caja: `cashbox`, `cashboxSession`, `cashMovements`, `pettyCash`
+- Inventario: `ingredients`, `recipes`, `recipeItems`, `inventoryMovements`, `wasteReports`
+- Empleados/Logística: `profiles`, `shifts`, `deliveryDrivers`
+
+## 🔐 5. Principios Multi-Tenant y Seguridad (RLS)
+Jamali OS es un software como servicio (SaaS).
+1. **SIEMPRE** asume que la consulta a base de datos usa `restaurant_id`.
+2. Las acciones de BD deben basarse en `restaurant_id = auth.user.restaurant()` a través de Row Level Security.
+3. Las tablas pivote deben tener SIEMPRE `created_at`, `updated_at` (audit logs).
+
+## 💎 6. Nivel Profesional UI / UX (World-Class)
+Cada vista nueva debe sentirse como un software de $200k USD.
+1. Obligatorio el uso de **Skeletons** o loaders bonitos antes de montar la data final.
+2. Uso de **Framer Motion** para transiciones (`layoutId`, `AnimatePresence`).
+3. Uso estricto de **Tailwind CSS** con la paleta de colores oficial de Jamali OS (Slate, Orange, Emerald, Rose).
+4. No uses `alert()` nativos; siempre usa `toast` (Sonner).
+
+## 🚀 7. Modificación de Base de Datos
+- **Prohibido** crear comandos `DROP TABLE` ciegos que destruyan datos para corregir un bug.
+- **Prohibido** romper las Foreign Keys existentes. Revisa `docs/DATABASE_JAMALI_OS.md` antes de crear tablas nuevas.
+- Toda política de RLS debe probarse para no generar bloqueos recursivos (`infinite recursion`).

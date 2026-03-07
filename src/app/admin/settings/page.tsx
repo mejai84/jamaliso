@@ -19,19 +19,64 @@ import { useRestaurant } from "@/providers/RestaurantProvider"
 import { toast } from "sonner"
 import Link from "next/link"
 
+import { updateRestaurantBranding } from "./actions"
+
 export default function SettingsPremiumPage() {
-    const { restaurant } = useRestaurant()
+    const { restaurant, refreshRestaurant } = useRestaurant()
     const [loading, setLoading] = useState(false)
-    const [activeTab, setActiveTab] = useState<'general' | 'infrastructure' | 'branding'>('general')
+    const [activeTab, setActiveTab] = useState<'general' | 'infrastructure' | 'branding' | 'regional'>('general')
     const [currentTime, setCurrentTime] = useState(new Date())
+
+    // Regional states
+    const [country, setCountry] = useState("Colombia")
+    const [currency, setCurrency] = useState("COP")
+    const [locale, setLocale] = useState("es-CO")
+
+    // Branding states
+    const [name, setName] = useState("")
+    const [logoUrl, setLogoUrl] = useState("")
+    const [primaryColor, setPrimaryColor] = useState("")
 
     useEffect(() => {
         const timer = setInterval(() => setCurrentTime(new Date()), 1000)
+        if (restaurant) {
+            setName(restaurant.name || "")
+            setLogoUrl(restaurant.logo_url || "")
+            setPrimaryColor(restaurant.primary_color || "#FF6B6B")
+        }
+        // Load regional settings from settings table if needed, for now defaults
         return () => clearInterval(timer)
-    }, [])
+    }, [restaurant])
+
+    const handleSave = async () => {
+        if (!restaurant?.id) return
+        setLoading(true)
+        try {
+            // Branding update
+            await updateRestaurantBranding(restaurant.id, {
+                name,
+                logo_url: logoUrl,
+                primary_color: primaryColor
+            })
+
+            // Regional update (Upsert in settings table)
+            await supabase.from('settings').upsert({
+                key: 'regional_config',
+                value: { country, currency_code: currency, locale, currency_symbol: '$', decimal_digits: 0 }
+            }, { onConflict: 'key' })
+
+            toast.success("CONFIGURACIÓN MAESTRA ACTUALIZADA ✨")
+            refreshRestaurant?.()
+        } catch (err) {
+            toast.error("Error de conexión")
+        } finally {
+            setLoading(false)
+        }
+    }
 
     const tabs = [
         { id: 'general', label: 'PARÁMETROS GENERALES', icon: Building2 },
+        { id: 'regional', label: 'CONFIGURACIÓN REGIONAL', icon: Globe },
         { id: 'branding', label: 'IDENTIDAD VISUAL', icon: Palette },
         { id: 'infrastructure', label: 'INFRAESTRUCTURA CORE', icon: Cpu },
     ]
@@ -69,13 +114,7 @@ export default function SettingsPremiumPage() {
                             <p className="text-[9px] font-bold text-emerald-500 uppercase tracking-widest text-right">SYSTEM UPTIME: 99.9%</p>
                         </div>
                         <Button
-                            onClick={() => {
-                                setLoading(true)
-                                setTimeout(() => {
-                                    setLoading(false)
-                                    toast.success("CONFIGURACIÓN DEL SISTEMA ACTUALIZADA")
-                                }, 1000)
-                            }}
+                            onClick={handleSave}
                             disabled={loading}
                             className="h-14 px-10 bg-orange-600 hover:bg-orange-700 text-black font-black uppercase text-[10px] italic tracking-widest rounded-2xl shadow-xl shadow-orange-600/30"
                         >
@@ -93,7 +132,7 @@ export default function SettingsPremiumPage() {
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id as any)}
                                 className={cn(
-                                    "flex items-center gap-4 p-5 rounded-2xl transition-all border shrink-0",
+                                    "flex items-center gap-4 p-5 rounded-2xl transition-all border shrink-0 text-left",
                                     activeTab === tab.id
                                         ? "bg-orange-500 border-orange-400 text-black shadow-xl shadow-orange-500/20"
                                         : "bg-white/5 border-white/5 text-slate-500 hover:bg-white/10 hover:text-white"
@@ -126,7 +165,7 @@ export default function SettingsPremiumPage() {
 
                     {/* CONTENT AREA */}
                     <main className="flex-1 overflow-y-auto custom-scrollbar p-12">
-                        <div className="max-w-4xl mx-auto space-y-12">
+                        <div className="max-w-4xl mx-auto space-y-12 pb-20">
 
                             {/* Section Header */}
                             <div className="flex items-center gap-6 pb-8 border-b border-white/5">
@@ -143,23 +182,123 @@ export default function SettingsPremiumPage() {
                                 </div>
                             </div>
 
-                            {/* Settings Form Simulation */}
-                            <div className="grid grid-cols-2 gap-8">
-                                <div className="space-y-3">
-                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic">NOMBRE DEL NEGOCIO</label>
-                                    <input
-                                        className="w-full bg-slate-900/40 border border-white/10 rounded-xl h-14 px-6 text-sm font-medium focus:outline-none focus:border-orange-500/50"
-                                        defaultValue={restaurant?.name || "PARGO ROJO"}
-                                    />
+                            {activeTab === 'branding' && (
+                                <div className="grid grid-cols-2 gap-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                    <div className="space-y-8">
+                                        <div className="space-y-3">
+                                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic">NOMBRE DEL NEGOCIO</label>
+                                            <input
+                                                className="w-full bg-slate-900/40 border border-white/10 rounded-xl h-14 px-6 text-sm font-medium focus:outline-none focus:border-orange-500/50"
+                                                value={name}
+                                                onChange={e => setName(e.target.value)}
+                                            />
+                                        </div>
+                                        <div className="space-y-3">
+                                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic">COLOR PRIMARIO (HEX)</label>
+                                            <div className="flex gap-4">
+                                                <input
+                                                    className="flex-1 bg-slate-900/40 border border-white/10 rounded-xl h-14 px-6 text-sm font-medium focus:outline-none focus:border-orange-500/50"
+                                                    value={primaryColor}
+                                                    onChange={e => setPrimaryColor(e.target.value)}
+                                                />
+                                                <div
+                                                    className="w-14 h-14 rounded-xl border border-white/20 shadow-lg"
+                                                    style={{ backgroundColor: primaryColor }}
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="space-y-3">
+                                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic">URL DEL LOGO (PNG/SVG)</label>
+                                            <input
+                                                className="w-full bg-slate-900/40 border border-white/10 rounded-xl h-14 px-6 text-sm font-medium focus:outline-none focus:border-orange-500/50"
+                                                value={logoUrl}
+                                                onChange={e => setLogoUrl(e.target.value)}
+                                                placeholder="https://..."
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="bg-white/5 border border-white/5 rounded-[2.5rem] p-10 flex flex-col items-center justify-center text-center gap-6">
+                                        <div className="w-32 h-32 rounded-3xl bg-slate-900 border border-white/10 flex items-center justify-center overflow-hidden shadow-2xl">
+                                            {logoUrl ? <img src={logoUrl} className="w-full h-full object-contain p-4" alt="Preview" /> : <ImageIcon className="w-12 h-12 text-slate-700" />}
+                                        </div>
+                                        <div>
+                                            <p className="text-xl font-black italic uppercase text-white tracking-tighter">{name || "TU MARCA"}</p>
+                                            <div className="flex items-center justify-center gap-2 mt-2">
+                                                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: primaryColor }} />
+                                                <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest italic">Pixel Perfect Branding</p>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="space-y-3">
-                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic">EMAIL CORPORATIVO</label>
-                                    <input
-                                        className="w-full bg-slate-900/40 border border-white/10 rounded-xl h-14 px-6 text-sm font-medium focus:outline-none focus:border-orange-500/50"
-                                        defaultValue="admin@pargorojo.com"
-                                    />
+                            )}
+
+                            {activeTab === 'regional' && (
+                                <div className="grid grid-cols-2 gap-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                    <div className="space-y-8">
+                                        <div className="space-y-3">
+                                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic flex items-center gap-2">
+                                                <Globe className="w-3 h-3 text-orange-500" /> PAÍS DE OPERACIÓN
+                                            </label>
+                                            <select
+                                                className="w-full bg-slate-900/40 border border-white/10 rounded-xl h-14 px-6 text-sm font-medium focus:outline-none focus:border-orange-500/50 appearance-none text-white italic"
+                                                value={country}
+                                                onChange={e => setCountry(e.target.value)}
+                                            >
+                                                <option value="Colombia" className="bg-slate-900">COLOMBIA (Default)</option>
+                                                <option value="Mexico" className="bg-slate-900">MÉXICO</option>
+                                                <option value="España" className="bg-slate-900">ESPAÑA</option>
+                                                <option value="USA" className="bg-slate-900">ESTADOS UNIDOS</option>
+                                            </select>
+                                        </div>
+                                        <div className="space-y-3">
+                                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic flex items-center gap-2">
+                                                <Coins className="w-3 h-3 text-orange-500" /> MONEDA PRINCIPAL
+                                            </label>
+                                            <select
+                                                className="w-full bg-slate-900/40 border border-white/10 rounded-xl h-14 px-6 text-sm font-medium focus:outline-none focus:border-orange-500/50 appearance-none text-white italic"
+                                                value={currency}
+                                                onChange={e => setCurrency(e.target.value)}
+                                            >
+                                                <option value="COP" className="bg-slate-900">COP - PESO COLOMBIANO</option>
+                                                <option value="MXN" className="bg-slate-900">MXN - PESO MEXICANO</option>
+                                                <option value="EUR" className="bg-slate-900">EUR - EURO</option>
+                                                <option value="USD" className="bg-slate-900">USD - DÓLAR ESTADOUNIDENSE</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div className="bg-orange-600/10 border border-orange-500/20 rounded-[2.5rem] p-10 space-y-4">
+                                        <div className="w-12 h-12 rounded-xl bg-orange-600 flex items-center justify-center text-black">
+                                            <Award className="w-6 h-6" />
+                                        </div>
+                                        <h3 className="text-xl font-black italic uppercase tracking-tighter">LOCALIZACIÓN SMART</h3>
+                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-relaxed">
+                                            JAMALI OS ajustará automáticamente los formatos de moneda, cálculos de impuestos y reglas legales de nómina según el país seleccionado.
+                                        </p>
+                                        <div className="pt-4 flex items-center gap-2 text-[9px] font-black text-orange-500 uppercase tracking-widest">
+                                            <CheckCircle2 className="w-4 h-4" /> LOCALIZACIÓN ACTIVA
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
+                            )}
+
+                            {activeTab === 'general' && (
+                                <div className="grid grid-cols-2 gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                    <div className="space-y-3">
+                                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic">NIT / IDENTIFICACIÓN</label>
+                                        <input
+                                            className="w-full bg-slate-900/40 border border-white/10 rounded-xl h-14 px-6 text-sm font-medium focus:outline-none focus:border-orange-500/50"
+                                            defaultValue="900.123.456-7"
+                                        />
+                                    </div>
+                                    <div className="space-y-3">
+                                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic">TELÉFONO DE CONTACTO</label>
+                                        <input
+                                            className="w-full bg-slate-900/40 border border-white/10 rounded-xl h-14 px-6 text-sm font-medium focus:outline-none focus:border-orange-500/50"
+                                            defaultValue={restaurant?.whatsapp_number || "+57 300 000 0000"}
+                                        />
+                                    </div>
+                                </div>
+                            )}
 
                             {/* Feature Toggles */}
                             <div className="bg-slate-900/40 backdrop-blur-3xl border border-white/5 rounded-[3rem] p-10 space-y-8">

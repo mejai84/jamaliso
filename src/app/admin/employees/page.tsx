@@ -43,6 +43,9 @@ interface Employee {
     food_discount_pct: number
     max_credit: number
     current_credit_spent: number
+    base_salary: number
+    commission_percentage: number
+    contract_type: string
     created_at: string
 }
 
@@ -67,6 +70,9 @@ export default function EmployeesPage() {
         waiter_pin: "",
         food_discount_pct: 0,
         max_credit: 0,
+        base_salary: 0,
+        commission_percentage: 0,
+        contract_type: "indefinido",
         hire_date: new Date().toISOString().split('T')[0]
     })
     const [submitting, setSubmitting] = useState(false)
@@ -122,6 +128,9 @@ export default function EmployeesPage() {
             waiter_pin: "",
             food_discount_pct: 0,
             max_credit: 0,
+            base_salary: 0,
+            commission_percentage: 0,
+            contract_type: "indefinido",
             hire_date: new Date().toISOString().split('T')[0]
         })
         setIsAddModalOpen(true)
@@ -139,6 +148,9 @@ export default function EmployeesPage() {
             waiter_pin: emp.waiter_pin || "",
             food_discount_pct: emp.food_discount_pct || 0,
             max_credit: emp.max_credit || 0,
+            base_salary: emp.base_salary || 0,
+            commission_percentage: emp.commission_percentage || 0,
+            contract_type: emp.contract_type || "indefinido",
             hire_date: emp.hire_date || ""
         })
         setIsEditModalOpen(true)
@@ -182,6 +194,9 @@ export default function EmployeesPage() {
                     waiter_pin: formData.waiter_pin,
                     food_discount_pct: formData.food_discount_pct,
                     max_credit: formData.max_credit,
+                    base_salary: formData.base_salary,
+                    commission_percentage: formData.commission_percentage,
+                    contract_type: formData.contract_type,
                     hire_date: formData.hire_date,
                     restaurant_id: restaurantId,
                     updated_at: new Date().toISOString()
@@ -217,6 +232,9 @@ export default function EmployeesPage() {
                     waiter_pin: formData.waiter_pin,
                     food_discount_pct: formData.food_discount_pct,
                     max_credit: formData.max_credit,
+                    base_salary: formData.base_salary,
+                    commission_percentage: formData.commission_percentage,
+                    contract_type: formData.contract_type,
                     hire_date: formData.hire_date
                 })
                 .eq('id', selectedEmployee.id)
@@ -532,6 +550,43 @@ export default function EmployeesPage() {
                                                     onChange={(e) => setFormData({ ...formData, max_credit: Number(e.target.value) })}
                                                 />
                                             </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-orange-500/5 p-6 rounded-[2rem] border border-orange-500/10">
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black uppercase tracking-widest text-orange-500 ml-4 italic">Sueldo Base Mensual</label>
+                                            <div className="relative">
+                                                <span className="absolute left-5 top-1/2 -translate-y-1/2 text-orange-500 font-bold">$</span>
+                                                <input
+                                                    type="number"
+                                                    className="w-full bg-slate-900 border border-white/10 rounded-2xl py-4 pl-10 pr-4 outline-none focus:border-orange-500/40 transition-all font-bold text-white"
+                                                    value={formData.base_salary}
+                                                    onChange={(e) => setFormData({ ...formData, base_salary: Number(e.target.value) })}
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black uppercase tracking-widest text-orange-500 ml-4 italic">% Comisión Venta</label>
+                                            <input
+                                                type="number"
+                                                className="w-full bg-slate-900 border border-white/10 rounded-2xl py-4 px-6 outline-none focus:border-orange-500/40 transition-all font-bold text-white"
+                                                value={formData.commission_percentage}
+                                                onChange={(e) => setFormData({ ...formData, commission_percentage: Number(e.target.value) })}
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black uppercase tracking-widest text-orange-500 ml-4 italic">Tipo Contrato</label>
+                                            <select
+                                                className="w-full bg-slate-900 border border-white/10 rounded-2xl py-4 px-6 outline-none focus:border-orange-500/40 transition-all font-bold text-white appearance-none italic"
+                                                value={formData.contract_type}
+                                                onChange={(e) => setFormData({ ...formData, contract_type: e.target.value })}
+                                            >
+                                                <option value="indefinido">INDEFINIDO</option>
+                                                <option value="termino_fijo">TÉRMINO FIJO</option>
+                                                <option value="prestacion">PRESTACIÓN</option>
+                                                <option value="aprendizaje">APRENDIZAJE</option>
+                                            </select>
                                         </div>
                                     </div>
 
