@@ -10,8 +10,10 @@ import { Footer } from "@/components/store/footer";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [featuredDishes, setFeaturedDishes] = useState<any[]>([])
   const [businessInfo, setBusinessInfo] = useState<any>({
@@ -30,67 +32,40 @@ export default function Home() {
   const fetchInitialData = async () => {
     setLoading(true)
     try {
-      // 1. Obtener restaurante por el subdominio actual (o el primero por defecto para testing)
       const hostname = typeof window !== 'undefined' ? window.location.hostname : ''
-      const subdomain = hostname.includes('.jamalios.com') ? hostname.split('.')[0] : null
+
+      // Si estamos en el dominio principal (jamaliso.vercel.app o localhost), ir al Landing SaaS
+      const isMainDomain = hostname === 'jamaliso.vercel.app' || hostname === 'localhost' || hostname === '127.0.0.1'
+
+      if (isMainDomain) {
+        router.replace('/landing')
+        return
+      }
+
+      // Si hay un subdominio (ej: pizzeriapaco.jamaliso.com)
+      const subdomain = hostname.includes('.jamaliso.com') ? hostname.split('.')[0] : null
 
       let query = supabase.from('restaurants').select('*')
       if (subdomain) {
         query = query.eq('subdomain', subdomain)
+      } else {
+        // Fallback: Si no hay subdominio pero tampoco es el principal, quizás es un dominio custom
+        // por ahora redirigimos al landing si no encontramos nada
+        query = query.limit(1)
       }
 
-      const { data: resData, error: resError } = await query.limit(1).maybeSingle()
-
-      if (resError) {
-        console.error('Error fetching restaurant:', resError)
-      }
+      const { data: resData } = await query.maybeSingle()
 
       if (resData) {
-        setBusinessInfo({
-          ...resData,
-          name: resData.name || "JAMALI OS",
-          tagline: resData.landing_page_config?.hero?.tagline || "Experiencia Gastronómica"
-        })
-        if (resData.landing_page_config) {
-          setLandingConfig(resData.landing_page_config)
-          if (resData.landing_page_config.feature_flags) {
-            setShowImages(resData.landing_page_config.feature_flags.menu_show_images ?? true)
-          }
-        }
-      }
-
-      // Fallback a settings solo si no se obtuvo la flag arriba
-      if (resData?.landing_page_config?.feature_flags?.menu_show_images === undefined) {
-        const { data: settings } = await supabase.from('settings').select('*')
-        if (settings) {
-          const flags = settings.find(s => s.key === 'feature_flags')
-          if (flags && flags.value) {
-            try {
-              const parsedFlags = typeof flags.value === 'string' ? JSON.parse(flags.value) : flags.value
-              setShowImages(parsedFlags.menu_show_images ?? true)
-            } catch (e) {
-              console.warn('Error parsing feature_flags:', e)
-            }
-          }
-        }
-      }
-
-      const { data: products } = await supabase
-        .from('products')
-        .select('*')
-        .eq('is_available', true)
-        .limit(4)
-
-      if (products) {
-        setFeaturedDishes(products.map(p => ({
-          ...p,
-          image: p.image_url || "/images/placeholder.png"
-        })))
+        // Si el restaurante existe, lo enviamos directamente a SU menú
+        router.replace(`/${resData.subdomain || resData.slug}/menu`)
+      } else {
+        // Si no se encuentra restaurante, al landing principal
+        router.replace('/landing')
       }
     } catch (e) {
       console.error('fetchInitialData error:', e)
-    } finally {
-      setLoading(false)
+      router.replace('/landing')
     }
   }
 

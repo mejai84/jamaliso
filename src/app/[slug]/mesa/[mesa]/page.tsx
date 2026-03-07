@@ -43,6 +43,8 @@ export default function QRMesaPage() {
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const [showCart, setShowCart] = useState(false)
+    const [customerPhone, setCustomerPhone] = useState("")
+    const [customerName, setCustomerName] = useState("")
 
     useEffect(() => {
         if (slug) loadData()
@@ -154,9 +156,17 @@ export default function QRMesaPage() {
                 await supabase.from('tables').update({ status: 'occupied' }).eq('id', tableId)
             }
 
-            alert(`✅ ¡Pedido Enviado a Cocina!\n\nTu orden está en preparación. Pronto el mesero estará contigo.`)
+            // 4. Send WhatsApp Notification (Simulation)
+            if (customerPhone) {
+                const { whatsapp } = await import("@/lib/notifications/whatsapp")
+                await whatsapp.sendOrderConfirmation(customerPhone, order.id, cartTotal)
+            }
+
+            alert(`✅ ¡Pedido Enviado!\n\nTu orden #${order.id.slice(-4)} está en preparación. Recibirás actualizaciones ${customerPhone ? 'en tu WhatsApp' : 'por este medio'}.`)
             setCart([])
             setShowCart(false)
+            setCustomerPhone("")
+            setCustomerName("")
 
         } catch (err: any) {
             console.error("ORDER ERROR:", err)
@@ -345,23 +355,49 @@ export default function QRMesaPage() {
                             </div>
                             <button onClick={() => setShowCart(false)} className="p-2 bg-slate-100 rounded-xl"><X className="w-5 h-5 text-slate-400" /></button>
                         </div>
-                        <div className="flex-1 overflow-y-auto p-6 space-y-4">
-                            {cart.map((item, i) => (
-                                <div key={i} className="flex items-center gap-4 bg-slate-50 rounded-2xl p-4">
-                                    <div className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-sm text-white" style={{ backgroundColor: brandColor }}>
-                                        {item.qty}x
+                        <div className="flex-1 overflow-y-auto p-6 space-y-6">
+                            {/* Customer Info */}
+                            <div className="space-y-4 bg-slate-50 p-6 rounded-3xl border border-slate-100">
+                                <h3 className="text-[10px] font-black uppercase tracking-widest text-slate-400">Datos para notificaciones (Opcional)</h3>
+                                <div className="space-y-3">
+                                    <div className="relative">
+                                        <MessageSquare className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
+                                        <input
+                                            type="tel"
+                                            placeholder="WhatsApp (Ej: 3001234567)"
+                                            className="w-full h-12 pl-12 pr-4 rounded-xl bg-white border border-slate-200 text-sm focus:border-orange-300 outline-none"
+                                            value={customerPhone}
+                                            onChange={e => setCustomerPhone(e.target.value)}
+                                        />
                                     </div>
-                                    <div className="flex-1 min-w-0">
-                                        <p className="text-xs font-black uppercase text-slate-900 truncate">{item.product.name}</p>
-                                        <p className="text-xs font-bold text-slate-400">{formatPrice(item.product.price * item.qty)}</p>
-                                    </div>
-                                    <div className="flex items-center gap-1">
-                                        <button onClick={() => updateQty(i, -1)} className="w-7 h-7 rounded-lg bg-white border border-slate-200 flex items-center justify-center"><Minus className="w-3 h-3" /></button>
-                                        <button onClick={() => updateQty(i, 1)} className="w-7 h-7 rounded-lg bg-white border border-slate-200 flex items-center justify-center"><Plus className="w-3 h-3" /></button>
-                                        <button onClick={() => removeItem(i)} className="w-7 h-7 rounded-lg bg-rose-50 border border-rose-100 flex items-center justify-center"><X className="w-3 h-3 text-rose-500" /></button>
-                                    </div>
+                                    <input
+                                        type="text"
+                                        placeholder="Tu Nombre"
+                                        className="w-full h-12 px-4 rounded-xl bg-white border border-slate-200 text-sm focus:border-orange-300 outline-none"
+                                        value={customerName}
+                                        onChange={e => setCustomerName(e.target.value)}
+                                    />
                                 </div>
-                            ))}
+                            </div>
+
+                            <div className="space-y-4">
+                                {cart.map((item, i) => (
+                                    <div key={i} className="flex items-center gap-4 bg-white border border-slate-100 rounded-2xl p-4">
+                                        <div className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-sm text-white" style={{ backgroundColor: brandColor }}>
+                                            {item.qty}x
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-xs font-black uppercase text-slate-900 truncate">{item.product.name}</p>
+                                            <p className="text-xs font-bold text-slate-400">{formatPrice(item.product.price * item.qty)}</p>
+                                        </div>
+                                        <div className="flex items-center gap-1">
+                                            <button onClick={() => updateQty(i, -1)} className="w-7 h-7 rounded-lg bg-white border border-slate-200 flex items-center justify-center"><Minus className="w-3 h-3" /></button>
+                                            <button onClick={() => updateQty(i, 1)} className="w-7 h-7 rounded-lg bg-white border border-slate-200 flex items-center justify-center"><Plus className="w-3 h-3" /></button>
+                                            <button onClick={() => removeItem(i)} className="w-7 h-7 rounded-lg bg-rose-50 border border-rose-100 flex items-center justify-center"><X className="w-3 h-3 text-rose-500" /></button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                         <div className="p-6 border-t border-slate-100 bg-slate-50/50 space-y-4">
                             <div className="flex justify-between items-end">
