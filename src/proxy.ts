@@ -1,6 +1,11 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
+// Simple Edge-Compatible Rate Limiter (InMemory)
+const rateLimitMap = new Map<string, { count: number; lastReset: number }>();
+const RATE_LIMIT_WINDOW = 60 * 1000;
+const MAX_REQUESTS = 100;
+
 export async function proxy(request: NextRequest) {
     let response = NextResponse.next({
         request: {
@@ -8,6 +13,31 @@ export async function proxy(request: NextRequest) {
         },
     })
 
+    const path = request.nextUrl.pathname;
+    const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown-ip';
+
+    // 1. RATE LIMITING
+    if (
+        !path.startsWith('/_next') &&
+        !path.match(/\.(ico|png|jpg|jpeg|svg|css|js)$/) &&
+        path.startsWith('/api/')
+    ) {
+        const now = Date.now();
+        const requestData = rateLimitMap.get(ip);
+        if (!requestData || requestData.lastReset < now - RATE_LIMIT_WINDOW) {
+            rateLimitMap.set(ip, { count: 1, lastReset: now });
+        } else {
+            requestData.count++;
+            if (requestData.count > MAX_REQUESTS) {
+                return new NextResponse(
+                    JSON.stringify({ error: 'Rate limit exceeded' }),
+                    { status: 429, headers: { 'Content-Type': 'application/json' } }
+                );
+            }
+        }
+    }
+
+    // 2. SUPABASE SESSION REFRESH (From consolidated proxy logic)
     const supabase = createServerClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -17,51 +47,29 @@ export async function proxy(request: NextRequest) {
                     return request.cookies.get(name)?.value
                 },
                 set(name: string, value: string, options: CookieOptions) {
-                    request.cookies.set({
-                        name,
-                        value,
-                        ...options,
-                    })
+                    request.cookies.set({ name, value, ...options })
                     response = NextResponse.next({
-                        request: {
-                            headers: request.headers,
-                        },
+                        request: { headers: request.headers },
                     })
-                    response.cookies.set({
-                        name,
-                        value,
-                        ...options,
-                    })
+                    response.cookies.set({ name, value, ...options })
                 },
                 remove(name: string, options: CookieOptions) {
-                    request.cookies.set({
-                        name,
-                        value: '',
-                        ...options,
-                    })
+                    request.cookies.set({ name, value: '', ...options })
                     response = NextResponse.next({
-                        request: {
-                            headers: request.headers,
-                        },
+                        request: { headers: request.headers },
                     })
-                    response.cookies.set({
-                        name,
-                        value: '',
-                        ...options,
-                    })
+                    response.cookies.set({ name, value: '', ...options })
                 },
             },
         }
     )
 
-    // Optimized session refresh with safety timeout
-    try {
-        await Promise.race([
-            supabase.auth.getUser(),
-            new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 1200))
-        ])
-    } catch (e) {
-        console.warn('Proxy: Supabase check skipped/timed out', e);
+    // Perimetral Auth Check for /admin
+    if (path.startsWith('/admin') && !path.startsWith('/admin/login')) {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) {
+            return NextResponse.redirect(new URL('/login', request.url));
+        }
     }
 
     return response
@@ -69,13 +77,6 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
     matcher: [
-        /*
-         * Match all request paths except for the ones starting with:
-         * - _next/static (static files)
-         * - _next/image (image optimization files)
-         * - favicon.ico (favicon file)
-         * Feel free to modify this pattern to include more paths.
-         */
         '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
     ],
 }

@@ -26,6 +26,7 @@ const nextConfig: any = {
     ],
   },
   // 🛡️ SECURITY HEADERS & CORS CONFIGURATION
+  turbopack: {},
   async headers() {
     return [
       {
