@@ -81,16 +81,8 @@ export const RestaurantProvider = ({ children }: { children: ReactNode }) => {
                 }
             }
 
-            // 3. Fallback para dominios de sistema (Vercel, localhost)
-            if (!currentRes && isSystemDomain) {
-                const { data: firstRes } = await supabase
-                    .from('restaurants')
-                    .select('*')
-                    .limit(1)
-                    .maybeSingle()
-
-                if (firstRes) currentRes = firstRes
-            }
+            // 3. Fallback: No se asigna restaurante por defecto en dominios de sistema
+            // para evitar que la landing SaaS cargue datos de un restaurante aleatorio.
 
             // 2. Obtener Sesión y Perfil
             const { data: { session } } = await supabase.auth.getSession()

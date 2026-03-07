@@ -2,11 +2,8 @@ import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/components/store/cart-context";
-import { CartSheet } from "@/components/store/cart-sheet";
-import { Footer } from "@/components/store/footer";
-import { WhatsAppButton } from "@/components/store/whatsapp-button";
-import { ClientBot } from "@/components/store/client-bot";
 import { RestaurantProvider } from "@/providers/RestaurantProvider";
+import LayoutClientWrapper from "@/components/layout-client-wrapper";
 
 const outfit = Outfit({ subsets: ["latin"] });
 
@@ -25,15 +22,9 @@ export default function RootLayout({
             <body className={`${outfit.className} bg-background text-foreground antialiased`}>
                 <RestaurantProvider>
                     <CartProvider>
-                        <div className="flex flex-col min-h-screen">
-                            <main className="flex-1">
-                                {children}
-                            </main>
-                            <Footer />
-                        </div>
-                        <CartSheet />
-                        <ClientBot />
-                        <WhatsAppButton />
+                        <LayoutClientWrapper>
+                            {children}
+                        </LayoutClientWrapper>
                     </CartProvider>
                 </RestaurantProvider>
             </body>
