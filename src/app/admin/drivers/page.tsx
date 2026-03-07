@@ -19,6 +19,7 @@ export default function DriversPage() {
     const [users, setUsers] = useState<PotentialDriver[]>([])
     const [showAddModal, setShowAddModal] = useState(false)
     const [searchQuery, setSearchQuery] = useState("")
+    const [activeProvider, setActiveProvider] = useState<string>('JAMALI_FLEET')
 
     // New Driver Form State
     const [newDriver, setNewDriver] = useState<Partial<Driver>>({
@@ -31,7 +32,19 @@ export default function DriversPage() {
 
     useEffect(() => {
         fetchDrivers()
+        fetchSettings()
     }, [])
+
+    const fetchSettings = async () => {
+        const { data } = await supabase
+            .from('delivery_settings')
+            .select('active_provider')
+            .single()
+
+        if (data?.active_provider) {
+            setActiveProvider(data.active_provider)
+        }
+    }
 
     const fetchDrivers = async () => {
         setLoading(true)
@@ -116,6 +129,7 @@ export default function DriversPage() {
                     searchQuery={searchQuery}
                     onSearchChange={setSearchQuery}
                     onOpenModal={openAddModal}
+                    activeProvider={activeProvider}
                 />
 
                 <DriversGrid

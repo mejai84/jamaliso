@@ -1,16 +1,18 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { ArrowLeft, Signal, Bike, Search, UserPlus } from "lucide-react"
+import { ArrowLeft, Signal, Bike, Search, UserPlus, AlertTriangle, Truck } from "lucide-react"
 import Link from "next/link"
 
 interface DriversHeaderProps {
     searchQuery: string
     onSearchChange: (query: string) => void
     onOpenModal: () => void
+    activeProvider?: string
 }
 
-export function DriversHeader({ searchQuery, onSearchChange, onOpenModal }: DriversHeaderProps) {
+export function DriversHeader({ searchQuery, onSearchChange, onOpenModal, activeProvider }: DriversHeaderProps) {
+    const isExternal = activeProvider && activeProvider !== 'JAMALI_FLEET'
     return (
         <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-12 border-b border-border/50 pb-12 font-sans">
             <div className="flex flex-col md:flex-row items-start md:items-center gap-10">
@@ -22,14 +24,31 @@ export function DriversHeader({ searchQuery, onSearchChange, onOpenModal }: Driv
                 <div className="space-y-6">
                     <div className="flex flex-wrap items-center gap-4">
                         <h1 className="text-6xl md:text-7xl font-black italic tracking-tighter uppercase leading-none text-foreground">FLOTA <span className="text-primary italic">REPARTO</span></h1>
-                        <div className="px-5 py-2 bg-primary/10 border-2 border-primary/20 rounded-[1.5rem] text-[11px] font-black text-primary tracking-[0.3em] italic uppercase shadow-xl animate-pulse flex items-center gap-3">
-                            <Signal className="w-4 h-4" />
-                            DRIVERS ACTIVE
-                        </div>
+
+                        {!isExternal ? (
+                            <div className="px-5 py-2 bg-emerald-500/10 border-2 border-emerald-500/20 rounded-[1.5rem] text-[11px] font-black text-emerald-500 tracking-[0.3em] italic uppercase shadow-xl animate-pulse flex items-center gap-3">
+                                <Signal className="w-4 h-4" />
+                                JAMALI FLEET ACTIVE
+                            </div>
+                        ) : (
+                            <div className="px-5 py-2 bg-amber-500/10 border-2 border-amber-500/20 rounded-[1.5rem] text-[11px] font-black text-amber-500 tracking-[0.3em] italic uppercase shadow-xl flex items-center gap-3">
+                                <AlertTriangle className="w-4 h-4" />
+                                {activeProvider} LOGISTICS ACTIVE
+                            </div>
+                        )}
                     </div>
                     <p className="text-[11px] text-muted-foreground font-black uppercase tracking-[0.5em] italic flex items-center gap-4 opacity-60">
                         <Bike className="w-5 h-5 text-primary" /> Gestión de Flota de Reparto, Calificaciones & Desempeño Logístico
                     </p>
+
+                    {isExternal && (
+                        <div className="flex items-center gap-4 py-3 px-6 bg-amber-500/5 border border-amber-500/20 rounded-2xl animate-in fade-in slide-in-from-left-4">
+                            <Truck className="w-4 h-4 text-amber-500" />
+                            <p className="text-[10px] font-bold text-amber-500/80 uppercase tracking-widest">
+                                ATENCIÓN: LA LOGÍSTICA ESTÁ DERIVADA A <span className="underline">{activeProvider}</span>. LOS REPARTIDORES LOCALES NO RECIBIRÁN PEDIDOS AUTOMÁTICOS.
+                            </p>
+                        </div>
+                    )}
                 </div>
             </div>
 

@@ -13,4 +13,7 @@ export interface DeliverySettings {
     delivery_active: boolean
     pickup_active: boolean
     notes: string
+    active_provider?: 'JAMALI_FLEET' | 'RAPPI' | 'UBER_EATS'
+    rappi_store_id?: string | null
+    uber_store_id?: string | null
 }

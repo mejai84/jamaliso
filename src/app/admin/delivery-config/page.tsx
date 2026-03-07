@@ -15,6 +15,7 @@ import { GeospatialParams } from "@/components/admin/delivery-config/GeospatialP
 import { ChronosMatrix } from "@/components/admin/delivery-config/ChronosMatrix"
 import { InternalProtocols } from "@/components/admin/delivery-config/InternalProtocols"
 import { GlobalMetric } from "@/components/admin/delivery-config/GlobalMetric"
+import { LogisticsProvider } from "@/components/admin/delivery-config/LogisticsProvider"
 
 export default function DeliveryConfigPage() {
     const [loading, setLoading] = useState(true)
@@ -64,6 +65,9 @@ export default function DeliveryConfigPage() {
                     delivery_active: settings.delivery_active,
                     pickup_active: settings.pickup_active,
                     notes: settings.notes,
+                    active_provider: settings.active_provider,
+                    rappi_store_id: settings.rappi_store_id,
+                    uber_store_id: settings.uber_store_id,
                     updated_at: new Date().toISOString()
                 })
                 .eq('id', settings.id)
@@ -122,7 +126,14 @@ export default function DeliveryConfigPage() {
                     <FinancialMatrix settings={settings} onUpdate={updateSetting} />
                     <GeospatialParams settings={settings} onUpdate={updateSetting} />
                     <ChronosMatrix settings={settings} onUpdate={updateSetting} />
-                    <InternalProtocols settings={settings} onUpdate={updateSetting} />
+
+                    <div className="md:col-span-2">
+                        <LogisticsProvider settings={settings} onUpdate={updateSetting} />
+                    </div>
+
+                    <div className="md:col-span-2">
+                        <InternalProtocols settings={settings} onUpdate={updateSetting} />
+                    </div>
                 </div>
 
                 <GlobalMetric />
