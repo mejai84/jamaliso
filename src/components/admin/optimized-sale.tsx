@@ -1,5 +1,5 @@
 /**
- * COMPONENTE DE VENTA OPTIMIZADO - PARGO ROJO POS (ELITE EDITION)
+ * COMPONENTE DE VENTA OPTIMIZADO - JAMALI OS POS (ELITE EDITION)
  * 
  * Implementa el flujo de venta crítico con estética Jamali OS:
  * - Validación de stock preventiva

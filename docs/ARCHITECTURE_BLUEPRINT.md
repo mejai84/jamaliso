@@ -36,9 +36,31 @@ graph TD
     D -- Update Status --> C
 ```
 
-## 5. Performance Tips
+## 5. Perímetro de Seguridad (Edge & Network)
+JAMALI OS implementa un escudo de Pen Testing diseñado para resistir ataques externos de fuerza bruta y suplantación:
+*   **Edge Middleware (`src/middleware.ts`)**: Ejecuta un "Rate Limiter" asíncrono que bloquea IPs maliciosas y valida la vigencia del JWT perimetralmente antes de que la petición toque la base de datos o renderice la UI.
+*   **Strict CORS & Security Headers**: Configurado nativamente en `next.config.ts`, el sistema blinda la app con cabeceras `X-Frame-Options`, `Strict-Transport-Security` y políticas CORS restrictivas para las APIs, previniendo ataques de Clickjacking y Cross-Site Scripting (XSS).
+
+## 6. Resiliencia Offline (PWA)
+Para operar ininterrumpidamente en entornos de restaurante del mundo real (donde el WiFi puede fallar), el sistema ha sido convertido en una **Progressive Web App (PWA)**:
+*   Utiliza `@ducanh2912/next-pwa` para registrar un **Service Worker** (`sw.js`).
+*   Mantiene en caché los assets de la Interfaz de Usuario. Si cae la red, la caja registradora, el KDS y el portal de meseros evitan la pantalla del "dinosaurio de Chrome" y permanecen estables.
+
+## 7. Performance Tips
 *   **Imágenes**: Usar el componente `<Image />` de Next.js para optimizar fotos de platos cargadas por el usuario.
 *   **Conexiones**: El `Pool` de conexiones en las Server Actions está diseñado para ser reutilizado (`client.release()`), evitando saturar los límites de Supabase.
+
+## 6. Patrón de Refactorización Atómica (SaaS Enterprise Standard)
+Para mantener la escalabilidad y permitir que múltiples desarrolladores trabajen en el mismo módulo sin conflictos masivos, JAMALI OS sigue un **Patrón de Refactorización Atómica**:
+
+1.  **Límite de Líneas (LOC)**: Los archivos de página principal (`page.tsx`) deben mantenerse por debajo de **150-200 líneas**.
+2.  **Extracción de Tipos**: Todos los interfaces y tipos específicos del módulo deben residir en un archivo `types.ts` dentro de la carpeta del módulo (ej: `src/app/admin/orders/types.ts`).
+3.  **Componentes Discretos**: La UI debe fragmentarse en componentes lógicos situados en `src/components/admin/[module_name]/`.
+    *   Ejemplo: `RevenueCore.tsx`, `InventoryTable.tsx`, `Sidebar.tsx`.
+4.  **Orquestación**: El archivo `page.tsx` sólo debe encargarse de:
+    *   Fecthing de datos inicial (vía hooks o server components).
+    *   Gestión de estados globales del módulo.
+    *   Renderizado de los componentes extraídos pasando las props necesarias.
 
 ---
 > [!CAUTION]

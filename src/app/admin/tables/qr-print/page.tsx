@@ -118,8 +118,8 @@ function QRPrintContent() {
                 <div className="text-center">
                     {/* Logo */}
                     <div className="mb-8">
-                        <h1 className="text-5xl font-bold text-black mb-2">Pargo Rojo</h1>
-                        <p className="text-2xl text-gray-600">Gran Rafa</p>
+                        <h1 className="text-5xl font-bold text-black mb-2">JAMALI OS</h1>
+                        <p className="text-2xl text-gray-600">MENÚ DIGITAL</p>
                     </div>
 
                     {/* QR Code */}
@@ -159,7 +159,7 @@ function QRPrintContent() {
 
                     {/* Footer */}
                     <div className="mt-8 text-gray-500 text-sm">
-                        <p>¡Disfruta tu experiencia en Pargo Rojo!</p>
+                        <p>¡Disfruta tu experiencia en JAMALI OS!</p>
                     </div>
                 </div>
             </div>

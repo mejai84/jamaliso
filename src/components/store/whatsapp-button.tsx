@@ -51,7 +51,7 @@ export function WhatsAppButton() {
 
     if (!config?.enabled || !config.phone) return null
 
-    const whatsappUrl = `https://wa.me/${config.phone.replace(/\+/g, '')}?text=Hola Pargo Rojo! Quiero hacer un pedido o una consulta.`
+    const whatsappUrl = `https://wa.me/${config.phone.replace(/\+/g, '')}?text=Hola JAMALI OS! Quiero hacer un pedido o una consulta.`
 
     return (
         <a

@@ -58,12 +58,12 @@ export async function createReservation(formData: FormData) {
     if (resend) {
         try {
             await resend.emails.send({
-                from: 'Pargo Rojo <reservas@pargo-rojo.com>',
+                from: 'JAMALI OS <reservas@jamali-os.com>',
                 to: [email],
-                subject: 'Confirmación de Reserva - Pargo Rojo',
+                subject: 'Confirmación de Reserva - JAMALI OS',
                 html: `
             <h1>¡Hola ${name}!</h1>
-            <p>Tu reserva en Pargo Rojo ha sido recibida y está pendiente de confirmación.</p>
+            <p>Tu reserva en JAMALI OS ha sido recibida y está pendiente de confirmación.</p>
             <p><strong>Detalles de la reserva:</strong></p>
             <ul>
               <li><strong>Fecha:</strong> ${date}</li>

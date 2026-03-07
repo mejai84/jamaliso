@@ -59,7 +59,9 @@ Siguiendo las mejores prácticas de mantenibilidad y modularidad, el proyecto es
 │   │
 │   ├── /components          # Componentes visuales genéricos y de dominio (Botones, Modales)
 │   │   ├── /admin           # Componentes específicos del POS y Backoffice
+│   │   │   └── /waiter      # Componentes atómicos del Portal de Meseros
 │   │   └── /ui              # Componentes UI base (Shadcn/Tailwind)
+
 │   │
 │   ├── /lib                 # Lógica core compartida
 │   │   ├── /supabase        # Clientes Supabase (Server / Browser / Middleware)
@@ -129,4 +131,14 @@ El sistema solo habilita el acceso total al POS una vez completado el pago exito
 
 ---
 
-*Última actualización: Marzo 2026 (Refactor Branding & Payment Gateway)*
+---
+
+## 9. Interfaz y Diseño (Pixora Light Theme)
+Desde marzo de 2026, JAMALI OS implementa el estándar **Pixora Light** de forma obligatoria para garantizar una estética premium, corporativa y de marca blanca:
+*   **Color System:** Basado en `Slate-900` para textos y `Orange-600` (`#EA580C`) para acciones principales.
+*   **Escalado Inteligente:** Implementación de `font-size` dinámico en el `html` vía CSS (100% móvil, 85% tablet, 75% laptop, 65% monitores grandes) para asegurar que la densidad de información sea óptima en cualquier dispositivo.
+*   **Branding Dinámico:** Los colores y logos se inyectan mediante el `RestaurantProvider` manteniendo la consistencia visual.
+
+---
+
+*Última actualización: 07 Marzo 2026 (Migración Final Branding JAMALI OS & Pixora Light)*

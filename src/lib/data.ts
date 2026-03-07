@@ -29,9 +29,9 @@ export const products: Product[] = [
     {
         id: "pargo_rojo",
         category_id: "cat_pescados",
-        name: "Pargo Rojo Frito",
+        name: "Frito de la Casa",
         price: 45000,
-        ingredients: ['Pargo Rojo fresco de 500g', 'Patacón', 'Arroz con coco', 'Ensalada fresca', 'Limón'],
+        ingredients: ['Pescado fresco de 500g', 'Patacón', 'Arroz con coco', 'Ensalada fresca', 'Limón'],
         image: "/images/placeholder.png",
         badge: "Especialidad"
     },

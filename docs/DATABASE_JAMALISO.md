@@ -64,9 +64,12 @@ Administración del personal, entregas a domicilio y liquidación automática de
 ---
 
 ## 🔒 Consolidación de Esquema (Squash)
-⚠️ A partir del 7 de Marzo de 2026, las más de 200 migraciones SQL originales se han archivado. El esquema entero se consolida en un **único archivo de origen de verdad**:
+⚠️ A partir del 07 de Marzo de 2026, las más de 200 migraciones SQL originales se han archivado por razones de performance y claridad. El esquema entero se consolida en un **único archivo de origen de verdad**:
 - `/supabase_migrations/20260307000000_jamaliso_initial_schema.sql`
-- También generado como mapa JSON en `/docs/schema_dump_v1.json` para integraciones.
+- `/docs/schema_dump_v1.json` (Mapa JSON para integraciones).
+
+## 6. Protección y Propiedad Intelectual
+El código fuente de este proyecto está protegido bajo las leyes de propiedad intelectual internacionales y la Ley 23 de 1982 (Colombia). El repositorio incluye un archivo `LICENSE` que restringe su uso y reproducción sin autorización expresa de **Jaime Jaramillo**.
 
 ---
 

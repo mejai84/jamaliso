@@ -2,41 +2,17 @@
 
 import { useEffect, useState } from "react"
 import { supabase } from "@/lib/supabase/client"
-import { Button } from "@/components/ui/button"
-import {
-    Plus,
-    Package,
-    Search,
-    Filter,
-    ArrowLeft,
-    Edit,
-    Trash2,
-    ChefHat,
-    DollarSign,
-    Loader2,
-    Activity,
-    Signal,
-    ChevronRight,
-    Truck,
-    Layers,
-    Warehouse,
-    AlertCircle,
-    MoreHorizontal
-} from "lucide-react"
-import Link from "next/link"
-import { cn } from "@/lib/utils"
-import { toast } from "sonner"
+import { Zap } from "lucide-react"
 import { useRestaurant } from "@/providers/RestaurantProvider"
 
-type Ingredient = {
-    id: string
-    name: string
-    unit: string
-    current_stock: number
-    min_stock: number
-    cost_per_unit: number
-    category: string
-}
+// Types
+import { Ingredient } from "./types"
+
+// Components
+import { InventoryHeader } from "@/components/admin/inventory/InventoryHeader"
+import { AccessGrid } from "@/components/admin/inventory/AccessGrid"
+import { InventoryKPIs } from "@/components/admin/inventory/InventoryKPIs"
+import { InventoryTable } from "@/components/admin/inventory/InventoryTable"
 
 export default function InventoryPage() {
     const { restaurant } = useRestaurant()
@@ -57,206 +33,37 @@ export default function InventoryPage() {
             .eq('active', true)
             .order('name', { ascending: true })
 
-        if (!error) setIngredients(data || [])
+        if (!error) setIngredients(data as Ingredient[] || [])
         setLoading(false)
     }
 
-    const getStatusInfo = (current: number, min: number) => {
-        if (current <= 0) return { label: 'Sin Stock', color: 'bg-red-500', text: 'text-red-400' }
-        if (current <= min) return { label: 'Crítico', color: 'bg-red-500', text: 'text-red-400' }
-        if (current <= min * 1.5) return { label: 'Bajo', color: 'bg-yellow-500', text: 'text-yellow-400' }
-        return { label: 'Óptimo', color: 'bg-emerald-500', text: 'text-emerald-400' }
-    }
-
-    const filtered = ingredients.filter(i =>
-        i.name.toLowerCase().includes(searchTerm.toLowerCase())
+    if (loading) return (
+        <div className="min-h-screen bg-background flex flex-col items-center justify-center p-8 gap-6 font-sans">
+            <div className="relative">
+                <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full scale-150 animate-pulse" />
+                <Zap className="w-16 h-16 text-primary animate-pulse relative z-10" />
+            </div>
+            <p className="font-black italic uppercase text-[10px] tracking-[0.4em] text-primary animate-pulse">Iniciando Kernel de Suministros...</p>
+        </div>
     )
-
-    const totalCost = ingredients.reduce((acc, curr) => acc + (curr.current_stock * curr.cost_per_unit), 0)
-    const criticalCount = ingredients.filter(i => i.current_stock <= i.min_stock).length
 
     return (
         <div className="min-h-screen bg-[#F8FAFC] text-slate-900 font-sans selection:bg-orange-500 overflow-hidden flex flex-col h-screen relative">
-
-            {/* 🌌 FONDO ESTRUCTURAL AURA */}
+            {/* 🌌 FONDO ESTRUCTURAL JAMALI */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-orange-500/5 blur-[120px] rounded-full animate-pulse" />
                 <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-500/5 blur-[120px] rounded-full opacity-50" />
             </div>
 
             <div className="relative z-30 p-10 md:p-12 space-y-12 max-w-[1800px] mx-auto flex-1 min-h-full flex flex-col">
-
-                {/* HEADER TÉCNICO ELITE */}
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-8">
-                        <Link href="/admin/hub">
-                            <Button variant="ghost" size="icon" className="h-16 w-16 rounded-[1.5rem] bg-white border border-slate-200 hover:bg-orange-600 hover:text-white transition-all group shadow-sm">
-                                <ArrowLeft className="w-6 h-6 group-hover:-translate-x-1 transition-transform" />
-                            </Button>
-                        </Link>
-                        <div className="space-y-2">
-                            <div className="flex items-center gap-2">
-                                <Signal className="w-4 h-4 text-orange-500 animate-pulse" />
-                                <span className="text-[10px] font-black uppercase tracking-[0.5em] text-orange-500 italic">Core Supply Intelligence</span>
-                            </div>
-                            <h1 className="text-6xl font-black italic tracking-tighter uppercase leading-none text-slate-900 text-glow">Kernel <span className="text-orange-500">Inventory</span></h1>
-                        </div>
-                    </div>
-                    <Button
-                        onClick={() => toast.success("ABRIENDO EDITOR DE NUEVO INSUMO")}
-                        className="h-16 px-12 bg-orange-600 hover:bg-orange-500 text-white font-black uppercase text-xs italic tracking-widest rounded-2xl shadow-lg shadow-orange-600/20 transition-all active:scale-95 gap-4"
-                    >
-                        <Plus className="w-6 h-6" /> ADQUIRIR PROTOCOLO
-                    </Button>
-                </div>
-
-                {/* BOTONES DE ACCESO RÁPIDO ELITE */}
-                <div className="grid grid-cols-4 gap-8">
-                    {[
-                        { label: 'LIBRO DE RECETAS', icon: ChefHat, href: '/admin/inventory/recipes', sub: 'Recipe_Engine' },
-                        { label: 'PROVEEDORES', icon: Truck, href: '/admin/inventory/suppliers', sub: 'Vendor_Matrix' },
-                        { label: 'HISTORIAL MOVIMIENTOS', icon: Activity, href: '/admin/inventory/movements', sub: 'Loss_Analysis' },
-                        { label: 'PEDIDOS Y COMPRAS', icon: Warehouse, href: '/admin/inventory/purchases', sub: 'Supply_Chain' }
-                    ].map((btn, i) => {
-                        const Content = (
-                            <div className="w-full h-24 flex items-center justify-between p-8 bg-white/60 backdrop-blur-3xl rounded-[2rem] border border-slate-200 hover:border-orange-500/30 hover:bg-orange-50 hover:shadow-xl group transition-all duration-500 cursor-pointer shadow-sm relative overflow-hidden">
-                                <div className="absolute top-0 right-0 p-6 opacity-[0.05] group-hover:rotate-12 transition-transform duration-1000">
-                                    <btn.icon className="w-16 h-16 text-slate-500" />
-                                </div>
-                                <div className="flex items-center gap-6 relative z-10 transition-all group-hover:translate-x-1">
-                                    <div className="p-4 bg-slate-50 border border-slate-100 rounded-xl group-hover:bg-white transition-colors">
-                                        <btn.icon className="w-6 h-6 text-orange-500" />
-                                    </div>
-                                    <div className="space-y-1 text-left">
-                                        <p className="text-[11px] font-black tracking-[0.2em] uppercase italic text-slate-900 group-hover:text-orange-600 leading-none">{btn.label}</p>
-                                        <p className="text-[8px] font-black uppercase tracking-[0.3em] text-slate-500 group-hover:text-slate-600 leading-none">{btn.sub}</p>
-                                    </div>
-                                </div>
-                                <ChevronRight className="w-5 h-5 text-slate-400 group-hover:text-orange-500 group-hover:translate-x-1 transition-all" />
-                            </div>
-                        );
-                        return (
-                            <Link key={i} href={btn.href} className="block w-full">{Content}</Link>
-                        );
-                    })}
-                </div>
-
-                {/* KPI CARDS ELITE */}
-                <div className="grid grid-cols-4 gap-8">
-                    {[
-                        { label: 'REFERENCIAS', val: ingredients.length, icon: Package, color: 'text-slate-900', sub: 'Active_Nodes' },
-                        {
-                            label: 'STOCK CRÍTICO',
-                            val: criticalCount,
-                            icon: AlertCircle,
-                            color: 'text-rose-500',
-                            sub: 'At_Risk',
-                            action: criticalCount > 0 ? (
-                                <Link href="/admin/inventory/purchases">
-                                    <Button variant="ghost" className="h-8 mt-2 px-2 text-[8px] font-black bg-rose-50 text-rose-600 border border-rose-100 hover:bg-rose-500 hover:text-white rounded-lg transition-all animate-pulse">
-                                        AUTOMATIZAR COMPRA
-                                    </Button>
-                                </Link>
-                            ) : null
-                        },
-                        { label: 'VALORACIÓN', val: `$${(totalCost / 1000).toFixed(1)}k`, icon: DollarSign, color: 'text-orange-500', sub: 'Market_Index' },
-                        { label: 'CATEGORÍAS', val: new Set(ingredients.map(i => i.category)).size, icon: Layers, color: 'text-blue-500', sub: 'Cluster_Map' }
-                    ].map((card, i) => (
-                        <div key={i} className="bg-white/60 backdrop-blur-3xl border border-slate-200 rounded-[3rem] p-8 relative overflow-hidden group shadow-sm transition-all duration-700 hover:border-orange-500/20 hover:shadow-xl">
-                            <div className="absolute top-0 right-0 p-8 opacity-[0.05] group-hover:rotate-12 transition-transform duration-1000">
-                                <card.icon className="w-20 h-20 text-slate-500" />
-                            </div>
-                            <div className="relative z-10 space-y-4">
-                                <div className="flex items-center gap-2">
-                                    <div className={cn("w-1.5 h-1.5 rounded-full", card.color.replace('text', 'bg'))} />
-                                    <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] italic leading-none">{card.label}</p>
-                                </div>
-                                <p className={cn("text-4xl font-black italic tracking-tighter text-slate-900 leading-none")}>{card.val}</p>
-                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.3em] italic group-hover:text-slate-500 transition-colors uppercase">{card.sub}</p>
-                                {card.action && <div className="pt-2">{card.action}</div>}
-                            </div>
-                        </div>
-                    ))}
-                </div>
-
-                {/* TABLA COMMAND ELITE */}
-                <div className="bg-white/60 backdrop-blur-3xl border border-slate-200 rounded-[4rem] overflow-hidden flex-1 flex flex-col shadow-sm">
-                    <div className="p-10 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-                        <div className="relative w-[500px] group">
-                            <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-orange-500 transition-all font-black" />
-                            <input
-                                type="search"
-                                autoComplete="new-password"
-                                placeholder="ESCANEAR REGISTROS DE KERNEL..."
-                                className="w-full bg-white border border-slate-200 rounded-2xl py-5 pl-16 pr-8 text-xs font-black uppercase tracking-[0.2em] italic focus:outline-none focus:border-orange-500/30 transition-all placeholder:text-slate-400 text-slate-900 shadow-sm"
-                                value={searchTerm}
-                                onChange={e => setSearchTerm(e.target.value)}
-                            />
-                        </div>
-                        <Button
-                            onClick={() => toast.info("FILTROS AVANZADOS")}
-                            variant="ghost" className="h-16 px-10 rounded-2xl bg-white border border-slate-200 text-slate-500 font-black uppercase italic text-[10px] tracking-[0.3em] transition-all hover:bg-slate-50 hover:text-slate-900 shadow-sm"
-                        >
-                            <Filter className="w-5 h-5 mr-4" /> Filtrar
-                        </Button>
-                    </div>
-
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse">
-                            <thead>
-                                <tr className="bg-slate-50/50">
-                                    <th className="p-6 text-[10px] font-bold text-slate-400 uppercase tracking-widest italic border-b border-slate-100">Referencia_Item</th>
-                                    <th className="p-6 text-[10px] font-bold text-slate-400 uppercase tracking-widest italic border-b border-slate-100">Cluster_Cat</th>
-                                    <th className="p-6 text-[10px] font-bold text-slate-400 uppercase tracking-widest italic border-b border-slate-100">Availability_Metric</th>
-                                    <th className="p-6 text-[10px] font-bold text-slate-400 uppercase tracking-widest italic text-center border-b border-slate-100">Health_Status</th>
-                                    <th className="p-6 text-[10px] font-bold text-slate-400 uppercase tracking-widest italic text-right border-b border-slate-100">Command</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {filtered.map((item) => {
-                                    const status = getStatusInfo(item.current_stock, item.min_stock)
-                                    return (
-                                        <tr key={item.id} className="border-b border-slate-100 hover:bg-slate-50 transition-colors group">
-                                            <td className="p-6">
-                                                <p className="font-bold text-slate-900">{item.name}</p>
-                                            </td>
-                                            <td className="p-6">
-                                                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">{item.category}</span>
-                                            </td>
-                                            <td className="p-6">
-                                                <div className="flex items-center gap-3">
-                                                    <span className="text-sm font-bold text-slate-900">{item.current_stock} {item.unit}</span>
-                                                    <span className={cn("text-[10px] font-black uppercase tracking-tighter opacity-70", status.text.replace('text-red-400', 'text-red-600').replace('text-yellow-400', 'text-yellow-600').replace('text-emerald-400', 'text-emerald-600'))}>({status.label})</span>
-                                                </div>
-                                            </td>
-                                            <td className="p-6">
-                                                <div className="flex justify-center">
-                                                    <div className={cn("w-3 h-3 rounded-full shadow-sm", status.color, "animate-pulse")} />
-                                                </div>
-                                            </td>
-                                            <td className="p-6 text-right">
-                                                <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                    <button
-                                                        onClick={() => toast.success(`EDITANDO: ${item.name}`)}
-                                                        className="p-2 rounded-lg bg-white text-slate-400 hover:text-slate-900 border border-slate-200 shadow-sm"
-                                                    >
-                                                        <Edit className="w-4 h-4" />
-                                                    </button>
-                                                    <button
-                                                        onClick={() => toast.info(`MÁS OPCIONES: ${item.name}`)}
-                                                        className="p-2 rounded-lg bg-white text-slate-400 hover:text-orange-500 border border-slate-200 shadow-sm"
-                                                    >
-                                                        <MoreHorizontal className="w-4 h-4" />
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    )
-                                })}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                <InventoryHeader />
+                <AccessGrid />
+                <InventoryKPIs ingredients={ingredients} />
+                <InventoryTable
+                    ingredients={ingredients}
+                    searchTerm={searchTerm}
+                    onSearchChange={setSearchTerm}
+                />
             </div>
         </div>
     )

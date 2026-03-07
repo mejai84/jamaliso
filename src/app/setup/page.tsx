@@ -76,7 +76,7 @@ export default function SetupPage() {
 
                 // Pescados y Mariscos
                 { cat: 'pescados-y-mariscos', name: 'Cazuela de Mariscos', price: 62000, desc: 'La especialidad de la casa.', badge: 'Best Seller' },
-                { cat: 'pescados-y-mariscos', name: 'Pargo Rojo Frito', price: 45000, desc: 'Clásico de la costa.' },
+                { cat: 'pescados-y-mariscos', name: 'Frito de la Casa', price: 45000, desc: 'Clásico de la costa.' },
 
                 // Ricuras Region
                 { cat: 'ricuras-region', name: 'Ensopado de Bagre', price: 52000, desc: 'Tradición en plato.' },

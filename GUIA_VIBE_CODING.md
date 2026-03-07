@@ -141,6 +141,12 @@ Esta guía define el orden exacto de construcción, las fórmulas matemáticas, 
    - Usa **Framer Motion** para todo cambio de estado crítico (pop-in, slide-in, stagger effects).
    - Micro-animaciones en botones (hover lift, soft shadows).
 
+6. **Arquitectura Atómica de Módulos (OBLIGATORIO):**
+   - Todo archivo `page.tsx` o componente que supere las **200 líneas** debe ser fragmentado de inmediato.
+   - Extraer interfaces a `types.ts` en la carpeta del módulo.
+   - Extraer piezas de UI a `src/components/admin/[módulo]/`.
+   - Mantener el archivo `page.tsx` como un **Orquestador Limpio** (< 150 líneas).
+
 ---
 
 ## ☢️ Parte 6: Protocolo Atómico de Actualización (OBLIGATORIO)

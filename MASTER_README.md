@@ -1,7 +1,13 @@
 # 🚀 JAMALI OS - Sistema de Operación Gastronómica Inteligente
 ¡Sistema de alto rendimiento implementado! Aquí encontrarás la guía para todas las funcionalidades de nivel empresarial.
 
-## 📖 MANUAL DE OPERACIÓN PRO (NUEVO)
+## � Transición de Marca (Marzo 2026)
+El sistema ha migrado completamente de "Pargo OS" a **JAMALI OS**. Este cambio incluye:
+- Nueva identidad visual premium (Pixora Light).
+- Unificación de dominios y correos electrónicos (@jamali-os.com).
+- Consolidación de base de datos y arquitectura escalable.
+
+## �📖 MANUAL DE OPERACIÓN PRO (NUEVO)
 > **[Consultar Manual de Usuario Vivo y Guía de Pruebas](MANUAL_DE_USUARIO_VIVO.md)**
 Este documento es la referencia definitiva para:
 - Pantalla de Cocina (KDS PRO)
@@ -38,6 +44,11 @@ Este documento es la referencia definitiva para:
 - Cálculo automático de periodos (Horas Extras y Comisiones POS).
 - Transacciones ACID para la dispersión segura de pagos.
 
+### 7. 🛡️ Arquitectura Enterprise & Seguridad
+- **Modo Offline (PWA)**: Interfaz resiliente ante caídas de internet en el restaurante.
+- **Testing & CI/CD**: Suite de Jest automatizada conectada a GitHub Actions.
+- **Edge Security**: Rate Limiting y CORS estrictos para repeler ataques automatizados.
+
 ---
 ## 🏗️ Documentación del Sistema (Developer & Admin)
 Para profundizar en el funcionamiento interno y la escalabilidad del sistema:
@@ -53,4 +64,4 @@ Para profundizar en el funcionamiento interno y la escalabilidad del sistema:
 - **Meseros**: `/admin/waiter` (Optimizado para tablets/móvil)
 - **Cocina**: `/admin/kitchen` (KDS en tiempo real)
 
-> **Importante**: No subir este código a GitHub sin autorización. Respetar políticas de privacidad de datos.
+> **Protección Legal**: Copyright (c) 2026 Jaime Jaramillo. Todos los derechos reservados. Este código es propiedad exclusiva del autor y está protegido por la Ley 23 de 1982. Prohibida su reproducción sin autorización escrita.

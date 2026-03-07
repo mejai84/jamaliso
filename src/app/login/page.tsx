@@ -81,10 +81,10 @@ export default function LoginPage() {
     }
 
     const demoUsers = [
-        { email: "admin.demo@pargorojo.com", pass: "password123", role: "Administrador", icon: ShieldCheck, color: "text-orange-500", bg: "bg-orange-50" },
-        { email: "clara.caja@pargorojo.com", pass: "password123", role: "Cajera", icon: Wallet, color: "text-emerald-500", bg: "bg-emerald-50" },
-        { email: "marcos.mesero@pargorojo.com", pass: "password123", role: "Mesero", icon: UserIcon, color: "text-blue-500", bg: "bg-blue-50" },
-        { email: "carlos.chef@pargorojo.com", pass: "password123", role: "Chef / Cocina", icon: ChefHat, color: "text-red-500", bg: "bg-red-50" },
+        { email: "admin.demo@jamali-os.com", pass: "password123", role: "Administrador", icon: ShieldCheck, color: "text-orange-500", bg: "bg-orange-50" },
+        { email: "clara.caja@jamali-os.com", pass: "password123", role: "Cajera", icon: Wallet, color: "text-emerald-500", bg: "bg-emerald-50" },
+        { email: "marcos.mesero@jamali-os.com", pass: "password123", role: "Mesero", icon: UserIcon, color: "text-blue-500", bg: "bg-blue-50" },
+        { email: "carlos.chef@jamali-os.com", pass: "password123", role: "Chef / Cocina", icon: ChefHat, color: "text-red-500", bg: "bg-red-50" },
     ]
 
     return (

@@ -14,7 +14,7 @@ export const generateReceiptPDF = (order: any, businessInfo: any, settings: any)
     // Header
     doc.setFontSize(12)
     doc.setFont("helvetica", "bold")
-    doc.text(businessInfo.business_name || "PARGO ROJO", 40, y, { align: "center" })
+    doc.text(businessInfo.business_name || "JAMALI OS", 40, y, { align: "center" })
     y += 5
 
     doc.setFontSize(8)

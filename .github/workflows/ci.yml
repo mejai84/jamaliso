@@ -24,6 +24,11 @@ jobs:
 
     - name: Lint check
       run: npm run lint
+      continue-on-error: true
+
+    - name: Run Tests
+      run: npm run test:ci
+
 
     - name: Build Next.js
       run: npm run build

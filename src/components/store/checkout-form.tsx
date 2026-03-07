@@ -432,7 +432,7 @@ export function CheckoutForm() {
                                     <p className="text-sm text-green-700 leading-relaxed">
                                         📍 <strong>Dirección:</strong> {businessInfo?.address || deliverySettings.restaurant_address || 'Calle Principal #123'}<br />
                                         📞 <strong>Teléfono:</strong> {businessInfo?.phone || deliverySettings.restaurant_phone || '+57 300 123 4567'}<br />
-                                        ✉️ <strong>Email:</strong> {businessInfo?.email || 'contacto@pargorojo.com'}<br />
+                                        ✉️ <strong>Email:</strong> {businessInfo?.email || 'contacto@jamali-os.com'}<br />
                                         ⏰ <strong>Tiempo estimado:</strong> {deliverySettings.estimated_delivery_time_min}-{deliverySettings.estimated_delivery_time_max} minutos
                                     </p>
                                 </div>

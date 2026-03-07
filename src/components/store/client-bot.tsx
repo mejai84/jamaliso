@@ -23,7 +23,7 @@ export function ClientBot() {
             role: 'assistant',
             content: (
                 <div className="space-y-2">
-                    <p>¡Hola! 👋 Soy tu asistente de **Pargo Rojo**. ¿En qué puedo ayudarte hoy?</p>
+                    <p>¡Hola! 👋 Soy tu asistente de **JAMALI OS**. ¿En qué puedo ayudarte hoy?</p>
                     <div className="text-[11px] bg-slate-100 p-2 rounded-lg italic">
                         Puedes preguntarme como: "¿Cómo comprar?", "¿Tienen ceviche?", o "Consultar mi pedido"
                     </div>
@@ -124,7 +124,7 @@ export function ClientBot() {
             responseContent = "¡Nuestra especialidad! 🐟 Lo servimos frito, a la plancha o en salsa marinera. Viene con patacones, arroz de coco y ensalada. ¡Es una joya!"
         }
         else if (q.includes('ceviche') || q.includes('camaron') || q.includes('marisco')) {
-            responseContent = "Usamos mariscos frescos que llegan cada madrugada. Te recomiendo el Ceviche Gran Pargo, ¡es una explosión de sabor! 🍋🦐"
+            responseContent = "Usamos mariscos frescos que llegan cada madrugada. Te recomiendo nuestra especialidad de la casa, ¡es una explosión de sabor! 🍋🦐"
         }
         else if (q.includes('carne') || q.includes('asado') || q.includes('res') || q.includes('cerdo')) {
             responseContent = "No todo es mar; nuestros cortes de res premium y costillitas BBQ son famosos en Caucasia. 🥩🔥"
@@ -167,13 +167,13 @@ export function ClientBot() {
 
         // 5. MARCA, HISTORIA Y PERSONALIDAD
         else if (q.includes('quien es') || q.includes('rafa')) {
-            responseContent = "Gran Rafa es el alma de este restaurante. 👨‍🍳 Un apasionado por la cocina tradicional de mar con años de experiencia consintiendo a los caucasianos."
+            responseContent = "Nuestro Chef es el alma de este restaurante. 👨‍🍳 Un apasionado por la cocina tradicional con años de experiencia consintiendo a nuestros clientes."
         }
         else if (q.includes('historia') || q.includes('tradicion') || q.includes('años')) {
-            responseContent = "Pargo Rojo nació del amor por la cocina de mar. Llevamos años siendo el punto de encuentro favorito en Caucasia gracias a nuestra sazón única. 🌊"
+            responseContent = "Nuestro restaurante nació del amor por la buena mesa. Llevamos años siendo el punto de encuentro favorito gracias a nuestra sazón única. 🌊"
         }
         else if (q.includes('trabajo') || q.includes('empleo') || q.includes('hoja de vida')) {
-            responseContent = "¡Siempre buscamos talento! Envía tu hoja de vida a contacto@pargorojo.com o déjala físicamente en el local. 📄"
+            responseContent = "¡Siempre buscamos talento! Envía tu hoja de vida a nuestro contacto o déjala físicamente en el local. 📄"
         }
         else if (q.includes('queja') || q.includes('reclamo') || q.includes('malo')) {
             responseContent = "Lamentamos mucho si algo no salió bien. Por favor, habla con el capitán de meseros o escríbenos a nuestro WhatsApp para solucionarlo de inmediato. Queremos que seas feliz. 🙏"
@@ -207,7 +207,7 @@ export function ClientBot() {
                     <div className="flex flex-col gap-2">
                         <span className="font-bold">📍 Nuestra ubicación:</span>
                         <span className="text-xs">{businessInfo?.address || "C.Cial. Cauca Centro, Caucasia"}</span>
-                        <a href={`https://maps.google.com/?q=${businessInfo?.address || "Pargo Rojo Caucasia"}`} target="_blank" rel="noreferrer" className="bg-slate-900 text-white px-3 py-2 rounded-lg text-center text-[10px] font-bold uppercase tracking-widest mt-1">Abrir Google Maps</a>
+                        <a href={`https://maps.google.com/?q=${businessInfo?.address || "Nuestra Ubicación"}`} target="_blank" rel="noreferrer" className="bg-slate-900 text-white px-3 py-2 rounded-lg text-center text-[10px] font-bold uppercase tracking-widest mt-1">Abrir Google Maps</a>
                     </div>
                 )
             } else if (q.includes('menu') || q.includes('carta') || q.includes('platos') || q.includes('recomienda') || q.includes('sugerencia')) {

@@ -339,7 +339,7 @@ function WizardContent() {
                                             <Label className="text-[10px] uppercase font-black tracking-widest text-slate-500 ml-4 group-focus-within:text-orange-500 transition-colors">NOMBRE DEL RESTAURANTE</Label>
                                             <div className="relative">
                                                 <Input
-                                                    placeholder="EJ: PARGO ROJO BISTRO"
+                                                    placeholder="EJ: JAMALI OS BISTRO"
                                                     className="h-16 rounded-2xl bg-white border-2 border-slate-100 focus:border-orange-500/20 focus:ring-0 px-8 text-xl font-black italic uppercase tracking-tight transition-all"
                                                     value={formData.restaurantName}
                                                     onChange={(e) => {

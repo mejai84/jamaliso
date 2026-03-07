@@ -42,7 +42,7 @@ export default function PurchasesPage() {
             try {
                 setLoading(true)
                 const { data, error } = await supabase
-                    .from('inventory_purchases')
+                    .from('purchases')
                     .select(`
             *,
             suppliers (name)

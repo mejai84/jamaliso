@@ -33,10 +33,10 @@ class OfflineEngine {
     private handleStatusChange(status: boolean) {
         this.isOnline = status
         if (status) {
-            console.log("⚡ Pargo OS: Conexión restaurada. Iniciando sincronización...")
+            console.log("⚡ JAMALI OS: Conexión restaurada. Iniciando sincronización...")
             this.syncPendingOrders()
         } else {
-            console.warn("⚠️ Pargo OS: Modo Offline activado.")
+            console.warn("⚠️ JAMALI OS: Modo Offline activado.")
         }
     }
 
@@ -53,14 +53,14 @@ class OfflineEngine {
 
         const pending = this.getPendingOrders()
         pending.push(offlineOrder)
-        localStorage.setItem('pargo_offline_orders', JSON.stringify(pending))
+        localStorage.setItem('jamali_offline_orders', JSON.stringify(pending))
 
         return offlineOrder
     }
 
     public getPendingOrders(): OfflineOrder[] {
         if (typeof window === 'undefined') return []
-        const stored = localStorage.getItem('pargo_offline_orders')
+        const stored = localStorage.getItem('jamali_offline_orders')
         return stored ? JSON.parse(stored) : []
     }
 
@@ -112,8 +112,8 @@ class OfflineEngine {
     private removeOrderFromLocal(id: string) {
         const pending = this.getPendingOrders()
         const updated = pending.filter(o => o.id !== id)
-        localStorage.setItem('pargo_offline_orders', JSON.stringify(updated))
+        localStorage.setItem('jamali_offline_orders', JSON.stringify(updated))
     }
 }
 
-export const pargoOffline = OfflineEngine.getInstance()
+export const jamaliOffline = OfflineEngine.getInstance()

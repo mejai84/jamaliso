@@ -102,14 +102,14 @@ export default function NewPurchasePage() {
         setSaving(true)
         try {
             const { data: purchaseData, error: pError } = await supabase
-                .from('inventory_purchases')
+                .from('purchases')
                 .insert([{
                     restaurant_id: restaurant?.id,
                     supplier_id: supplierId,
                     invoice_number: invoiceNumber,
-                    purchase_date: new Date(purchaseDate).toISOString(),
+                    received_at: new Date(purchaseDate).toISOString(),
                     total_amount: totalOrder,
-                    payment_status: 'paid',
+                    status: 'completed',
                     created_by: (await supabase.auth.getUser()).data.user?.id
                 }])
                 .select()
@@ -119,13 +119,13 @@ export default function NewPurchasePage() {
 
             const purchaseId = purchaseData.id
             const { error: iError } = await supabase
-                .from('inventory_purchase_items')
+                .from('purchase_items')
                 .insert(items.map(i => ({
                     purchase_id: purchaseId,
                     ingredient_id: i.ingredient_id,
                     quantity: i.quantity,
                     unit_cost: i.unit_cost,
-                    total_cost: i.total_cost
+                    subtotal: i.total_cost
                 })))
 
             if (iError) throw iError

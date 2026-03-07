@@ -31,7 +31,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     // Persistir en localStorage
     useEffect(() => {
         setIsMounted(true)
-        const savedCart = localStorage.getItem("pargo-rojo-cart")
+        const savedCart = localStorage.getItem("jamali-os-cart")
         if (savedCart) {
             try {
                 setItems(JSON.parse(savedCart))
@@ -43,7 +43,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         if (isMounted) {
-            localStorage.setItem("pargo-rojo-cart", JSON.stringify(items))
+            localStorage.setItem("jamali-os-cart", JSON.stringify(items))
         }
     }, [items, isMounted])
 

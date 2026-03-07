@@ -27,11 +27,11 @@ export default function OrderStatusPage() {
             const channel = supabase.channel('order-status-' + params.id)
                 .on('postgres_changes',
                     { event: 'UPDATE', schema: 'public', table: 'orders', filter: `id=eq.${params.id}` },
-                    (payload) => setOrder(prev => ({ ...prev, ...payload.new }))
+                    (payload) => setOrder((prev: any) => ({ ...prev, ...payload.new }))
                 )
                 .on('postgres_changes',
                     { event: 'UPDATE', schema: 'public', table: 'delivery_tracking', filter: `order_id=eq.${params.id}` },
-                    (payload) => setDelivery(prev => ({ ...prev, ...payload.new }))
+                    (payload) => setDelivery((prev: any) => ({ ...prev, ...payload.new }))
                 )
                 .subscribe()
 
@@ -225,7 +225,7 @@ export default function OrderStatusPage() {
                                 </div>
                                 <div>
                                     <p className="font-bold">{delivery.profiles?.full_name || "Repartidor"}</p>
-                                    <p className="text-[10px] text-white/50 uppercase tracking-wider">Pargo Delivery</p>
+                                    <p className="text-[10px] text-white/50 uppercase tracking-wider">JAMALI Delivery</p>
                                 </div>
                             </div>
                             {delivery.profiles?.phone && (

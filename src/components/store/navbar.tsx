@@ -22,7 +22,7 @@ export function Navbar() {
     const [categories, setCategories] = useState<any[]>([])
 
     const [showCombos, setShowCombos] = useState(false)
-    const [businessInfo, setBusinessInfo] = useState<any>({ name: "PARGO ROJO", logo_url: "" })
+    const [businessInfo, setBusinessInfo] = useState<any>({ name: "JAMALI OS", logo_url: "" })
 
     useEffect(() => {
         // Get initial session
@@ -137,7 +137,7 @@ export function Navbar() {
                                 <img src={businessInfo.logo_url} className="w-full h-full object-contain" alt="Logo" />
                             </div>
                         ) : (
-                            <div className="w-14 h-14 bg-primary flex items-center justify-center rounded-full text-white font-black italic text-xl">P</div>
+                            <div className="w-14 h-14 bg-primary flex items-center justify-center rounded-full text-white font-black italic text-xl">J</div>
                         )}
                         <span className="text-2xl font-bold tracking-tighter text-gradient uppercase">
                             {businessInfo.name}
@@ -273,7 +273,7 @@ export function Navbar() {
                     <div className="h-20 flex items-center justify-between px-6 border-b border-gray-100">
                         <div className="flex items-center gap-3">
                             <Utensils className="w-6 h-6 text-primary" />
-                            <span className="text-xl font-bold tracking-tight text-gray-900">CARTA PARGO ROJO</span>
+                            <span className="text-xl font-bold tracking-tight text-gray-900">MENÚ DIGITAL</span>
                         </div>
                         <Button variant="ghost" size="icon" className="rounded-full hover:bg-gray-50" onClick={() => setIsMenuOpen(false)}>
                             <X className="w-7 h-7 text-gray-700" />

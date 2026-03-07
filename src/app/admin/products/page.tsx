@@ -76,7 +76,7 @@ export default function AdminProductsPremium() {
     return (
         <div className="min-h-screen bg-[#F8FAFC] text-slate-900 font-sans selection:bg-orange-500 overflow-hidden flex flex-col h-screen relative">
 
-            {/* 🌌 FONDO ESTRUCTURAL AURA */}
+            {/* 🌌 FONDO ESTRUCTURAL JAMALI */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[60%] bg-orange-500/5 blur-[120px] rounded-full animate-pulse" />
                 <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-500/5 blur-[120px] rounded-full opacity-50" />

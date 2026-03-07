@@ -1,5 +1,5 @@
 /**
- * ACCIONES OPTIMIZADAS PARA VENTAS - PARGO ROJO POS
+ * ACCIONES OPTIMIZADAS PARA VENTAS - JAMALI OS POS
  * 
  * Implementa flujos críticos optimizados usando transacciones atómicas
  * y validaciones preventivas según mejores prácticas de sistemas POS profesionales.
@@ -359,7 +359,7 @@ export function validateOpeningAmount(
     return {
         valid: true,
         requiresAuth,
-        error: requiresAuth 
+        error: requiresAuth
             ? `Monto superior a $${validations.requiresAuthAbove.toLocaleString()}, requiere autorización`
             : undefined
     }
@@ -368,12 +368,3 @@ export function validateOpeningAmount(
 // ============================================================================
 // EXPORTACIONES
 // ============================================================================
-
-export {
-    type SaleItem,
-    type CompleteSaleData,
-    type CancelSaleData,
-    type StockValidation,
-    type OpeningContext,
-    type CashboxValidations
-}

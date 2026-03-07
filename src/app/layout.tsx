@@ -10,8 +10,10 @@ const outfit = Outfit({ subsets: ["latin"] });
 export const metadata: Metadata = {
     title: "JAMALI OS | El sistema operativo de tu restaurante",
     description: "Sistema de gestión integral para restaurantes. Con tecnología Antigravity.",
+    manifest: '/manifest.json',
     icons: {
         icon: '/favicon.png',
+        apple: '/icon.png',
     },
 };
 

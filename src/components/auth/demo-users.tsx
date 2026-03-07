@@ -11,7 +11,7 @@ interface DemoUserProps {
 export function DemoUsers({ onSelect }: DemoUserProps) {
     const users = [
         {
-            email: "admin.demo@pargorojo.com",
+            email: "admin.demo@jamali-os.com",
             pass: "password123",
             role: "Administrador (Demo)",
             icon: ShieldCheck,
@@ -19,7 +19,7 @@ export function DemoUsers({ onSelect }: DemoUserProps) {
             bg: "bg-primary/10"
         },
         {
-            email: "clara.caja@pargorojo.com",
+            email: "clara.caja@jamali-os.com",
             pass: "password123",
             role: "Cajera (Clara)",
             icon: Wallet,
@@ -27,7 +27,7 @@ export function DemoUsers({ onSelect }: DemoUserProps) {
             bg: "bg-emerald-400/10"
         },
         {
-            email: "marcos.mesero@pargorojo.com",
+            email: "marcos.mesero@jamali-os.com",
             pass: "password123",
             role: "Mesero (Marcos)",
             icon: UserIcon,
@@ -35,7 +35,7 @@ export function DemoUsers({ onSelect }: DemoUserProps) {
             bg: "bg-blue-400/10"
         },
         {
-            email: "carlos.chef@pargorojo.com",
+            email: "carlos.chef@jamali-os.com",
             pass: "password123",
             role: "Chef / Cocina (Carlos)",
             icon: ChefHat,

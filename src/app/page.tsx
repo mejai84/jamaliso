@@ -17,9 +17,9 @@ export default function Home() {
   const [loading, setLoading] = useState(true)
   const [featuredDishes, setFeaturedDishes] = useState<any[]>([])
   const [businessInfo, setBusinessInfo] = useState<any>({
-    name: "PARGO ROJO",
+    name: "JAMALI OS",
     logo_url: "",
-    tagline: "Gran Rafa | Experiencia Gastronómica de Mar",
+    tagline: "JAMALI OS | Experiencia Gastronómica de Mar",
     address: "C.Cial. Cauca Centro, Caucasia"
   })
   const [landingConfig, setLandingConfig] = useState<any>(null)
@@ -94,8 +94,8 @@ export default function Home() {
   const config = landingConfig || {
     hero: {
       image_url: "/premium_seafood_hero_1769294804705.png",
-      title_part1: businessInfo.name?.split(' ')[0] || "PARGO",
-      title_part2: businessInfo.name?.split(' ').slice(1).join(' ') || "ROJO",
+      title_part1: businessInfo.name?.split(' ')[0] || "JAMALI",
+      title_part2: businessInfo.name?.split(' ').slice(1).join(' ') || "OS",
       tagline: businessInfo.tagline,
       est_year: "2012",
       location_city: "Caucasia, Antioquia"
