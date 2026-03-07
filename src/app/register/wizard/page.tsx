@@ -82,7 +82,7 @@ export default function RegisterWizard() {
                 options: {
                     data: {
                         full_name: formData.ownerName,
-                        role: 'owner'
+                        role: 'admin'
                     }
                 }
             })
@@ -90,14 +90,14 @@ export default function RegisterWizard() {
             if (authError) throw authError
             if (!authData.user) throw new Error("No se pudo crear el usuario")
 
-            // 2. Crear Restaurante (Tenant)
-            // Nota: En un sistema real aquí llamaríamos a un Server Action para manejar la lógica atómica
+            // 2. Crear el Restaurante
             const { data: restData, error: restError } = await supabase
                 .from('restaurants')
                 .insert({
                     name: formData.restaurantName,
                     subdomain: formData.slug,
                     primary_color: formData.primaryColor,
+                    logo_url: '/jamali_os_dashboard_mockup_1772892029558.png', // Logo por defecto
                     is_active: true
                 })
                 .select()
@@ -105,10 +105,13 @@ export default function RegisterWizard() {
 
             if (restError) throw restError
 
-            // 3. Vincular Perfil con el Restaurante
+            // 3. Vincular Perfil con el Restaurante y Rol
             const { error: profileError } = await supabase
                 .from('profiles')
-                .update({ restaurant_id: restData.id, role: 'owner' })
+                .update({
+                    restaurant_id: restData.id,
+                    role: 'admin'
+                })
                 .eq('id', authData.user.id)
 
             if (profileError) throw profileError
