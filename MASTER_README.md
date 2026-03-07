@@ -32,6 +32,11 @@ Este documento es la referencia definitiva para:
 ### 5. 💳 Pagos Locales (Wompi)
 - Integración con Wompi Colombia (Tarjetas, Nequi, PSE).
 
+### 6. 💼 [Motor de Nómina (Payroll)](/admin/payroll)
+- Dashboard Financiero de sueldos y contratos.
+- Cálculo automático de periodos (Horas Extras y Comisiones POS).
+- Transacciones ACID para la dispersión segura de pagos.
+
 ---
 ## 🏗️ Documentación del Sistema (Developer & Admin)
 Para profundizar en el funcionamiento interno y la escalabilidad del sistema:

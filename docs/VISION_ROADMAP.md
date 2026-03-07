@@ -28,6 +28,9 @@ Fases para llevar a Jamali OS a la dominancia del mercado:
 ### Fase 1: Base Sólida (Meses 0–3) *[FASE ACTUAL]*
 - [x] Arquitectura SaaS Multi-Tenant (Seguridad RLS).
 - [x] Dashboard Financiero visual (Food Cost y Mermas).
+- [x] Estabilización Técnica: Limpieza de historial Git, CI/CD en GitHub Actions.
+- [x] Consolidación de Migraciones (DB Squash) a un único origen de verdad + Json Dict.
+- [x] Implementación Core Motor de Nómina (Payroll Engine) conectado al POS y turnos.
 - [ ] Construcción de un POS (Punto de Venta) robusto, rápido y fluido (Animaciones Framer Motion).
 - [ ] Flujo impecable Mesero -> Cocina (KDS) -> Caja.
 - [ ] Facturación Electrónica (DIAN), modo Offline (PWA) de emergencia.

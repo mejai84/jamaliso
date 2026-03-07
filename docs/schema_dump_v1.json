@@ -1,0 +1,3933 @@
+{
+  "prep_stations": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": "gen_random_uuid()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "restaurant_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "name",
+      "data_type": "character varying",
+      "character_maximum_length": 255,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "description",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "is_active",
+      "data_type": "boolean",
+      "character_maximum_length": null,
+      "column_default": "true",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "updated_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    }
+  ],
+  "tenants": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": "gen_random_uuid()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "owner_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "name",
+      "data_type": "character varying",
+      "character_maximum_length": 255,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "logo_url",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "primary_color",
+      "data_type": "character varying",
+      "character_maximum_length": 20,
+      "column_default": "'#FF6B6B'::character varying",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "domain",
+      "data_type": "character varying",
+      "character_maximum_length": 255,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "subscription_plan",
+      "data_type": "character varying",
+      "character_maximum_length": 50,
+      "column_default": "'partner_standard'::character varying",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "is_active",
+      "data_type": "boolean",
+      "character_maximum_length": null,
+      "column_default": "true",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "timezone('utc'::text, now())",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "updated_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "timezone('utc'::text, now())",
+      "is_nullable": "NO"
+    }
+  ],
+  "orders": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": "uuid_generate_v4()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "user_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "guest_info",
+      "data_type": "jsonb",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "status",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": "'pending'::text",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "total",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "timezone('utc'::text, now())",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "table_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "delivery_address",
+      "data_type": "jsonb",
+      "character_maximum_length": null,
+      "column_default": "'{}'::jsonb",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "payment_method",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": "'cash'::text",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "payment_status",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": "'pending'::text",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "subtotal",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": "0",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "delivery_fee",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": "0",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "notes",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "order_type",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": "'delivery'::text",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "preparation_started_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "preparation_finished_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "waiter_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "updated_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "restaurant_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "deleted_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "tip_amount",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": "0",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "tax",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": "0",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "service_charge",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": "0",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "priority",
+      "data_type": "boolean",
+      "character_maximum_length": null,
+      "column_default": "false",
+      "is_nullable": "YES"
+    }
+  ],
+  "tables": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": "gen_random_uuid()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "table_number",
+      "data_type": "integer",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "table_name",
+      "data_type": "character varying",
+      "character_maximum_length": 50,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "capacity",
+      "data_type": "integer",
+      "character_maximum_length": null,
+      "column_default": "4",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "qr_code",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "status",
+      "data_type": "character varying",
+      "character_maximum_length": 20,
+      "column_default": "'available'::character varying",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "location",
+      "data_type": "character varying",
+      "character_maximum_length": 100,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "active",
+      "data_type": "boolean",
+      "character_maximum_length": null,
+      "column_default": "true",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "updated_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "parent_table_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "is_merged",
+      "data_type": "boolean",
+      "character_maximum_length": null,
+      "column_default": "false",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "x_pos",
+      "data_type": "integer",
+      "character_maximum_length": null,
+      "column_default": "0",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "y_pos",
+      "data_type": "integer",
+      "character_maximum_length": null,
+      "column_default": "0",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "width",
+      "data_type": "integer",
+      "character_maximum_length": null,
+      "column_default": "120",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "height",
+      "data_type": "integer",
+      "character_maximum_length": null,
+      "column_default": "120",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "rotation",
+      "data_type": "integer",
+      "character_maximum_length": null,
+      "column_default": "0",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "shape",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": "'rectangle'::text",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "restaurant_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "deleted_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    }
+  ],
+  "cash_movements": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": "gen_random_uuid()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "cashbox_session_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "user_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "movement_type",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "amount",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "description",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "reference_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "updated_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "restaurant_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "payment_method",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    }
+  ],
+  "petty_cash_vouchers": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": "gen_random_uuid()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "voucher_number",
+      "data_type": "integer",
+      "character_maximum_length": null,
+      "column_default": "nextval('petty_cash_vouchers_voucher_number_seq'::regclass)",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "date",
+      "data_type": "date",
+      "character_maximum_length": null,
+      "column_default": "CURRENT_DATE",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "beneficiary_name",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "amount",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "concept",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "category",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": "'Otros'::text",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "status",
+      "data_type": "character varying",
+      "character_maximum_length": 20,
+      "column_default": "'draft'::character varying",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "accounting_code",
+      "data_type": "character varying",
+      "character_maximum_length": 100,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "amount_in_words",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "cargo",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "signature_data",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "restaurant_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": "'00000000-0000-0000-0000-000000000000'::uuid",
+      "is_nullable": "YES"
+    }
+  ],
+  "delivery_settings": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": "gen_random_uuid()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "delivery_fee_enabled",
+      "data_type": "boolean",
+      "character_maximum_length": null,
+      "column_default": "true",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "delivery_fee",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": "5000",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "free_delivery_threshold",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "max_delivery_radius_km",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": "3",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "estimated_delivery_time_min",
+      "data_type": "integer",
+      "character_maximum_length": null,
+      "column_default": "30",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "estimated_delivery_time_max",
+      "data_type": "integer",
+      "character_maximum_length": null,
+      "column_default": "45",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "restaurant_address",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "restaurant_lat",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "restaurant_lng",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "restaurant_phone",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "business_hours",
+      "data_type": "jsonb",
+      "character_maximum_length": null,
+      "column_default": "'[]'::jsonb",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "delivery_active",
+      "data_type": "boolean",
+      "character_maximum_length": null,
+      "column_default": "true",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "pickup_active",
+      "data_type": "boolean",
+      "character_maximum_length": null,
+      "column_default": "true",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "notes",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "updated_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "updated_by",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    }
+  ],
+  "order_deliveries": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": "gen_random_uuid()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "order_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "driver_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "assigned_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "assigned_by",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "picked_up_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "on_route_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "delivered_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "delivery_status",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": "'pending'::text",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "delivery_address",
+      "data_type": "jsonb",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "customer_phone",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "delivery_notes",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "customer_location_lat",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "customer_location_lng",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "distance_km",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "estimated_arrival",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "actual_arrival",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "proof_of_delivery",
+      "data_type": "jsonb",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "failure_reason",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "updated_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    }
+  ],
+  "categories": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": "uuid_generate_v4()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "name",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "slug",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "image_url",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "order_position",
+      "data_type": "integer",
+      "character_maximum_length": null,
+      "column_default": "0",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "is_active",
+      "data_type": "boolean",
+      "character_maximum_length": null,
+      "column_default": "true",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "timezone('utc'::text, now())",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "description",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "sort_order",
+      "data_type": "integer",
+      "character_maximum_length": null,
+      "column_default": "0",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "restaurant_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "deleted_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    }
+  ],
+  "products": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": "uuid_generate_v4()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "category_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "name",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "description",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "price",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "image_url",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "is_available",
+      "data_type": "boolean",
+      "character_maximum_length": null,
+      "column_default": "true",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "options",
+      "data_type": "jsonb",
+      "character_maximum_length": null,
+      "column_default": "'{}'::jsonb",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "timezone('utc'::text, now())",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "available",
+      "data_type": "boolean",
+      "character_maximum_length": null,
+      "column_default": "true",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "preparation_time",
+      "data_type": "integer",
+      "character_maximum_length": null,
+      "column_default": "15",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "restaurant_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "deleted_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "station_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    }
+  ],
+  "order_items": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": "uuid_generate_v4()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "order_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "product_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "quantity",
+      "data_type": "integer",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "unit_price",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "customizations",
+      "data_type": "jsonb",
+      "character_maximum_length": null,
+      "column_default": "'{}'::jsonb",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "notes",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "updated_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "status",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": "'pending'::text",
+      "is_nullable": "YES"
+    }
+  ],
+  "payroll_concepts": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": "gen_random_uuid()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "restaurant_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "name",
+      "data_type": "character varying",
+      "character_maximum_length": 100,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "type",
+      "data_type": "character varying",
+      "character_maximum_length": 20,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "category",
+      "data_type": "character varying",
+      "character_maximum_length": 50,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "percentage",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "is_legal",
+      "data_type": "boolean",
+      "character_maximum_length": null,
+      "column_default": "true",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "deleted_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    }
+  ],
+  "payroll_periods": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": "gen_random_uuid()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "restaurant_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "name",
+      "data_type": "character varying",
+      "character_maximum_length": 100,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "start_date",
+      "data_type": "date",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "end_date",
+      "data_type": "date",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "status",
+      "data_type": "character varying",
+      "character_maximum_length": 20,
+      "column_default": "'OPEN'::character varying",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    }
+  ],
+  "payroll_runs": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": "gen_random_uuid()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "period_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "restaurant_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "run_date",
+      "data_type": "date",
+      "character_maximum_length": null,
+      "column_default": "CURRENT_DATE",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "total_earnings",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": "0",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "total_deductions",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": "0",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "net_total",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": "0",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "status",
+      "data_type": "character varying",
+      "character_maximum_length": 20,
+      "column_default": "'DRAFT'::character varying",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    }
+  ],
+  "payroll_items": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": "gen_random_uuid()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "run_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "employee_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "concept_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "amount",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "description",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    }
+  ],
+  "payroll_novelties": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": "gen_random_uuid()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "employee_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "restaurant_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "type",
+      "data_type": "character varying",
+      "character_maximum_length": 50,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "start_date",
+      "data_type": "date",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "end_date",
+      "data_type": "date",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "amount",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "notes",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "status",
+      "data_type": "character varying",
+      "character_maximum_length": 20,
+      "column_default": "'PENDING'::character varying",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    }
+  ],
+  "profiles": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "email",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "full_name",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "phone",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "role",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": "'customer'::text",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "loyalty_points",
+      "data_type": "integer",
+      "character_maximum_length": null,
+      "column_default": "0",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "timezone('utc'::text, now())",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "role_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "address",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "restaurant_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "document_id",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "hire_date",
+      "data_type": "date",
+      "character_maximum_length": null,
+      "column_default": "CURRENT_DATE",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "waiter_pin",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "food_discount_pct",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": "0",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "max_credit",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": "0",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "current_credit_spent",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": "0",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "hourly_rate",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": "0",
+      "is_nullable": "YES"
+    }
+  ],
+  "ingredients": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": "gen_random_uuid()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "name",
+      "data_type": "character varying",
+      "character_maximum_length": 255,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "description",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "unit",
+      "data_type": "character varying",
+      "character_maximum_length": 50,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "current_stock",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": "0",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "min_stock",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": "0",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "max_stock",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "cost_per_unit",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": "0",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "supplier",
+      "data_type": "character varying",
+      "character_maximum_length": 255,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "category",
+      "data_type": "character varying",
+      "character_maximum_length": 100,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "active",
+      "data_type": "boolean",
+      "character_maximum_length": null,
+      "column_default": "true",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "updated_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "restaurant_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "deleted_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    }
+  ],
+  "shifts": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": "gen_random_uuid()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "user_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "device_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "shift_type",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "started_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "ended_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "status",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": "'OPEN'::text",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "notes",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "shift_definition_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "overtime_hours",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": "0",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "regular_hours",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": "0",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "restaurant_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "deleted_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "total_hours",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": "0",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "hourly_rate",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": "0",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "total_payment",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": "0",
+      "is_nullable": "YES"
+    }
+  ],
+  "employee_liquidations": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": "gen_random_uuid()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "employee_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "restaurant_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "period_start",
+      "data_type": "date",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "period_end",
+      "data_type": "date",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "total_amount",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "status",
+      "data_type": "character varying",
+      "character_maximum_length": 20,
+      "column_default": "'pending'::character varying",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "signature_url",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "voucher_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "paid_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    }
+  ],
+  "pos_sales": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": "gen_random_uuid()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "cashbox_session_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "shift_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "user_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "order_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "customer_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "subtotal",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": "0",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "tax_amount",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": "0",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "discount_amount",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": "0",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "total_amount",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": "0",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "payment_status",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": "'PENDING'::text",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "notes",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "updated_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    }
+  ],
+  "sale_payments": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": "gen_random_uuid()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "sale_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "cashbox_session_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "payment_method",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "amount",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "reference_code",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    }
+  ],
+  "receipts": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": "gen_random_uuid()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "order_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "receipt_number",
+      "data_type": "character varying",
+      "character_maximum_length": 50,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "issued_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "customer_name",
+      "data_type": "character varying",
+      "character_maximum_length": 255,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "customer_tax_id",
+      "data_type": "character varying",
+      "character_maximum_length": 50,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "subtotal",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "tax",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": "0",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "total",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "payment_method",
+      "data_type": "character varying",
+      "character_maximum_length": 50,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "notes",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "pdf_url",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "updated_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "NO"
+    }
+  ],
+  "notifications": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": "gen_random_uuid()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "user_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "order_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "type",
+      "data_type": "character varying",
+      "character_maximum_length": 50,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "title",
+      "data_type": "character varying",
+      "character_maximum_length": 255,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "message",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "read",
+      "data_type": "boolean",
+      "character_maximum_length": null,
+      "column_default": "false",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "data",
+      "data_type": "jsonb",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    }
+  ],
+  "cashbox_audits": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": "gen_random_uuid()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "cashbox_session_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "user_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "counted_amount",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "system_amount",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "difference_amount",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "notes",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    }
+  ],
+  "role_permissions": [
+    {
+      "column_name": "role_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "permission_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "granted_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    }
+  ],
+  "delivery_tracking": [
+    {
+      "column_name": "order_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "driver_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "status",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": "'assigned'::text",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "assigned_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "picked_up_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "delivered_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "delivery_proof_url",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "notes",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    }
+  ],
+  "cashbox_sessions": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": "gen_random_uuid()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "cashbox_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "shift_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "user_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "opening_amount",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": "0",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "opening_time",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "opening_notes",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "closing_amount",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "system_amount",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "difference_amount",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "closing_time",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "closing_notes",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "status",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": "'OPEN'::text",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "updated_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "restaurant_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    }
+  ],
+  "recipes": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": "gen_random_uuid()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "product_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "ingredient_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "quantity",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "notes",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "restaurant_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "deleted_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    }
+  ],
+  "shift_definitions": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": "gen_random_uuid()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "name",
+      "data_type": "character varying",
+      "character_maximum_length": 50,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "start_time",
+      "data_type": "time without time zone",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "end_time",
+      "data_type": "time without time zone",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "is_active",
+      "data_type": "boolean",
+      "character_maximum_length": null,
+      "column_default": "true",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "restaurant_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    }
+  ],
+  "audit_logs": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": "gen_random_uuid()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "user_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "action",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "entity_type",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "entity_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "old_values",
+      "data_type": "jsonb",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "new_values",
+      "data_type": "jsonb",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "ip_address",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "user_agent",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "restaurant_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    }
+  ],
+  "delivery_drivers": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": "gen_random_uuid()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "user_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "full_name",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "phone",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "vehicle_type",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "license_plate",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "is_active",
+      "data_type": "boolean",
+      "character_maximum_length": null,
+      "column_default": "true",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "is_available",
+      "data_type": "boolean",
+      "character_maximum_length": null,
+      "column_default": "true",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "current_location_lat",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "current_location_lng",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "location_updated_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "total_deliveries",
+      "data_type": "integer",
+      "character_maximum_length": null,
+      "column_default": "0",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "rating",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": "5.00",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "updated_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    }
+  ],
+  "roles": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": "gen_random_uuid()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "name",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "description",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "is_system_role",
+      "data_type": "boolean",
+      "character_maximum_length": null,
+      "column_default": "false",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "updated_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    }
+  ],
+  "permissions": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": "gen_random_uuid()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "name",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "description",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "category",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    }
+  ],
+  "customers": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": "gen_random_uuid()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "full_name",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "email",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "phone",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "address",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "tax_id",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "notes",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "is_active",
+      "data_type": "boolean",
+      "character_maximum_length": null,
+      "column_default": "true",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "updated_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "restaurant_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "deleted_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    }
+  ],
+  "waste_reports": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": "gen_random_uuid()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "restaurant_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "ingredient_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "quantity",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "reason",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "cost_at_waste",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "user_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    }
+  ],
+  "suppliers": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": "gen_random_uuid()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "restaurant_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "name",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "contact_name",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "email",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "phone",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "category",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "active",
+      "data_type": "boolean",
+      "character_maximum_length": null,
+      "column_default": "true",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "updated_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "tax_id",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "address",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "is_active",
+      "data_type": "boolean",
+      "character_maximum_length": null,
+      "column_default": "true",
+      "is_nullable": "YES"
+    }
+  ],
+  "purchases": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": "gen_random_uuid()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "restaurant_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "supplier_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "invoice_number",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "total_amount",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": "0",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "status",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": "'pending'::text",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "received_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "notes",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "updated_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    }
+  ],
+  "purchase_items": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": "gen_random_uuid()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "purchase_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "ingredient_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "quantity",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "unit_cost",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "subtotal",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    }
+  ],
+  "recipes_new": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": "gen_random_uuid()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "restaurant_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "product_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "name",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "description",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "is_sub_recipe",
+      "data_type": "boolean",
+      "character_maximum_length": null,
+      "column_default": "false",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "portions",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": "1",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "updated_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    }
+  ],
+  "recipe_items": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": "gen_random_uuid()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "recipe_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "ingredient_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "sub_recipe_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "quantity",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "notes",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    }
+  ],
+  "restaurants": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": "gen_random_uuid()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "name",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "subdomain",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "logo_url",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "primary_color",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": "'#ef4444'::text",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "updated_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "apply_service_charge",
+      "data_type": "boolean",
+      "character_maximum_length": null,
+      "column_default": "false",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "service_charge_percentage",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": "10",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "loyalty_points_per_1000",
+      "data_type": "integer",
+      "character_maximum_length": null,
+      "column_default": "1",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "currency_symbol",
+      "data_type": "character varying",
+      "character_maximum_length": 10,
+      "column_default": "'$'::character varying",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "tax_percentage",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": "0",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "whatsapp_number",
+      "data_type": "character varying",
+      "character_maximum_length": 20,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "enable_whatsapp_receipts",
+      "data_type": "boolean",
+      "character_maximum_length": null,
+      "column_default": "false",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "landing_page_config",
+      "data_type": "jsonb",
+      "character_maximum_length": null,
+      "column_default": "'{\"hero\": {\"tagline\": \"Gran Rafa | Experiencia Gastronómica de Mar\", \"est_year\": \"2012\", \"image_url\": \"/premium_seafood_hero_1769294804705.png\", \"title_part1\": \"PARGO\", \"title_part2\": \"ROJO\", \"location_city\": \"Caucasia, Antioquia\"}, \"essence\": [{\"desc\": \"Seleccionamos diariamente la pesca más fresca y los cortes de carne más exclusivos de la región.\", \"icon\": \"Award\", \"title\": \"Ingredientes Premium\"}, {\"desc\": \"Nuestra técnica de asado tradicional resalta los sabores naturales con el toque único del Gran Rafa.\", \"icon\": \"ChefHat\", \"title\": \"Maestría en Brasa\"}, {\"desc\": \"Más que un restaurante, somos una tradición que celebra el sabor auténtico del Cauca.\", \"icon\": \"Heart\", \"title\": \"Legado Familiar\"}], \"experience\": {\"image_url\": \"/premium_restaurant_interior_1769294818416.png\", \"tour_link\": \"#\", \"description\": \"Cada rincón cuenta una historia. Hemos creado una atmósfera que combina la calidez tropical con la sofisticación moderna.\", \"title_part1\": \"Un espacio diseñado para\", \"title_part2\": \"Celebrar\"}}'::jsonb",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "tenant_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    }
+  ],
+  "settings": [
+    {
+      "column_name": "key",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "value",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "description",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "updated_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "restaurant_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    }
+  ],
+  "cashboxes": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": "gen_random_uuid()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "name",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "current_status",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": "'CLOSED'::text",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "assigned_user_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "restaurant_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    }
+  ],
+  "inventory_movements": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": "gen_random_uuid()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "ingredient_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "movement_type",
+      "data_type": "character varying",
+      "character_maximum_length": 50,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "quantity",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "previous_stock",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "new_stock",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "cost",
+      "data_type": "numeric",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "reference_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "reference_type",
+      "data_type": "character varying",
+      "character_maximum_length": 50,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "notes",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "created_by",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "restaurant_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    }
+  ],
+  "whatsapp_templates": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": "gen_random_uuid()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "slug",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "name",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "content",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "variables",
+      "data_type": "jsonb",
+      "character_maximum_length": null,
+      "column_default": "'[]'::jsonb",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "is_active",
+      "data_type": "boolean",
+      "character_maximum_length": null,
+      "column_default": "true",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "updated_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    }
+  ],
+  "table_transfers": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": "gen_random_uuid()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "source_table_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "target_table_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "order_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "transferred_by",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "reason",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "transferred_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "NO"
+    }
+  ],
+  "customer_notifications": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": "gen_random_uuid()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "customer_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "phone",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "template_slug",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "content",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "status",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": "'pending'::text",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "sent_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    }
+  ],
+  "reservations": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": "uuid_generate_v4()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "user_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "customer_name",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "customer_email",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "customer_phone",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "reservation_date",
+      "data_type": "date",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "reservation_time",
+      "data_type": "time without time zone",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "num_people",
+      "data_type": "integer",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "status",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": "'pending'::text",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "notes",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "timezone('utc'::text, now())",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "updated_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "timezone('utc'::text, now())",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "restaurant_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "deleted_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    }
+  ],
+  "devices": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": "gen_random_uuid()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "name",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "fingerprint",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "last_ip",
+      "data_type": "text",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "is_active",
+      "data_type": "boolean",
+      "character_maximum_length": null,
+      "column_default": "true",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "last_seen_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "created_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    }
+  ],
+  "user_permissions": [
+    {
+      "column_name": "id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": "gen_random_uuid()",
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "user_id",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "permission",
+      "data_type": "USER-DEFINED",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "NO"
+    },
+    {
+      "column_name": "granted_by",
+      "data_type": "uuid",
+      "character_maximum_length": null,
+      "column_default": null,
+      "is_nullable": "YES"
+    },
+    {
+      "column_name": "updated_at",
+      "data_type": "timestamp with time zone",
+      "character_maximum_length": null,
+      "column_default": "now()",
+      "is_nullable": "YES"
+    }
+  ]
+}

@@ -3,31 +3,12 @@
 import { useEffect, useState } from "react"
 import { supabase } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
-import {
-    Users,
-    Clock,
-    DollarSign,
-    Loader2,
-    ArrowLeft,
-    Search,
-    Filter,
-    Activity,
-    Calendar,
-    Wallet,
-    TrendingUp,
-    MoreHorizontal,
-    CheckCircle2,
-    XCircle,
-    UserPlus,
-    Briefcase,
-    Zap,
-    ShieldCheck,
-    BadgeDollarSign
-} from "lucide-react"
+import { Users, Clock, DollarSign, Loader2, ArrowLeft, Search, Filter, Activity, Calendar, Wallet, TrendingUp, MoreHorizontal, CheckCircle2, XCircle, UserPlus, Briefcase, Zap, ShieldCheck, BadgeDollarSign } from "lucide-react"
 import Link from "next/link"
 import { cn, formatPrice } from "@/lib/utils"
 import { toast } from "sonner"
 import { useRestaurant } from "@/providers/RestaurantProvider"
+import { calculatePayrollForPeriod } from "@/actions/payroll-engine"
 
 type Employee = {
     id: string
@@ -44,6 +25,7 @@ export default function PayrollPage() {
     const [activeShifts, setActiveShifts] = useState<any[]>([])
     const [concepts, setConcepts] = useState<any[]>([])
     const [loading, setLoading] = useState(true)
+    const [isCalculating, setIsCalculating] = useState(false)
 
     useEffect(() => {
         if (restaurant) loadData()
@@ -73,6 +55,59 @@ export default function PayrollPage() {
         const { error } = await supabase.from('shifts').update({ status: 'CLOSED', ended_at: new Date().toISOString() }).eq('id', shiftId)
         if (!error) { toast.success(`TURNO DE ${empName} FINALIZADO`); loadData(); }
         else { toast.error("Error: " + error.message) }
+    }
+
+    const handleCalculatePayroll = async () => {
+        if (!restaurant) return;
+        setIsCalculating(true);
+        try {
+            const { data: { session } } = await supabase.auth.getSession()
+            if (!session) throw new Error("No session found")
+
+            // 1. Get or create an open period for this month
+            let { data: period } = await supabase
+                .from('payroll_periods')
+                .select('*')
+                .eq('restaurant_id', restaurant.id)
+                .eq('status', 'OPEN')
+                .maybeSingle()
+
+            if (!period) {
+                const start = new Date()
+                start.setDate(1)
+                const end = new Date(start.getFullYear(), start.getMonth() + 1, 0)
+
+                const { data: newPeriod, error: pErr } = await supabase
+                    .from('payroll_periods')
+                    .insert({
+                        restaurant_id: restaurant.id,
+                        name: `Periodo ${start.toLocaleString('es', { month: 'long' }).toUpperCase()}`,
+                        start_date: start.toISOString().split('T')[0],
+                        end_date: end.toISOString().split('T')[0],
+                        status: 'OPEN'
+                    })
+                    .select()
+                    .single()
+
+                if (pErr) throw pErr
+                period = newPeriod
+            }
+
+            toast.loading("Calculando nómina, horas extra y comisiones...", { id: 'payroll_calc' })
+
+            const result = await calculatePayrollForPeriod(restaurant.id, period.id, session.user.id)
+
+            if (result.success) {
+                toast.success(result.message, { id: 'payroll_calc' })
+            } else {
+                toast.error(result.message || "Error al calcular nómina", { id: 'payroll_calc' })
+            }
+        } catch (error: any) {
+            console.error("Payroll Error:", error)
+            toast.error(error.message || "Error inesperado", { id: 'payroll_calc' })
+        } finally {
+            setIsCalculating(false)
+        }
     }
 
     const stats = [
@@ -363,14 +398,15 @@ export default function PayrollPage() {
                                         </div>
                                     </div>
                                     <Button
-                                        onClick={() => toast.promise(new Promise(res => setTimeout(res, 2000)), {
-                                            loading: 'Calculando IBC, Horas Extra y Propinas...',
-                                            success: 'NÓMINA GENERADA CORRECTAMENTE',
-                                            error: 'Error en cálculo de novedades'
-                                        })}
+                                        onClick={handleCalculatePayroll}
+                                        disabled={isCalculating}
                                         className="w-full h-20 bg-orange-600 hover:bg-orange-700 text-black font-black uppercase text-base italic tracking-widest rounded-3xl shadow-2xl shadow-orange-600/20 active:scale-95 transition-all"
                                     >
-                                        INICIAR DISPERSIÓN DE PAGOS
+                                        {isCalculating ? (
+                                            <><Loader2 className="w-6 h-6 mr-3 animate-spin" /> PROCESANDO NÓMINA...</>
+                                        ) : (
+                                            "INICIAR DISPERSIÓN DE PAGOS / EJECUTAR CÁLCULO"
+                                        )}
                                     </Button>
                                 </div>
                             </div>
