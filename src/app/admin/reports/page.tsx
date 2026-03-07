@@ -34,6 +34,7 @@ import { cn, formatPrice } from "@/lib/utils"
 import { toast } from "sonner"
 import { getBusinessIntelligenceData } from "./actions"
 import { useRestaurant } from "@/providers/RestaurantProvider"
+import jsPDF from "jspdf"
 
 type KPI = {
     total_revenue_month: number
@@ -68,6 +69,7 @@ export default function ReportsPagePremium() {
     const [topProducts, setTopProducts] = useState<TopProduct[]>([])
     const [weeklyWaste, setWeeklyWaste] = useState<WasteData[]>([])
     const [loading, setLoading] = useState(true)
+    const [exporting, setExporting] = useState(false)
     const [currentTime, setCurrentTime] = useState(new Date())
 
     useEffect(() => {
@@ -96,6 +98,149 @@ export default function ReportsPagePremium() {
             toast.error("Error de conexión al servidor")
         } finally {
             setLoading(false)
+        }
+    }
+
+    // 📄 EXPORT PDF REAL
+    const exportPDF = () => {
+        setExporting(true)
+        try {
+            const doc = new jsPDF()
+            const restaurantName = restaurant?.name || 'JAMALI SO'
+            const fecha = new Date().toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' })
+
+            // Header
+            doc.setFillColor(234, 88, 12) // orange-600
+            doc.rect(0, 0, 210, 40, 'F')
+            doc.setTextColor(255, 255, 255)
+            doc.setFontSize(22)
+            doc.setFont('helvetica', 'bold')
+            doc.text('BUSINESS INTELLIGENCE', 14, 20)
+            doc.setFontSize(11)
+            doc.setFont('helvetica', 'normal')
+            doc.text(`${restaurantName} | Reporte generado: ${fecha}`, 14, 32)
+
+            // KPIs
+            doc.setTextColor(15, 23, 42)
+            doc.setFontSize(14)
+            doc.setFont('helvetica', 'bold')
+            doc.text('KPIs DEL MES', 14, 56)
+            doc.setFontSize(11)
+            doc.setFont('helvetica', 'normal')
+            const kpiData = [
+                ['Ingresos del Mes', formatPrice(kpis?.total_revenue_month || 0)],
+                ['Total de Órdenes', String(kpis?.total_orders_month || 0)],
+                ['Ticket Promedio', formatPrice(kpis?.avg_ticket || 0)],
+                ['Clientes Únicos', String(kpis?.total_customers || 0)],
+                ['Saldo Caja Actual', formatPrice(kpis?.current_cash_balance || 0)],
+            ]
+            let y = 64
+            kpiData.forEach(([label, val]) => {
+                doc.setFont('helvetica', 'bold')
+                doc.text(label + ':', 14, y)
+                doc.setFont('helvetica', 'normal')
+                doc.text(val, 90, y)
+                y += 9
+            })
+
+            // Top Productos
+            y += 6
+            doc.setFont('helvetica', 'bold')
+            doc.setFontSize(14)
+            doc.text('TOP PRODUCTOS', 14, y)
+            y += 8
+            doc.setFontSize(10)
+            doc.setFont('helvetica', 'bold')
+            doc.text('#', 14, y); doc.text('Producto', 25, y); doc.text('Revenue', 120, y); doc.text('Margen', 165, y)
+            doc.setDrawColor(200, 200, 200)
+            doc.line(14, y + 2, 196, y + 2)
+            y += 8
+            doc.setFont('helvetica', 'normal')
+            topProducts.forEach((p, i) => {
+                doc.text(String(i + 1), 14, y)
+                doc.text(p.product_name.substring(0, 40), 25, y)
+                doc.text(formatPrice(p.total_revenue), 120, y)
+                doc.text(formatPrice(p.contribution_margin || 0), 165, y)
+                y += 8
+            })
+
+            // Ventas diarias
+            if (dailySales.length > 0) {
+                y += 6
+                doc.setFont('helvetica', 'bold')
+                doc.setFontSize(14)
+                doc.text('VENTAS ÚLTIMOS 7 DÍAS', 14, y)
+                y += 8
+                doc.setFontSize(10)
+                doc.setFont('helvetica', 'bold')
+                doc.text('Día', 14, y); doc.text('Ventas', 60, y); doc.text('Órdenes', 120, y)
+                doc.line(14, y + 2, 196, y + 2)
+                y += 8
+                doc.setFont('helvetica', 'normal')
+                dailySales.forEach(s => {
+                    doc.text(s.day, 14, y)
+                    doc.text(formatPrice(s.total_sales), 60, y)
+                    doc.text(String(s.order_count), 120, y)
+                    y += 8
+                })
+            }
+
+            // Footer
+            doc.setFontSize(8)
+            doc.setTextColor(150, 150, 150)
+            doc.text(`Generado por ${restaurantName} OS · Antigravity Platform`, 14, 285)
+
+            doc.save(`reporte-${restaurantName.toLowerCase().replace(/\s/g, '-')}-${new Date().toISOString().split('T')[0]}.pdf`)
+            toast.success('PDF generado y descargado exitosamente')
+        } catch (err) {
+            console.error(err)
+            toast.error('Error generando el PDF')
+        } finally {
+            setExporting(false)
+        }
+    }
+
+    // 📊 EXPORT CSV REAL
+    const exportCSV = () => {
+        try {
+            const restaurantName = restaurant?.name || 'JAMALI SO'
+            const rows = [
+                ['REPORTE DE BUSINESS INTELLIGENCE'],
+                [`Restaurante: ${restaurantName}`],
+                [`Fecha: ${new Date().toLocaleDateString('es-CO')}`],
+                [],
+                ['--- KPIs DEL MES ---'],
+                ['Métrica', 'Valor'],
+                ['Ingresos del Mes', formatPrice(kpis?.total_revenue_month || 0)],
+                ['Total Órdenes', String(kpis?.total_orders_month || 0)],
+                ['Ticket Promedio', formatPrice(kpis?.avg_ticket || 0)],
+                ['Clientes Únicos', String(kpis?.total_customers || 0)],
+                ['Saldo Caja', formatPrice(kpis?.current_cash_balance || 0)],
+                [],
+                ['--- TOP PRODUCTOS ---'],
+                ['Producto', 'Revenue Total', 'Margen de Contribución', 'Unidades'],
+                ...topProducts.map(p => [
+                    p.product_name,
+                    formatPrice(p.total_revenue),
+                    formatPrice(p.contribution_margin || 0),
+                    String(p.total_quantity)
+                ]),
+                [],
+                ['--- VENTAS DIARIAS (7 DÍAS) ---'],
+                ['Día', 'Ventas', 'Órdenes'],
+                ...dailySales.map(s => [s.day, formatPrice(s.total_sales), String(s.order_count)])
+            ]
+            const csvContent = rows.map(r => r.join(',')).join('\n')
+            const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' })
+            const url = URL.createObjectURL(blob)
+            const link = document.createElement('a')
+            link.href = url
+            link.download = `reporte-${restaurantName.toLowerCase().replace(/\s/g, '-')}-${new Date().toISOString().split('T')[0]}.csv`
+            link.click()
+            URL.revokeObjectURL(url)
+            toast.success('CSV exportado exitosamente')
+        } catch (err) {
+            toast.error('Error exportando CSV')
         }
     }
 
@@ -131,10 +276,18 @@ export default function ReportsPagePremium() {
                         </div>
                         <div className="flex gap-3">
                             <Button
-                                onClick={() => toast.success("GENERANDO REPORTE PDF / EXCEL...")}
+                                onClick={exportCSV}
+                                className="h-14 px-6 bg-white/10 border border-white/20 hover:bg-white/20 text-white font-black uppercase text-xs italic tracking-widest rounded-2xl"
+                            >
+                                <Download className="w-5 h-5 mr-2" /> CSV
+                            </Button>
+                            <Button
+                                onClick={exportPDF}
+                                disabled={exporting}
                                 className="h-14 px-8 bg-orange-600 hover:bg-orange-700 text-black font-black uppercase text-xs italic tracking-widest rounded-2xl shadow-xl shadow-orange-600/20"
                             >
-                                <Download className="w-5 h-5 mr-3" /> EXPORTAR DATA
+                                {exporting ? <Loader2 className="w-5 h-5 mr-3 animate-spin" /> : <Download className="w-5 h-5 mr-3" />}
+                                EXPORT PDF
                             </Button>
                         </div>
                     </div>
@@ -296,12 +449,30 @@ export default function ReportsPagePremium() {
 
                 </div>
 
-                {/* 3. ADDITIONAL INTELLIGENCE GRID */}
+                {/* 3. ADDITIONAL INTELLIGENCE GRID — DATOS REALES */}
                 <div className="grid grid-cols-3 gap-8 shrink-0 pb-10">
                     {[
-                        { label: 'COSTO OPERATIVO', val: '$12.4M', icon: BadgeDollarSign, desc: 'Nómina, Suministros y Servicios', color: 'text-rose-500' },
-                        { label: 'TIEMPO KDS AVG', val: '14:20 min', icon: Clock, desc: 'Desde orden hasta entrega', color: 'text-yellow-400' },
-                        { label: 'RECO GOBAL', val: '94%', icon: Globe, desc: 'Satisfacción basada en encuestas', color: 'text-emerald-400' }
+                        {
+                            label: 'SALDO EN CAJA',
+                            val: formatPrice(kpis?.current_cash_balance || 0),
+                            icon: Wallet,
+                            desc: 'Conciliación en tiempo real',
+                            color: 'text-emerald-400'
+                        },
+                        {
+                            label: 'TICKET PROMEDIO',
+                            val: formatPrice(kpis?.avg_ticket || 0),
+                            icon: Target,
+                            desc: 'Valor medio por orden del mes',
+                            color: 'text-orange-400'
+                        },
+                        {
+                            label: 'ÓRDENES DEL MES',
+                            val: String(kpis?.total_orders_month || 0),
+                            icon: ShoppingBag,
+                            desc: 'Total de pedidos confirmados',
+                            color: 'text-blue-400'
+                        }
                     ].map((item, i) => (
                         <div key={i} className="bg-slate-900/40 backdrop-blur-2xl border border-white/5 rounded-3xl p-8 flex items-center gap-6 group hover:border-white/20 transition-all">
                             <div className={cn("p-4 bg-white/5 rounded-2xl shadow-inner group-hover:scale-110 transition-all", item.color)}>
@@ -309,7 +480,9 @@ export default function ReportsPagePremium() {
                             </div>
                             <div>
                                 <h4 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">{item.label}</h4>
-                                <p className="text-2xl font-black italic text-white tracking-tighter leading-none">{item.val}</p>
+                                <p className={cn("text-2xl font-black italic tracking-tighter leading-none", item.color)}>
+                                    {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : item.val}
+                                </p>
                                 <p className="text-[9px] font-medium text-slate-500 mt-1 uppercase tracking-wider">{item.desc}</p>
                             </div>
                         </div>

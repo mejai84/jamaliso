@@ -7,6 +7,7 @@ interface Restaurant {
     id: string
     name: string
     subdomain: string
+    slug?: string
     logo_url: string | null
     primary_color: string
     theme?: 'light' | 'dark'
@@ -18,6 +19,8 @@ interface Restaurant {
     whatsapp_number?: string
     enable_whatsapp_receipts?: boolean
     landing_page_config?: any
+    custom_domain?: string
+    online_store_enabled?: boolean
 }
 
 interface RestaurantContextType {
@@ -45,6 +48,7 @@ export const RestaurantProvider = ({ children }: { children: ReactNode }) => {
         try {
             setLoading(true)
             const hostname = typeof window !== 'undefined' ? window.location.hostname : ''
+            const pathname = typeof window !== 'undefined' ? window.location.pathname : ''
 
             // 1. Resolver por Subdominio (Prioridad Máxima)
             let currentRes: Restaurant | null = null
@@ -62,7 +66,22 @@ export const RestaurantProvider = ({ children }: { children: ReactNode }) => {
                 if (resBySub) currentRes = resBySub
             }
 
-            // Fallback para dominios de sistema (Vercel, localhost)
+            // 2. Resolver por Slug en la URL: /[slug]/menu, /[slug]/admin, etc.
+            if (!currentRes && pathname) {
+                const slugMatch = pathname.match(/^\/([a-z0-9-]+)\/(menu|admin|login)/)
+                if (slugMatch) {
+                    const urlSlug = slugMatch[1]
+                    const { data: resBySlug } = await supabase
+                        .from('restaurants')
+                        .select('*')
+                        .or(`slug.eq.${urlSlug},subdomain.eq.${urlSlug}`)
+                        .maybeSingle()
+
+                    if (resBySlug) currentRes = resBySlug
+                }
+            }
+
+            // 3. Fallback para dominios de sistema (Vercel, localhost)
             if (!currentRes && isSystemDomain) {
                 const { data: firstRes } = await supabase
                     .from('restaurants')

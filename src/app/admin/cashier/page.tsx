@@ -421,10 +421,16 @@ export default function CashierPage() {
                                 <Scale className="w-6 h-6 text-indigo-500 group-hover:scale-110 transition-transform" />
                                 <span className="font-black uppercase text-[9px] tracking-[0.3em] italic text-foreground text-center">ARQUEO PARCIAL</span>
                             </Button>
-                            <Link href="/admin/cashier/close-shift" className="col-span-2">
-                                <Button className="w-full h-24 rounded-[2.5rem] bg-rose-500/10 border border-rose-500/20 hover:bg-rose-500 hover:text-white transition-all flex items-center justify-center gap-4 shadow-xl group active:scale-95">
+                            <Link href="/admin/caja/cierre" className="col-span-1">
+                                <Button className="w-full h-24 rounded-[2.5rem] bg-amber-500/10 border border-amber-500/20 hover:bg-amber-500 hover:text-white transition-all flex flex-col items-center justify-center gap-2 shadow-xl group active:scale-95">
+                                    <Clock className="w-6 h-6 group-hover:rotate-12 transition-transform" />
+                                    <span className="font-black uppercase text-[9px] tracking-[0.2em] italic text-center leading-tight">CERRAR PENDIENTES<br />(TRASPASO)</span>
+                                </Button>
+                            </Link>
+                            <Link href="/admin/cashier/close-shift" className="col-span-1">
+                                <Button className="w-full h-24 rounded-[2.5rem] bg-rose-500/10 border border-rose-500/20 hover:bg-rose-500 hover:text-white transition-all flex flex-col items-center justify-center gap-2 shadow-xl group active:scale-95">
                                     <Lock className="w-6 h-6 group-hover:rotate-12 transition-transform" />
-                                    <span className="font-black uppercase text-[11px] tracking-[0.5em] italic">CERRAR TURNO Y JORNADA</span>
+                                    <span className="font-black uppercase text-[9px] tracking-[0.2em] italic text-center leading-tight">CERRAR TURNO Y<br />JORNADA</span>
                                 </Button>
                             </Link>
                         </div>

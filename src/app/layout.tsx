@@ -11,8 +11,8 @@ import { RestaurantProvider } from "@/providers/RestaurantProvider";
 const outfit = Outfit({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-    title: "Pargo Rojo - Gran Rafa | Restaurante",
-    description: "Lo mejor en comida de mar, Pescados y Mariscos. Espectaculares asados en Caucasia.",
+    title: "JAMALI SO | Restaurante",
+    description: "Sistema de gestión para restaurantes. Con tecnología Antigravity.",
 };
 
 export default function RootLayout({

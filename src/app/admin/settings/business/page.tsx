@@ -32,12 +32,15 @@ import {
     Database,
     ShieldAlert,
     ChevronRight,
-    Terminal
+    Terminal,
+    ArrowRight
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
+import { useRestaurant } from "@/providers/RestaurantProvider"
 
 export default function BusinessSettingsPage() {
+    const { restaurant } = useRestaurant()
     const [loading, setLoading] = useState(true)
     const [saving, setSaving] = useState(false)
     const [businessInfo, setBusinessInfo] = useState({
@@ -62,7 +65,8 @@ export default function BusinessSettingsPage() {
 
     useEffect(() => {
         const fetchSettings = async () => {
-            const { data } = await supabase.from('settings').select('*')
+            if (!restaurant?.id) return
+            const { data } = await supabase.from('settings').select('*').eq('restaurant_id', restaurant.id)
             if (data) {
                 const info = data.find(s => s.key === 'business_info')?.value
                 const taxes = data.find(s => s.key === 'tax_settings')?.value
@@ -72,7 +76,7 @@ export default function BusinessSettingsPage() {
             setLoading(false)
         }
         fetchSettings()
-    }, [])
+    }, [restaurant])
 
     const handleSave = async () => {
         setSaving(true)
@@ -80,18 +84,20 @@ export default function BusinessSettingsPage() {
             const { error: infoError } = await supabase
                 .from('settings')
                 .upsert({
+                    restaurant_id: restaurant?.id,
                     key: 'business_info',
                     value: businessInfo,
                     description: 'Public business identity and contact info'
-                })
+                }, { onConflict: 'restaurant_id, key' })
 
             const { error: taxError } = await supabase
                 .from('settings')
                 .upsert({
+                    restaurant_id: restaurant?.id,
                     key: 'tax_settings',
                     value: taxSettings,
                     description: 'Fiscal and tax parameters'
-                })
+                }, { onConflict: 'restaurant_id, key' })
 
             if (infoError || taxError) throw new Error("Error al guardar")
             alert("Configuración de Elite Ledger guardada correctamente ✅")

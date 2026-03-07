@@ -1,5 +1,5 @@
 # 📘 Manual de Usuario Vivo — JAMALISO
-> **Versión:** 2.1 Enterprise | **Estado:** Documento Vivo — Actualización Continua | **Última revisión:** 07 Marzo 2026
+> **Versión:** 2.2 Enterprise | **Estado:** Documento Vivo | **Última revisión:** 07 Marzo 2026 (14:30)
 
 Este manual es la referencia oficial para todos los roles del sistema. Está divido en dos tipos de secciones:
 - 🟢 **Guías Operativas**: Cómo usar cada módulo paso a paso.
@@ -54,12 +54,17 @@ El blindaje financiero del negocio. Ninguna venta puede procesarse sin una caja 
 - **Para registrar un retiro de efectivo**: En la sesión activa, use el botón **RETIRO** e ingrese siempre un motivo descriptivo. *Nunca lo deje en blanco.*
 - **Para un arqueo parcial**: Puede contar el efectivo durante el turno sin cerrarlo para verificar que todo cuadra.
 
-#### Al Finalizar el Día (Cierre Ciego):
-1. Asegúrese de que todos los pedidos pendientes estén facturados o cancelados.
-2. En **Control de Caja**, presione **CERRAR CAJA**.
-3. Cuente el dinero físico que tiene en la gaveta.
-4. Ingrese el valor en **"Efectivo Contado"** (el sistema no le muestra cuánto espera hasta que usted ingrese el suyo).
-5. El sistema calculará y guardará la **Diferencia / Descuadre** automáticamente para la auditoría del dueño.
+5. El sistema calculará y guardará la **Diferencia / Descuadre** automáticamente.
+
+#### 🔄 Cierre con Traspaso (Mesas Abiertas):
+Si el turno termina pero hay mesas aún consumiendo, use el botón **CERRAR PENDIENTES (TRASPASO)**:
+1. Ingrese el efectivo físico en gaveta.
+2. Seleccione a la **Cajera Entrante** que recibirá su turno.
+3. El sistema generará un acta digital con el snapshot de mesas y pedidos en cocina.
+4. **Cajera Entrante**: Al loguearse, el sistema le pedirá su **Firma Digital** (Nombre) para aceptar el cargo. Una vez aceptado, las mesas pasan a su responsabilidad y su saldo inicial se autocompleta con lo declarado por la saliente.
+
+> [!TIP]
+> Use el traspaso de turno cuando el restaurante deba seguir operando sin solución de continuidad durante el cambio de personal.
 
 > [!CAUTION]
 > Los comprobantes de Caja Menor son **inmutables** una vez guardados. Si se equivocó, haga un **Depósito de Caja** para reversar el monto, cree uno nuevo y deje nota en la descripción explicando la corrección.
@@ -70,53 +75,100 @@ El blindaje financiero del negocio. Ninguna venta puede procesarse sin una caja 
 
 Réplica visual de la distribución física del restaurante.
 
-- **En la operación diaria**: El mesero ve el mapa al entrar. Las mesas en **verde** están libres; en **rojo/naranja**, ocupadas con tiempo activo.
 - **Pulso Rojo (⚠️ Alerta de Servicio)**: Si una mesa lleva más de **20 minutos** esperando su pedido, emitirá un pulso rojo visible para que el capitán tome acción.
-- **Administración del plano**: El administrador puede ir a la edición del mapa para reorganizar mesas con **Drag & Drop**, cambiar su forma (circular, cuadrada) y definir zonas (Terraza, Salón).
+- **Pedidos por QR (Auto-servicio)**: El cliente escanea el código en su mesa. Al enviar el pedido, este aparece en el **KDS de Cocina** inmediatamente. La mesa en el mapa cambiará a **Naranja (Ocupada)** automáticamente.
+- **Administración del plano**: El administrador puede reorganizar mesas con **Drag & Drop**, cambiar su forma y definir zonas.
 
 ---
 
 ### 👨‍💼 3.3. Portal de Meseros — Waiter Pro (`/admin/waiter`)
 
-Herramienta de alta velocidad y baja fricción para el salón. Diseñada para tablets y teléfonos.
+Herramienta de alta velocidad para el salón. Optimizada para móvil y tablet. Sin papel, sin radio.
+
+> 📄 **Manual completo:** `docs/modulos/MANUAL_WAITER_PRO.md`
+
+#### Las 3 Vistas del Portal:
+
+| Vista | Cuándo aparece | Función |
+| :--- | :--- | :--- |
+| **Gestión de Salón** | Al entrar | Mapa de mesas con estado en tiempo real |
+| **Opciones de Mesa** | Al tocar mesa ocupada | Menú de acciones avanzadas |
+| **Tomar Pedido** | Al tocar mesa libre o "Adicionar" | Catálogo + Carrito |
+
+#### Indicadores del Mapa de Mesas:
+- 🟢 **Verde**: Mesa libre y disponible
+- 🟠 **Naranja**: Mesa ocupada, orden en preparación
+- 🟢 **Borde verde pulsante**: ¡Orden **READY**! Los platos están listos en cocina
+- 🔴 **Borde rojo pulsante**: Orden con **+20 minutos** sin resolver — crítico
+- ⭐ **Borde dorado**: Orden **VIP / Prioritaria**
 
 #### Para Tomar un Pedido Paso a Paso:
-1. Ingrese al portal con su **PIN de 4 dígitos** (no requiere contraseña completa).
-2. Seleccione una mesa libre en el mapa.
-3. Use la **Barra de Favoritos (Quick-Add)** (parte superior) para agregar los productos más populares con un toque.
-4. Use el buscador para platos específicos.
-5. Toque un producto ya en el carrito y aplique **Modificadores Rápidos** (ej: SIN CEBOLLA, TÉRMINO MEDIO, EXTRA QUESO).
-6. Presione **ENVIAR A COCINA / MARCHAR**. La orden vuela al KDS.
+1. Toca la mesa libre del cliente en el mapa.
+2. Usa la **Barra Quick-Add** (los 5 productos más rápidos) o el catálogo filtrado por categoría.
+3. En el carrito, toca los chips de **Modificadores Rápidos**: `SIN CEBOLLA`, `TÉRMINO MEDIO`, `EXTRA QUESO`, etc.
+4. Escribe notas libres si el cliente tiene indicaciones especiales.
+5. Ajusta cantidades con `+` / `-`.
+6. (Opcional) Activa el toggle **PEDIDO VIP** para prioridad absoluta en cocina.
+7. Presiona **MARCHAR A COCINA** — la comanda vuela al KDS en tiempo real.
 
-#### Funciones Avanzadas de Cuenta:
-- **Dividir Cuenta (Split Check)**: Seleccione ítems específicos del carrito y asígnelos a una nueva cuenta separada para uno o más clientes.
-- **Unir Mesas (Merge)**: Fusiona dos mesas en una sola cuenta. La mesa de origen queda liberada.
-- **Transferir Ítem**: Mueve un producto de una mesa a otra por error, sin cancelar el pedido completo.
-- **Pre-Cuenta**: Genera un borrador de factura con estética de ticket térmico para mostrar al cliente antes del cobro formal.
+#### Acciones Avanzadas (mesa ocupada):
+| Acción | Función |
+| :--- | :--- |
+| **Adicionar Ítems** | Agrega más productos a la orden ya enviada |
+| **Ver Pre-Cuenta** | Muestra borrador del ticket al cliente (no es factura válida) |
+| **Dividir Cuenta** | Separa ítems específicos en una nueva orden paralela |
+| **Unir Mesas** | Fusiona la orden de dos mesas ocupadas en una sola |
+| **Transferir Ítems** | Mueve un producto específico de una mesa a otra |
+| **Pagar Cuenta** | Redirige al módulo POS para procesar el cobro |
+| **Entregar al Cliente** | Marca la orden como entregada (solo visible si está en READY) |
+| **Liberar Mesa** | Pone la mesa en verde (solo si el pago ya fue procesado) |
 
 ---
 
 ### 👨‍🍳 3.4. Cocina — KDS PRO (`/admin/kitchen`)
 
-Monitor táctil que reemplaza las comandas en papel. El cocinero no necesita retirarse de su estación.
+Monitor táctil que reemplaza las comandas en papel. Sincronización en tiempo real con el portal del mesero. El cocinero trabaja desde su estación sin papel ni gritos.
 
-#### Interfaz del KDS:
-- **Tarjetas de Pedido**: Cada orden es una tarjeta con: número de mesa, mesero, lista de ítems y tiempo transcurrido.
-  - 🟡 **Amarillo**: Orden reciente (< 10 min).
-  - 🟠 **Naranja**: Alerta (entre 10 y 20 min).
-  - 🔴 **Rojo parpadeante**: Crítico (> 20 min). Suena alerta intensa.
-- **Órdenes VIP / Urgente**: Borde azul eléctrico, se desplazan al inicio de la fila automáticamente.
+> 📄 **Manual completo:** `docs/modulos/MANUAL_KDS_COCINA.md`
+
+#### El Tablero Kanban de 3 Columnas:
+
+| Columna | Estado | Significado |
+| :--- | :--- | :--- |
+| **PEDIDOS PENDIENTES** | `pending` | Orden recibida, sin tocar aún |
+| **ÓRDENES EN MARCHA** | `preparing` | Un cocinero la inició |
+| **LISTO / ENTREGA** | `ready` | Completa, esperando al mesero |
+
+#### Semáforo de Urgencia (borde de tarjeta):
+- 🟢 **Verde** → 0–4 min | Normal
+- 🟠 **Naranja** → 5–9 min | Alerta temprana
+- 🔴 **Rojo parpadeante** → 10+ min | **CRÍTICO** — suena alerta sonora cada 30 seg
 
 #### Flujo de Producción Paso a Paso:
-1. Nueva orden entra → suena *ding suave* → aparece tarjeta en amarillo.
-2. El cocinero toca la tarjeta y presiona **PREPARANDO** → el mesero ve la actualización en su portal.
-3. Al terminar, presiona **LISTO** → la tarjeta cambia a verde y el mesero recibe notificación.
-4. El mesero lleva el plato y presiona **ENTREGADO** → la tarjeta desaparece del KDS.
+1. Mesero envía pedido → suena **ding suave** → nueva tarjeta en **PENDIENTES**.
+2. Toca **"Ver Pedido Completo"** para expandir y ver ítems, notas y modificadores.
+3. Toca **[INICIAR →]** en cada ítem que empiezas a preparar.
+   - ⚡ **Automatización**: Al iniciar el primer ítem, la orden entera pasa sola a **EN MARCHA**.
+4. Cuando un ítem está listo, toca **[✓ LISTO]** → queda tachado.
+5. Cuando todos los ítems están listos, toca **"MARCAR TODO LISTO"** → tarjeta pasa a **LISTO**.
+6. El mesero recoge los platos y confirma entrega → **tarjeta desaparece**.
 
-#### Herramientas Adicionales del KDS:
-- **Resumen de Producción**: Botón lateral que muestra el total acumulado de todos los ítems pendientes (ej: "15 Hamburguesas, 8 Papas"). Útil para preparar en lote.
-- **Gestión de Stock Crítico**: Botón para marcar un producto como **AGOTADO** directamente desde cocina. El sistema lo bloquea instantáneamente en el portal de meseros.
-- **Filtro por Estación**: Cada pantalla puede configurarse para mostrar solo su área (Parrilla, Bebidas, Entradas).
+#### Notas de Ítems y Notas de Orden:
+- **Bloque naranja** bajo un ítem: nota especial del cliente (ej: `SIN CEBOLLA`, `TÉRMINO MEDIO`).
+- **Bloque ámbar** al final de la tarjeta: nota general de la mesa (ej: `Cliente alérgico al gluten`). **Nunca ignorarla.**
+
+#### Herramientas del Encabezado:
+| Botón | Función |
+| :--- | :--- |
+| **Filtro de Estaciones** | Ver solo los ítems de tu área (Parrilla, Bebidas, Entradas, etc.) |
+| **RESUMEN** | Panel lateral con conteo total de ítems pendientes (útil para cocinar en lote) |
+| **STOCK** | Modal para marcar/desmarcar productos AGOTADOS al instante |
+| **🔊 / 🔇** | Activar o silenciar alertas sonoras |
+
+#### Automatizaciones Inteligentes:
+- Si tocas **INICIAR** en cualquier ítem de una orden `pending` → la orden pasa automáticamente a `preparing`.
+- Si hay ítems sin iniciar dentro de una orden en marcha → aparece **banner naranja de advertencia**.
+- Las órdenes con campo `priority: true` → se muestran **primero** con insignia dorada **⭐ PRIORIDAD VIP**.
 
 ---
 

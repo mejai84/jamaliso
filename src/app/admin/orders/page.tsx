@@ -156,6 +156,7 @@ function OrdersContent() {
                 const { data: simpleData } = await supabase
                     .from('orders')
                     .select('*')
+                    .eq('restaurant_id', restaurant?.id)
                     .order('created_at', { ascending: false })
 
                 setOrders(simpleData?.map(order => ({ ...order, order_items: [], tables: null })) || [])
@@ -177,13 +178,13 @@ function OrdersContent() {
             setCurrentUser(profile)
         }
 
-        const { data: tablesData } = await supabase.from('tables').select('*').eq('active', true).order('table_number', { ascending: true })
+        const { data: tablesData } = await supabase.from('tables').select('*').eq('restaurant_id', restaurant?.id).eq('active', true).order('table_number', { ascending: true })
         setTables(tablesData || [])
 
-        const { data: customers } = await supabase.from('profiles').select('id, full_name, phone, loyalty_points')
+        const { data: customers } = await supabase.from('profiles').select('id, full_name, phone, loyalty_points').eq('restaurant_id', restaurant?.id)
         setAllCustomers(customers || [])
 
-        const { data: prodData } = await supabase.from('products').select('*').eq('is_available', true).order('name')
+        const { data: prodData } = await supabase.from('products').select('*').eq('restaurant_id', restaurant?.id).eq('is_available', true).order('name')
         setProducts(prodData || [])
     }
 

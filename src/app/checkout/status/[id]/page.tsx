@@ -22,7 +22,6 @@ export default function OrderStatusPage() {
     useEffect(() => {
         if (params.id) {
             fetchOrder()
-            fetchSettings()
 
             // Suscripción a cambios en ORDEN y DELIVERY
             const channel = supabase.channel('order-status-' + params.id)
@@ -57,13 +56,14 @@ export default function OrderStatusPage() {
                 .eq('order_id', params.id)
                 .maybeSingle()
             if (dData) setDelivery(dData)
+            fetchSettings(data.restaurant_id)
         }
         setLoading(false)
     }
 
     // ... (fetchSettings y handleFileUpload se mantienen igual) ...
-    const fetchSettings = async () => {
-        const { data } = await supabase.from('settings').select('value').eq('key', 'business_info').single()
+    const fetchSettings = async (restaurantId: string) => {
+        const { data } = await supabase.from('settings').select('value').eq('restaurant_id', restaurantId).eq('key', 'business_info').single()
         if (data) setBusinessInfo(data.value)
     }
 

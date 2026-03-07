@@ -20,6 +20,7 @@ import {
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
+import { useRestaurant } from "@/providers/RestaurantProvider"
 
 type Supplier = { id: string, name: string }
 type Ingredient = { id: string, name: string, unit: string, cost_per_unit: number }
@@ -32,6 +33,7 @@ type PurchaseItem = {
 }
 
 export default function NewPurchasePage() {
+    const { restaurant } = useRestaurant()
     const router = useRouter()
     const [suppliers, setSuppliers] = useState<Supplier[]>([])
     const [ingredients, setIngredients] = useState<Ingredient[]>([])
@@ -50,13 +52,13 @@ export default function NewPurchasePage() {
     }])
 
     useEffect(() => {
-        loadData()
-    }, [])
+        if (restaurant) loadData()
+    }, [restaurant])
 
     const loadData = async () => {
         const [supRes, ingRes] = await Promise.all([
-            supabase.from('suppliers').select('id, name').eq('is_active', true).order('name'),
-            supabase.from('ingredients').select('id, name, unit, cost_per_unit').eq('active', true).order('name')
+            supabase.from('suppliers').select('id, name').eq('restaurant_id', restaurant?.id).eq('is_active', true).order('name'),
+            supabase.from('ingredients').select('id, name, unit, cost_per_unit').eq('restaurant_id', restaurant?.id).eq('active', true).order('name')
         ])
         setSuppliers(supRes.data || [])
         setIngredients(ingRes.data || [])
@@ -102,6 +104,7 @@ export default function NewPurchasePage() {
             const { data: purchaseData, error: pError } = await supabase
                 .from('inventory_purchases')
                 .insert([{
+                    restaurant_id: restaurant?.id,
                     supplier_id: supplierId,
                     invoice_number: invoiceNumber,
                     purchase_date: new Date(purchaseDate).toISOString(),

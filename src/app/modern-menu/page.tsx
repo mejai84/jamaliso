@@ -5,6 +5,7 @@ import { Search, ShoppingBasket, HelpCircle, Plus, Info, Loader2 } from "lucide-
 import Image from "next/image"
 import { supabase } from "@/lib/supabase/client"
 import { useCart } from "@/components/store/cart-context"
+import { useSearchParams } from "next/navigation"
 
 // Tipos de datos actualizados para coincidir con la base de datos
 interface Product {
@@ -31,6 +32,13 @@ function ModernMenuContent() {
     const [categories, setCategories] = useState<Category[]>([])
     const [loading, setLoading] = useState(true)
     const [searchTerm, setSearchTerm] = useState("")
+    const searchParams = useSearchParams()
+
+    // 📋 Mesa dinámica desde URL: /modern-menu?mesa=5&personas=3
+    const mesaParam = searchParams.get('mesa')
+    const personasParam = searchParams.get('personas')
+    const mesaLabel = mesaParam ? `Mesa ${mesaParam}` : 'Mesa'
+    const personasLabel = personasParam || '-'
 
     const cartCount = items.reduce((sum, item) => sum + item.quantity, 0)
 
@@ -216,11 +224,11 @@ function ModernMenuContent() {
                 <div className="flex gap-12">
                     <div className="flex gap-3">
                         <span className="text-[#B0B2B8] font-bold text-[16px]">Mesa:</span>
-                        <span className="text-[#1E2022] font-black text-[16px]">2</span>
+                        <span className="text-[#1E2022] font-black text-[16px]">{mesaLabel}</span>
                     </div>
                     <div className="flex gap-3">
                         <span className="text-[#B0B2B8] font-bold text-[16px]">Personas:</span>
-                        <span className="text-[#1E2022] font-black text-[16px]">4</span>
+                        <span className="text-[#1E2022] font-black text-[16px]">{personasLabel}</span>
                     </div>
                 </div>
 

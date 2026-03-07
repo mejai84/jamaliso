@@ -102,7 +102,7 @@ export default function PosPremiumPage() {
         const { data: prods } = await supabase.from('products').select('*').eq('restaurant_id', restaurant?.id).eq('is_available', true).is('deleted_at', null)
 
         // 3. Cargar Configuración Regional
-        const { data: config } = await supabase.from('settings').select('value').eq('key', 'regional_config').maybeSingle()
+        const { data: config } = await supabase.from('settings').select('value').eq('restaurant_id', restaurant?.id).eq('key', 'regional_config').maybeSingle()
         if (config?.value) {
             setRegionalConfig(config.value)
             const { data: taxData } = await supabase.from('regional_taxes').select('*').eq('country', config.value.country).eq('is_active', true)

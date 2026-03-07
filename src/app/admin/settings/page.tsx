@@ -61,9 +61,10 @@ export default function SettingsPremiumPage() {
 
             // Regional update (Upsert in settings table)
             await supabase.from('settings').upsert({
+                restaurant_id: restaurant.id,
                 key: 'regional_config',
                 value: { country, currency_code: currency, locale, currency_symbol: '$', decimal_digits: 0 }
-            }, { onConflict: 'key' })
+            }, { onConflict: 'restaurant_id, key' })
 
             toast.success("CONFIGURACIÓN MAESTRA ACTUALIZADA ✨")
             refreshRestaurant?.()

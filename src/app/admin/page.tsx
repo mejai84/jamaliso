@@ -59,6 +59,7 @@ export default function AdminDashboard() {
     const navItems = [
         { label: 'POS VENTA', icon: ShoppingBag, href: '/admin/pos', desc: 'Terminal Punto de Venta' },
         { label: 'KDS COCINA', icon: Flame, href: '/admin/kitchen', desc: 'Central de Producción' },
+        { label: 'CAJA', icon: Wallet, href: '/admin/cashier', desc: 'Control de Flujo de Efectivo' },
         { label: 'INVENTARIO', icon: Package, href: '/admin/inventory', desc: 'Control de Suministros' },
         { label: 'NÓMINA', icon: Users, href: '/admin/payroll', desc: 'Gestión de Personal' },
         { label: 'PRODUCTOS', icon: Utensils, href: '/admin/products', desc: 'Ingeniería de Menú' },
@@ -83,7 +84,7 @@ export default function AdminDashboard() {
                         <p className="text-[8px] md:text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] md:tracking-[0.5em] italic flex items-center gap-2 md:gap-4">
                             CENTRAL COMMAND HUB
                             <span className="w-1.5 h-1.5 bg-orange-500 rounded-full animate-pulse" />
-                            PARGO ROJO OS v2.0
+                            {restaurant?.name || 'JAMALI SO'} OS v2.0
                         </p>
                     </div>
 

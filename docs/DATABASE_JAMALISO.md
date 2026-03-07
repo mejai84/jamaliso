@@ -12,7 +12,8 @@ La estructura principal sobre la cual todo pivotea.
 | `tenants` | **Partner / Reseller** | Entidad de más alto nivel para Marca Blanca. Almacena: nombre del distribuidor, logo corporativo, color primario del Partner, subdominio maestro y plan de suscripción B2B. |
 | `restaurants` | **Sucursal / Cliente** | Datos de las sucursales. Cada restaurante pertenece a un `tenant_id`. Atributos clave: `name`, `subdomain`, `logo_url`, `primary_color`. |
 | `profiles` | Usuarios | Perfiles vinculados a `auth.users`. Controlan acceso y roles. Vinculados a un `restaurant_id`. |
-| `settings` | Configuración | Ajustes globales del restaurante (propina, impuestos, etc.). |
+| `settings` | Configuración | Ajustes globales del restaurante. **PK (restaurant_id, key)** asegura que las configuraciones sean aisladas por tenant. |
+| `shift_handoffs` | **Traspaso de Turno** | Registro de entrega de caja entre empleados. Guarda snapshots de mesas abiertas, pedidos en cocina y efectivo contado. |
 
 ## 2. Subsistema de Punto de Venta (POS) y Menú
 Estructura de ventas en piso.
@@ -43,7 +44,7 @@ Control estricto contra descuadres robos.
 | Tabla | Función | Descripción |
 | :--- | :--- | :--- |
 | `cashboxes` | Físicas | Ubicación/Identificador de caja física (POS 1, Main, Ventanilla). |
-| `cashbox_sessions` | Transaccional | Turno de un cajero. Guarda: base inicial, dinero esperado vs declarado, responsable y descuadres. |
+| `cashbox_sessions` | Transaccional | Turno de un cajero. Guarda: base inicial, dinero esperado vs declarado, responsable y descuadres. Agregadas columnas: `closed_with_pending`, `transferred_to`. |
 | `cash_movements` | Flujo | Entradas y salidas manuales durante una sesión activa. |
 | `petty_cash_vouchers` | Egresos | Pagos a proveedores en efectivo, recibos. |
 

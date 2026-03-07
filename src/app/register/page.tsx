@@ -111,7 +111,7 @@ export default function RegisterPage() {
                         <User className="w-10 h-10 text-primary" />
                     </div>
                     <h1 className="text-2xl font-black text-gray-900 tracking-tight uppercase">Crear Cuenta</h1>
-                    <p className="text-gray-500 text-sm mt-2 font-medium">Únete a la familia Pargo Rojo</p>
+                    <p className="text-gray-500 text-sm mt-2 font-medium">Crea tu cuenta y disfruta de la mejor experiencia</p>
                 </div>
 
                 <div className="p-8 pt-0 space-y-6">

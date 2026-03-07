@@ -83,7 +83,8 @@ La aplicación se divide en áreas funcionales cohesionadas.
 | **Kitchen Display (KDS)** | Pantalla para cocina, tiempos de preparación y estados. | `/src/app/admin/kitchen` |
 | **Gestión de Inventario** | Entradas, salidas, alertas de stock mínimo y proveedores. | `/src/app/admin/inventory/*` |
 | **Recetas y Producción** | Base para el cálculo de Food Cost (rendimientos, mermas). | `/src/app/admin/inventory/recipes` |
-| **Cajas y Turnos** | Control de efectivo, descuadres, movimientos manuales. | `/src/app/admin/cashier/*` |
+| **Cajas y Turnos** | Control de efectivo, descuadres. Soporta **Traspaso de Turno** (Handoff) con mesas pendientes y firma digital. | `/src/app/admin/cashier/*` |
+| **Pedidos QR** | Menú digital con pedidos directos desde la mesa vinculados al KDS. | `/src/app/[slug]/mesa/[mesa]` |
 | **Reportes y B.I.** | Inteligencia de negocios, proyecciones IA, márgenes. | `/src/app/admin/reports` |
 | **Identidad Visual** | Configuración dinámica de marca blanca (logos, colores). | `/src/app/admin/settings` |
 | **Nómina (Payroll)** | Gestión de sueldos, contratos, comisiones e impuestos. | `/src/app/admin/payroll` |

@@ -16,6 +16,7 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
+import { useRestaurant } from "@/providers/RestaurantProvider"
 
 export default function OrderTrackingPage() {
     const params = useParams()
@@ -23,6 +24,7 @@ export default function OrderTrackingPage() {
     const [loading, setLoading] = useState(true)
     const [order, setOrder] = useState<any>(null)
     const [delivery, setDelivery] = useState<any>(null)
+    const { restaurant } = useRestaurant()
 
     // Estados Visuales
     const STATUS_STEPS = [
@@ -44,14 +46,14 @@ export default function OrderTrackingPage() {
                 'postgres_changes',
                 { event: 'UPDATE', schema: 'public', table: 'orders', filter: `id=eq.${orderId}` },
                 (payload) => {
-                    setOrder(prev => ({ ...prev, ...payload.new }))
+                    setOrder((prev: any) => ({ ...prev, ...payload.new }))
                 }
             )
             .on(
                 'postgres_changes',
                 { event: 'UPDATE', schema: 'public', table: 'delivery_tracking', filter: `order_id=eq.${orderId}` },
                 (payload) => {
-                    setDelivery(prev => ({ ...prev, ...payload.new }))
+                    setDelivery((prev: any) => ({ ...prev, ...payload.new }))
                 }
             )
             .subscribe()
@@ -120,7 +122,7 @@ export default function OrderTrackingPage() {
             <div className="bg-white p-6 shadow-sm border-b border-gray-100 sticky top-0 z-20">
                 <div className="flex justify-between items-center max-w-2xl mx-auto">
                     <div>
-                        <p className="text-[10px] font-black uppercase tracking-widest text-[#FF0075]">Pargo Rojo</p>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-[#FF0075]">{restaurant?.name || 'JAMALI SO'}</p>
                         <h1 className="text-xl font-black italic text-[#1E2022]">TU PEDIDO</h1>
                     </div>
                     <div className="text-right">
@@ -216,7 +218,7 @@ export default function OrderTrackingPage() {
                                 </div>
                                 <div>
                                     <p className="font-bold">{delivery.profiles?.full_name || "Repartidor"}</p>
-                                    <p className="text-[10px] text-white/50 uppercase tracking-wider">Pargo Delivery Team</p>
+                                    <p className="text-[10px] text-white/50 uppercase tracking-wider">{restaurant?.name || 'JAMALI SO'} Delivery</p>
                                 </div>
                             </div>
                             {delivery.profiles?.phone && (

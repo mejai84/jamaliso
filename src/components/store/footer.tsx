@@ -7,11 +7,11 @@ import { supabase } from "@/lib/supabase/client"
 
 export function Footer() {
     const [info, setInfo] = useState<any>({
-        name: "PARGO ROJO",
+        name: "JAMALI SO",
         logo_url: "",
-        address: "C.Cial. Cauca Centro, Caucasia",
-        phone: "320 784 8287",
-        email: "contacto@pargorojo.com",
+        address: "",
+        phone: "",
+        email: "",
         instagram_url: "",
         facebook_url: "",
         tiktok_url: "",
