@@ -226,6 +226,7 @@ export default function CashierPage() {
                 data={zReportData}
                 onPrint={() => window.print()}
                 onExit={() => router.push('/admin')}
+                restaurant={restaurant}
             />
 
             <VoucherModal
