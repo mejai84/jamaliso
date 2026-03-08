@@ -75,17 +75,25 @@ export default function Home() {
   }
 
   if (loading) return (
-    <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center gap-8">
-      <div className="relative w-64 h-28 animate-pulse">
+    <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center gap-12">
+      <div className="relative w-[500px] h-[200px] md:w-[800px] md:h-[300px] animate-pulse">
+        <div className="absolute inset-0 bg-primary/20 blur-[100px] rounded-full animate-pulse" />
         <Image
           src="/images/jamali-os-logo.png"
           alt="JAMALI OS"
           fill
-          className="object-contain brightness-0 invert"
+          className="object-contain brightness-0 invert relative z-10"
         />
       </div>
-      <div className="text-center">
-        <p className="text-slate-500 text-[10px] font-bold uppercase tracking-[0.4em] mt-2">Iniciando Ecosistema Gastronómico</p>
+      <div className="text-center space-y-4">
+        <p className="text-white font-black text-xl md:text-3xl uppercase tracking-[0.6em] italic animate-in fade-in slide-in-from-bottom-4 duration-1000">
+          Iniciando <span className="text-primary">Ecosistema</span> Gastronómico
+        </p>
+        <div className="flex justify-center gap-2">
+          <div className="w-2 h-2 bg-primary rounded-full animate-bounce [animation-delay:-0.3s]" />
+          <div className="w-2 h-2 bg-primary rounded-full animate-bounce [animation-delay:-0.15s]" />
+          <div className="w-2 h-2 bg-primary rounded-full animate-bounce" />
+        </div>
       </div>
     </div>
   )
