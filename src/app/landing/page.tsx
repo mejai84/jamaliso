@@ -174,9 +174,9 @@ export default function ModernSaaSLanding() {
                             <Image
                                 src="/images/jamali-os-transparent.png"
                                 alt="JAMALI OS Logo"
-                                width={180}
-                                height={60}
-                                className="h-12 w-auto object-contain"
+                                width={240}
+                                height={80}
+                                className="h-16 w-auto object-contain"
                             />
                         </Link>
                         <div className="hidden md:flex items-center gap-6">
@@ -550,9 +550,9 @@ export default function ModernSaaSLanding() {
                             <Image
                                 src="/images/jamali-os-transparent.png"
                                 alt="JAMALI OS Logo"
-                                width={200}
-                                height={60}
-                                className="h-14 w-auto object-contain grayscale opacity-80 hover:grayscale-0 transition-all hover:opacity-100"
+                                width={280}
+                                height={80}
+                                className="h-20 w-auto object-contain grayscale opacity-80 hover:grayscale-0 transition-all hover:opacity-100"
                             />
                         </Link>
                         <p className="text-slate-500 text-sm max-w-sm leading-relaxed font-medium">

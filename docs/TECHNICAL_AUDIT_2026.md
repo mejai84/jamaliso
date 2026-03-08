@@ -21,6 +21,8 @@ En esta sesión se ha transformado el sistema de un POS robusto a una plataforma
 | **Premium UX Elite** | Rediseño estructural bajo el estándar Pixora Light v2 con Glassmorphism 3.0. | Experiencia de usuario de nivel "Top-Tier" que justifica precios Premium. |
 | **Onboarding Elite** | Unificación de Demo, Setup y Pago en un flujo interactivo de 5 fases. | Reducción drástica del abandono en registro (Churn) y activación inmediata. |
 | **Financial Core v2** | Facturación Fiscal con desglose de impuestos y Vouchers contables profesionales. | Legalidad total y control de Caja Menor con impresión térmica 80mm. |
+| **Branch Isolation v2** | Sincronización dinámica de KPIs, POS y Cajas al cambiar de sede (sucursal). | Eliminación de contaminación de datos y reportes erróneos en cadenas multi-sede. |
+| **Landing Branding v3** | Logo ultra-dimencionado, tipografía premium y loading screen cinemático. | Impacto visual inmediato y posicionamiento de marca de lujo (High-End). |
 
 ---
 

@@ -142,12 +142,13 @@ El sistema utiliza un flag `isPaid` y `setupCompleted` para orquestar el acceso 
 
 ---
 
-## 9. Premium Financial Core (Fiscal Ready)
+## 9. Premium Financial Core & Multi-Branch Context
 JAMALI OS ha evolucionado su sistema de transacciones para cumplir con estándares contables de alta gama:
 1.  **Facturación Electrónica (v2.0):** Desglose detallado de impuestos por ítem y total neto. Documento equivalente para impresión térmica (80mm).
 2.  **Vouchers de Caja Menor:** Generación de comprobantes profesionales de ingreso/egreso con branding real del restaurante y protocolo de justificación.
 3.  **Auditoría de Cierre (Z-Report):** Reporte de final de turno que sincroniza el saldo teórico con el conteo físico, detectando novedades con precisión forense.
 4.  **Identidad Legal:** Los documentos impresos integran automáticamente el logo, NIT y dirección legal configurados en el sistema.
+5.  **Multi-Branch Isolation:** Sincronización en tiempo real de métricas (KPIs), estados de POS y sesiones de caja al cambiar de sede (sucursal). El sistema detecta dinámicamente el `restaurant_id` actual y filtra TODA la lógica operativa (ventas, stock, cajas) para evitar contaminación de datos entre sedes de un mismo inquilino.
 
 ---
 
@@ -228,4 +229,4 @@ Desde marzo de 2026, JAMALI OS implementa el estándar **Pixora Light**:
 
 ---
 
-*Última actualización: 08 Marzo 2026 — Se añade Inteligencia Predictiva (IA Guardian), Onboarding Elite v2 (Premium UX overhaul) y Financial Core v2 (Fiscal Ready).*
+*Última actualización: 08 Marzo 2026 — Se añade Inteligencia Predictiva (IA Guardian), Onboarding Elite v2 (Premium UX overhaul), Financial Core v2 (Fiscal Ready) y Multi-Branch Context Isolation.*

@@ -34,7 +34,7 @@ export function Sidebar({ restaurant, userRole, userName }: SidebarProps) {
             {/* Brand Header */}
             <div className="p-8 pb-10 flex flex-col items-center justify-center relative z-10 border-b-2 border-slate-50">
                 <div className="flex flex-col items-center gap-4">
-                    <div className="relative w-16 h-16 rounded-2xl bg-white border-2 border-slate-100 flex items-center justify-center relative z-10 overflow-hidden shadow-sm">
+                    <div className="relative w-20 h-20 rounded-2xl bg-white border-2 border-slate-100 flex items-center justify-center relative z-10 overflow-hidden shadow-sm">
                         {restaurant?.logo_url ? (
                             <img src={restaurant.logo_url} alt="Logo" className="w-full h-full object-cover" />
                         ) : (

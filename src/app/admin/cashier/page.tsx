@@ -46,11 +46,18 @@ export default function CashierPage() {
             setCurrentUser(profile)
 
             try {
-                const posStatus = await getPosStatus()
+                if (!restaurant?.id) return
+                const posStatus = await getPosStatus(undefined, restaurant.id)
                 setStatus(posStatus)
 
-                if (!posStatus.hasActiveShift) return router.push("/admin/cashier/start-shift")
-                if (!posStatus.hasOpenCashbox) return router.push("/admin/cashier/open-box")
+                if (!posStatus.hasActiveShift) {
+                    router.push("/admin/cashier/start-shift")
+                    return
+                }
+                if (!posStatus.hasOpenCashbox) {
+                    router.push("/admin/cashier/open-box")
+                    return
+                }
 
                 if (posStatus.activeCashboxSession?.id) {
                     await fetchDashboardData(posStatus.activeCashboxSession.id)
@@ -63,8 +70,11 @@ export default function CashierPage() {
                 setLoading(false)
             }
         }
-        init()
-    }, [router])
+
+        if (restaurant?.id) {
+            init()
+        }
+    }, [restaurant?.id, router])
 
     const fetchDashboardData = async (sessionId: string) => {
         setRefreshing(true)
@@ -96,11 +106,15 @@ export default function CashierPage() {
         const currentModal = modalOpen
         try {
             const { transferToPettyCash } = await import("@/actions/pos")
+            let voucherType: 'DEPOSIT' | 'WITHDRAWAL' | 'PETTY_CASH' = 'DEPOSIT'
+
             if (currentModal === 'petty-cash-transfer') {
                 await transferToPettyCash(status.activeCashboxSession.id, amount, reason)
                 toast.success("Transferencia a Caja Menor exitosa")
+                voucherType = 'PETTY_CASH'
             } else {
                 const type = currentModal === 'income' ? 'DEPOSIT' : 'WITHDRAWAL'
+                voucherType = type
                 const { error } = await supabase.from('cash_movements').insert({
                     cashbox_session_id: status.activeCashboxSession.id,
                     user_id: currentUser.id,
@@ -110,17 +124,18 @@ export default function CashierPage() {
                 })
                 if (error) throw error
                 toast.success("Movimiento registrado con éxito")
-
-                // Open professional voucher
-                setActiveVoucher({
-                    id: (Math.random() * 1000000).toString(), // Fallback if no ID available
-                    type: currentModal === 'petty-cash-transfer' ? 'PETTY_CASH' : (currentModal === 'income' ? 'DEPOSIT' : 'WITHDRAWAL'),
-                    amount,
-                    description: reason,
-                    date: new Date(),
-                    user: currentUser?.full_name || 'ADMINISTRADOR'
-                })
             }
+
+            // Open professional voucher for all movement types
+            setActiveVoucher({
+                id: (Math.random() * 1000000).toString(),
+                type: voucherType,
+                amount,
+                description: reason,
+                date: new Date(),
+                user: currentUser?.full_name || 'ADMINISTRADOR'
+            })
+
             setModalOpen(null)
             fetchDashboardData(status.activeCashboxSession.id)
         } catch (error: any) {

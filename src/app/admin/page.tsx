@@ -40,12 +40,12 @@ import { toast } from "sonner"
 export default function AdminDashboard() {
     const [loading, setLoading] = useState(true)
     const [stats, setStats] = useState({
-        todayRevenue: 2450000,
-        activeOrders: 18,
-        criticalStock: 3,
-        occupiedTables: 12,
-        totalTables: 20,
-        newCustomers: 8,
+        todayRevenue: 0,
+        activeOrders: 0,
+        criticalStock: 0,
+        occupiedTables: 0,
+        totalTables: 0,
+        newCustomers: 0,
         rating: 4.8
     })
     const [currentTime, setCurrentTime] = useState(new Date())
@@ -54,10 +54,86 @@ export default function AdminDashboard() {
 
     useEffect(() => {
         const timer = setInterval(() => setCurrentTime(new Date()), 1000)
-        setLoading(false)
         return () => clearInterval(timer)
     }, [])
 
+    useEffect(() => {
+        if (restaurant?.id) {
+            fetchDashboardStats(restaurant.id)
+        }
+    }, [restaurant?.id])
+
+    const fetchDashboardStats = async (resId: string) => {
+        setLoading(true)
+        try {
+            // 1. Ventas de Hoy
+            const today = new Date()
+            today.setHours(0, 0, 0, 0)
+            const { data: salesData } = await supabase
+                .from('orders')
+                .select('total')
+                .eq('restaurant_id', resId)
+                .neq('status', 'cancelled')
+                .gte('created_at', today.toISOString())
+
+            const totalRevenue = salesData?.reduce((sum, order) => sum + (order.total || 0), 0) || 0
+
+            // 2. Órdenes Activas
+            const { count: activeCount } = await supabase
+                .from('orders')
+                .select('*', { count: 'exact', head: true })
+                .eq('restaurant_id', resId)
+                .in('status', ['pending', 'confirmed', 'cooking', 'ready'])
+
+            // 3. Mesas
+            const { data: tablesData } = await supabase
+                .from('tables')
+                .select('status')
+                .eq('restaurant_id', resId)
+
+            const totalTables = tablesData?.length || 0
+            const occupiedTables = tablesData?.filter(t => t.status === 'occupied').length || 0
+
+            // 4. Inventario Crítico
+            const { data: invData } = await supabase
+                .from('ingredients')
+                .select('stock, min_stock')
+                .eq('restaurant_id', resId)
+
+            const criticalStock = invData?.filter(i => (i.stock || 0) <= (i.min_stock || 0)).length || 0
+
+            setStats({
+                todayRevenue: totalRevenue,
+                activeOrders: activeCount || 0,
+                criticalStock: criticalStock,
+                occupiedTables: occupiedTables,
+                totalTables: totalTables,
+                newCustomers: 8, // Placeholder o consulta opcional
+                rating: 4.8
+            })
+        } catch (error) {
+            console.error("Error loading dashboard stats:", error)
+            toast.error("No se pudieron sincronizar las métricas reales")
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    if (loading) return (
+        <div className="min-h-screen bg-white/80 backdrop-blur-xl flex flex-col items-center justify-center gap-12 z-[100] relative">
+            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center opacity-5 pointer-events-none" />
+            <div className="relative">
+                <div className="w-24 h-24 border-4 border-orange-500/20 border-t-orange-500 rounded-full animate-spin" />
+                <LayoutDashboard className="w-10 h-10 text-orange-500 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+            </div>
+            <div className="text-center space-y-3">
+                <p className="text-2xl font-black italic uppercase italic tracking-tighter">Sincronizando <span className="text-orange-500">Métricas</span> Reales</p>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.5em] animate-pulse">
+                    {restaurant?.name || 'JAMALI OS'} COMMAND CENTER
+                </p>
+            </div>
+        </div>
+    )
     const navItems = [
         { label: 'POS VENTA', icon: ShoppingBag, href: '/admin/pos', desc: 'Terminal Punto de Venta' },
         { label: 'KDS COCINA', icon: Flame, href: '/admin/kitchen', desc: 'Central de Producción' },

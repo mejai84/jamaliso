@@ -19,7 +19,7 @@ export interface PosStatus {
  * Obtiene el estado actual del operador POS.
  * Verifica si tiene turno activo y si tiene caja abierta.
  */
-export async function getPosStatus(targetUserId?: string): Promise<PosStatus> {
+export async function getPosStatus(targetUserId?: string, restaurantId?: string): Promise<PosStatus> {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) throw new Error("Unauthorized")
@@ -34,25 +34,35 @@ export async function getPosStatus(targetUserId?: string): Promise<PosStatus> {
         }
     }
 
-    // 1. Buscar turno activo (usando maybeSingle para evitar error si no hay ninguno)
-    const { data: shift, error: shiftError } = await supabase
+    // 1. Buscar turno activo
+    let shiftQuery = supabase
         .from('shifts')
         .select('*')
         .eq('user_id', userId)
         .eq('status', 'OPEN')
-        .maybeSingle()
+
+    if (restaurantId) {
+        shiftQuery = shiftQuery.eq('restaurant_id', restaurantId)
+    }
+
+    const { data: shift, error: shiftError } = await shiftQuery.maybeSingle()
 
     if (shiftError) console.warn("Aviso: Error buscando turno activo:", shiftError.message)
 
     // 2. Si hay turno, buscar sesión de caja activa para ese turno
     let cashboxSession = null
     if (shift) {
-        const { data: session, error: sessionError } = await supabase
+        let sessionQuery = supabase
             .from('cashbox_sessions')
             .select('*, cashbox:cashboxes(*)')
             .eq('shift_id', shift.id)
             .eq('status', 'OPEN')
-            .maybeSingle()
+
+        if (restaurantId) {
+            sessionQuery = sessionQuery.eq('restaurant_id', restaurantId)
+        }
+
+        const { data: session, error: sessionError } = await sessionQuery.maybeSingle()
 
         if (sessionError) console.warn("Aviso: Error buscando caja activa:", sessionError.message)
         cashboxSession = session
