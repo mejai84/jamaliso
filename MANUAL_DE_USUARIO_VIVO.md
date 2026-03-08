@@ -446,6 +446,21 @@ Una vez completado, tu sistema operativo se provisionará en menos de 60 segundo
 
 ---
 
+### 🚀 11. IDENTIDAD Y SIMBOLISMO — EL ALMA DE JAMALI OS (PIXORA EXCLUSIVA)
+
+El logo de JAMALI OS no es solo estética; es una representación visual de la arquitectura y los valores que protegen tu negocio.
+
+1.  **El Círculo (Armadura del Sistema):** Simboliza **Integridad y Seguridad**. Su diseño como "Botón de Encendido" comunica que este es el interruptor que pone en marcha tu restaurante cada día. La interrupción superior representa un sistema abierto y conectado, mientras que la base se curva en una sutil "J" abstracta y elegante.
+2.  **El Núcleo de Red (El Corazón Familiar):** Cuatro nodos cian en forma de diamante representan la base familiar del proyecto (**Jaime, Liliana, Matthias y Mariana**). Son el motor de compromiso detrás del código. Tecnológicamente, simboliza una **Red MESH** donde los datos fluyen sincronizados entre POS, Cocina y Administración.
+3.  **Color y Energía Digital:**
+    *   **Azul Medianoche:** Profesionalismo grado industrial (Estabilidad y Seriedad).
+    *   **Cian Neón:** Agilidad de última generación (Next.js & Supabase).
+4.  **Tipografía Estructural:** JAMALI OS se presenta como un componente sólido, un verdadero **Sistema Operativo** para hostelería, no solo un sitio web.
+
+> "Los cuatro nodos centrales son nuestra base familiar que garantiza la pasión detrás del código, mientras que el círculo exterior es la seguridad que envuelve y protege los datos de tu restaurante."
+
+---
+
 > [!IMPORTANT]
 > **Regla de Oro del Sistema:** Los módulos de Frontend NUNCA se comunican directamente entre sí. Todo cambio de estado (pedido listo, stock agotado, caja cerrada) se escribe en la Base de Datos (PostgreSQL) y los otros módulos lo reciben a través de **Supabase Realtime** de forma automática.
 

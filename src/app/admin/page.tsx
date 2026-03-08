@@ -86,16 +86,22 @@ export default function AdminDashboard() {
     const fetchDashboardStats = async (resId: string) => {
         setLoading(true)
         try {
-            const isDemo = new URL(window.location.href).searchParams.get('demo') === 'true'
-            if (isDemo || resId === '00000000-0000-0000-0000-000000000000') {
+            // Logic for Demo Mode: Different values for different restaurants to indicate switch success
+            const isDemoQuery = new URL(window.location.href).searchParams.get('demo') === 'true'
+            const isSandbox = resId === '00000000-0000-0000-0000-000000000000'
+
+            if (isDemoQuery || isSandbox) {
+                // Generate unique metrics per restaurant using a simple hash of the ID
+                const seed = resId.split('-')[0].split('').reduce((a, b) => a + b.charCodeAt(0), 0)
+
                 setStats({
-                    todayRevenue: 1250000,
-                    activeOrders: 8,
-                    criticalStock: 3,
-                    occupiedTables: 12,
+                    todayRevenue: 1250000 + (seed % 50 * 10000),
+                    activeOrders: 8 + (seed % 7),
+                    criticalStock: 3 + (seed % 4),
+                    occupiedTables: 12 + (seed % 6),
                     totalTables: 24,
-                    newCustomers: 15,
-                    rating: 4.9
+                    newCustomers: 15 + (seed % 12),
+                    rating: 4.5 + (seed % 5) / 10
                 })
                 setLoading(false)
                 return

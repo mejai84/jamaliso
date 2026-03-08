@@ -486,18 +486,113 @@ export default function ModernSaaSLanding() {
                 </div>
             </section>
 
-            {/* 5. SOLUTION SECTION */}
-            <section className="py-20 px-6">
-                <div className="max-w-4xl mx-auto text-center space-y-8">
-                    <motion.div {...fadeUp} className="inline-block p-10 rounded-[3.5rem] bg-orange-50/50 border border-orange-100/50 mb-8 shadow-sm backdrop-blur-sm">
-                        <Image src="/images/jamali-os-transparent.png" alt="JAMALI OS" width={220} height={80} className="w-48 h-auto" />
+            {/* 5. SOLUTION SECTION - REFINED WITH DETAILED SYMBOLISM (USER DATA) */}
+            <section className="py-24 px-6 bg-white relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-orange-100/20 blur-[150px] rounded-full -translate-y-1/2 translate-x-1/2" />
+
+                <div className="max-w-6xl mx-auto text-center space-y-12 relative z-10">
+                    <motion.div {...fadeUp} className="inline-block p-12 rounded-[4rem] bg-slate-900 border-4 border-slate-800 mb-8 shadow-2xl">
+                        <Image src="/images/jamali-os-transparent.png" alt="JAMALI OS" width={280} height={100} className="w-56 h-auto" />
                     </motion.div>
-                    <motion.h2 {...fadeUp} className="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter">
-                        {c.solution.title}
-                    </motion.h2>
-                    <motion.p {...fadeUp} className="text-xl text-slate-500 leading-relaxed font-medium">
-                        {c.solution.desc}
-                    </motion.p>
+
+                    <div className="space-y-6 max-w-4xl mx-auto mb-16">
+                        <motion.h2 {...fadeUp} className="text-4xl md:text-6xl font-black text-slate-900 tracking-tighter leading-tight italic uppercase">
+                            {lang === 'es' ? 'Mucho más que un Software, un Ecosistema' : 'Much more than Software, an Ecosystem'}
+                        </motion.h2>
+                        <motion.p {...fadeUp} className="text-xl text-slate-500 leading-relaxed font-medium">
+                            {lang === 'es'
+                                ? 'Diseñado para ser la armadura de tu restaurante y el motor que impulsa tu crecimiento con la intensidad de un legado familiar.'
+                                : 'Designed to be your restaurant\'s armor and the engine that drives your growth with the intensity of a family legacy.'}
+                        </motion.p>
+                    </div>
+
+                    {/* ✨ INTENDED BRANDING SYMBOLISM SECTION */}
+                    <div className="grid md:grid-cols-2 gap-8 mt-24">
+                        {/* 1. Circle */}
+                        <motion.div {...fadeUp} transition={{ delay: 0.1 }} className="bg-slate-950 p-10 rounded-[3.5rem] text-left space-y-6 hover:shadow-2xl transition-all border border-slate-800 group relative overflow-hidden">
+                            <div className="absolute -top-12 -right-12 p-24 opacity-5 pointer-events-none rotate-12 group-hover:rotate-45 transition-transform duration-1000">
+                                <Package className="w-64 h-64 text-white" />
+                            </div>
+                            <div className="w-16 h-16 rounded-2xl bg-white text-slate-950 flex items-center justify-center shrink-0 shadow-lg group-hover:scale-110 transition-transform">
+                                <span className="text-3xl font-black">⭕</span>
+                            </div>
+                            <div className="space-y-4">
+                                <h4 className="text-2xl font-black italic uppercase tracking-tighter text-white">
+                                    {lang === 'es' ? 'La Armadura del Sistema' : 'The System Armor'}
+                                </h4>
+                                <div className="space-y-3">
+                                    <p className="text-sm text-slate-400 font-medium leading-relaxed">
+                                        {lang === 'es'
+                                            ? 'El círculo exterior simboliza integridad y seguridad. Su diseño como "Botón de Encendido" comunica que este es el interruptor que pone en marcha tu negocio.'
+                                            : 'The outer circle symbolizes integrity and security. Its "Power Button" design communicates that this is the switch that starts your business.'}
+                                    </p>
+                                    <ul className="text-[12px] text-slate-500 font-bold space-y-2 uppercase italic tracking-wider">
+                                        <li>• {lang === 'es' ? 'Interrupción Superior: Conexión abierta y dinámica.' : 'Top Interruption: Open and dynamic connection.'}</li>
+                                        <li>• {lang === 'es' ? 'Trazo Inferior: Curva sutil que insinúa la "J" de JAMALI.' : 'Bottom Stroke: Subtle curve hinting at JAMALI\'s "J".'}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </motion.div>
+
+                        {/* 2. Nodes / Family */}
+                        <motion.div {...fadeUp} transition={{ delay: 0.2 }} className="bg-cyan-950 p-10 rounded-[3.5rem] text-left space-y-6 hover:shadow-2xl transition-all border border-cyan-800 group relative overflow-hidden">
+                            <div className="absolute -top-12 -right-12 p-24 opacity-5 pointer-events-none -rotate-12 group-hover:-rotate-45 transition-transform duration-1000">
+                                <Users className="w-64 h-64 text-cyan-400" />
+                            </div>
+                            <div className="w-16 h-16 rounded-2xl bg-cyan-400 text-cyan-950 flex items-center justify-center shrink-0 shadow-lg group-hover:scale-110 transition-transform">
+                                <span className="text-3xl font-black">💠</span>
+                            </div>
+                            <div className="space-y-4">
+                                <h4 className="text-2xl font-black italic uppercase tracking-tighter text-cyan-400">
+                                    {lang === 'es' ? 'El Corazón Familiar' : 'The Family Heart'}
+                                </h4>
+                                <div className="space-y-3">
+                                    <p className="text-sm text-cyan-100/80 font-medium leading-relaxed">
+                                        {lang === 'es'
+                                            ? 'Cuatro nodos cian en diamante representan a Jaime, Liliana, Matthias y Mariana. Son el motor y la razón de ser de este proyecto.'
+                                            : 'Four cyan nodes in a diamond represent Jaime, Liliana, Matthias, and Mariana. They are the engine and reason for this project.'}
+                                    </p>
+                                    <p className="text-[12px] text-cyan-400 font-bold uppercase italic tracking-wider">
+                                        {lang === 'es' ? 'TECNOLOGÍA MESH: Datos sincronizados en tiempo real entre POS, Cocina y Administración.' : 'MESH TECH: Data synchronized in real-time between POS, Kitchen, and Administration.'}
+                                    </p>
+                                </div>
+                            </div>
+                        </motion.div>
+
+                        {/* 3. Energy / Tech */}
+                        <motion.div {...fadeUp} transition={{ delay: 0.3 }} className="p-10 rounded-[3.5rem] text-left space-y-6 hover:shadow-2xl transition-all border border-slate-100 group bg-white shadow-xl">
+                            <div className="w-16 h-16 rounded-2xl bg-slate-100 text-slate-900 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                                <Sparkles className="w-8 h-8" />
+                            </div>
+                            <div className="space-y-4">
+                                <h4 className="text-2xl font-black italic uppercase tracking-tighter text-slate-900">
+                                    {lang === 'es' ? 'Energía Digital' : 'Digital Energy'}
+                                </h4>
+                                <p className="text-sm text-slate-500 font-medium leading-relaxed">
+                                    {lang === 'es'
+                                        ? 'Midnight Blue para la estabilidad industrial y Cyan Neón para la agilidad de última generación. Una marca de grado industrial.'
+                                        : 'Midnight Blue for industrial stability and Neon Cyan for next-generation agility. An industrial grade brand.'}
+                                </p>
+                            </div>
+                        </motion.div>
+
+                        {/* 4. OS Concept */}
+                        <motion.div {...fadeUp} transition={{ delay: 0.4 }} className="p-10 rounded-[3.5rem] text-left space-y-6 hover:shadow-2xl transition-all border border-slate-100 group bg-slate-50 shadow-xl">
+                            <div className="w-16 h-16 rounded-2xl bg-orange-500 text-white flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                                <LayoutDashboard className="w-8 h-8" />
+                            </div>
+                            <div className="space-y-4">
+                                <h4 className="text-2xl font-black italic uppercase tracking-tighter text-slate-900">
+                                    {lang === 'es' ? 'Sistema Operativo (OS)' : 'Operating System (OS)'}
+                                </h4>
+                                <p className="text-sm text-slate-500 font-medium leading-relaxed">
+                                    {lang === 'es'
+                                        ? 'Representamos el "SISTEMA OPERATIVO" total. JAMALI OS es un componente sólido y estructural para tu negocio.'
+                                        : 'We represent the total "OPERATING SYSTEM". JAMALI OS is a solid and structural component for your business.'}
+                                </p>
+                            </div>
+                        </motion.div>
+                    </div>
                 </div>
             </section>
 
@@ -532,88 +627,78 @@ export default function ModernSaaSLanding() {
                 </div>
             </section>
 
-            {/* 6.5 THE SUITE SHOWCASE */}
-            <section className="py-24 overflow-hidden bg-slate-900 border-y border-slate-800 relative z-10 w-full">
-                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-[0.05] pointer-events-none" />
-                <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-slate-900 to-transparent z-20 pointer-events-none" />
-                <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-slate-900 to-transparent z-20 pointer-events-none" />
+            {/* 6.5 THE SUITE SHOWCASE - UPDATED TO STATIC GALLERY WITH DESCRIPTIONS */}
+            <section id="features-gallery" className="py-24 px-6 bg-slate-50 border-y border-slate-100 relative">
+                <div className="max-w-7xl mx-auto">
+                    <div className="text-center mb-16 space-y-4">
+                        <span className="text-orange-500 font-bold uppercase tracking-widest text-xs">{lang === 'es' ? 'Explora el Ecosistema' : 'Explore the Ecosystem'}</span>
+                        <h2 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter mt-4">
+                            {lang === 'es' ? 'Potencia en cada Módulo' : 'Power in every Module'}
+                        </h2>
+                        <p className="text-slate-500 mt-4 font-medium max-w-2xl mx-auto">
+                            {lang === 'es'
+                                ? 'Visualiza la robustez de JAMALI OS. Cada pantalla ha sido diseñada para maximizar la velocidad y el control.'
+                                : 'Visualize the robustness of JAMALI OS. Every screen has been designed to maximize speed and control.'}
+                        </p>
+                    </div>
 
-                <div className="max-w-7xl mx-auto px-6 text-center mb-16 relative z-30">
-                    <span className="text-orange-500 font-bold uppercase tracking-widest text-xs">{lang === 'es' ? 'El Ecosistema' : 'The Ecosystem'}</span>
-                    <h2 className="text-4xl md:text-5xl font-black text-white tracking-tighter mt-4">
-                        {lang === 'es' ? '+25 Módulos Especializados' : '+25 Specialized Modules'}
-                    </h2>
-                    <p className="text-slate-400 mt-4 font-medium max-w-2xl mx-auto">
-                        {lang === 'es'
-                            ? 'Todo lo que necesitas para operar, desde CRM de clientes élite hasta gestión de nómina, control de mermas y auditoría de seguridad.'
-                            : 'Everything you need to operate, from elite customer CRM to payroll management, waste control, and security auditing.'}
-                    </p>
-                </div>
-
-                <div className="relative flex gap-6 w-full max-w-[100vw] overflow-hidden">
-                    <motion.div
-                        initial={{ x: 0 }}
-                        animate={{ x: "-50%" }}
-                        transition={{ repeat: Infinity, duration: 30, ease: "linear" }}
-                        className="flex gap-6 min-w-max hover:[animation-play-state:paused]"
-                    >
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {[
-                            '/assets/modules_screenshots/2_dashboard_administrativo.png',
-                            '/assets/modules_screenshots/1_kds_production.png',
-                            '/assets/modules_screenshots/20_business_intelligence.png',
-                            '/assets/modules_screenshots/22_jamali_guardian.png',
-                            '/assets/modules_screenshots/17_menu_catalog_studio.png',
-                            '/assets/modules_screenshots/3_centro_de_pedidos.png',
-                            '/assets/modules_screenshots/6_geometria_salon.png',
-                            '/assets/modules_screenshots/11_nomina_dashboard.png',
-                            // Duplicated for seamless loop
-                            '/assets/modules_screenshots/2_dashboard_administrativo.png',
-                            '/assets/modules_screenshots/1_kds_production.png',
-                            '/assets/modules_screenshots/20_business_intelligence.png',
-                            '/assets/modules_screenshots/22_jamali_guardian.png',
-                            '/assets/modules_screenshots/17_menu_catalog_studio.png',
-                            '/assets/modules_screenshots/3_centro_de_pedidos.png',
-                            '/assets/modules_screenshots/6_geometria_salon.png',
-                            '/assets/modules_screenshots/11_nomina_dashboard.png'
-                        ].map((src, idx) => (
-                            <div key={idx} className="w-[300px] md:w-[500px] lg:w-[600px] shrink-0 rounded-2xl overflow-hidden border-2 border-slate-800 shadow-2xl relative block bg-slate-800 group">
-                                <Image src={src} alt="JAMALI OS Module" width={1200} height={800} className="w-full h-auto object-cover group-hover:scale-[1.02] transition-transform duration-700 opacity-60 group-hover:opacity-100 cursor-pointer" />
-                            </div>
+                            {
+                                src: '/assets/modules_screenshots/2_dashboard_administrativo.png',
+                                title: lang === 'es' ? 'Panel de Control' : 'Control Panel',
+                                desc: lang === 'es' ? 'Métricas en tiempo real sobre ventas, inventario y rendimiento.' : 'Real-time metrics on sales, inventory, and performance.'
+                            },
+                            {
+                                src: '/assets/modules_screenshots/1_kds_production.png',
+                                title: lang === 'es' ? 'KDS Pro' : 'KDS Pro',
+                                desc: lang === 'es' ? 'Gestión de cocina con tiempos de producción y alertas inteligentes.' : 'Kitchen management with production times and smart alerts.'
+                            },
+                            {
+                                src: '/assets/modules_screenshots/3_centro_de_pedidos.png',
+                                title: lang === 'es' ? 'Terminal POS' : 'POS Terminal',
+                                desc: lang === 'es' ? 'Toma de pedidos ultra-rápida con división de cuentas y mesas.' : 'Ultra-fast order taking with split checks and table management.'
+                            },
+                            {
+                                src: '/assets/modules_screenshots/14_kernel_inventory.png',
+                                title: lang === 'es' ? 'Inventario' : 'Inventory',
+                                desc: lang === 'es' ? 'Control de ingredientes, recetas y alertas de stock crítico.' : 'Ingredient control, recipes, and critical stock alerts.'
+                            },
+                            {
+                                src: '/assets/modules_screenshots/11_nomina_dashboard.png',
+                                title: lang === 'es' ? 'Nómina Pro' : 'Payroll Pro',
+                                desc: lang === 'es' ? 'Liquidación automática de sueldos y comisiones para el staff.' : 'Automatic salary and commission settlement for your staff.'
+                            },
+                            {
+                                src: '/assets/modules_screenshots/22_jamali_guardian.png',
+                                title: lang === 'es' ? 'IA Guardian' : 'AI Guardian',
+                                desc: lang === 'es' ? 'Detección de fraude y patrones de riesgo mediante Inteligencia Artificial.' : 'Fraud detection and risk patterns powered by Artificial Intelligence.'
+                            }
+                        ].map((mod, idx) => (
+                            <motion.div
+                                key={idx}
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: idx * 0.1, duration: 0.5 }}
+                                className="group bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-2xl transition-all"
+                            >
+                                <div className="aspect-video relative overflow-hidden bg-slate-100">
+                                    <Image
+                                        src={mod.src}
+                                        alt={mod.title}
+                                        fill
+                                        className="object-cover group-hover:scale-105 transition-transform duration-700"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
+                                </div>
+                                <div className="p-6 space-y-2">
+                                    <h3 className="text-xl font-bold text-slate-900">{mod.title}</h3>
+                                    <p className="text-sm text-slate-500 font-medium leading-relaxed">{mod.desc}</p>
+                                </div>
+                            </motion.div>
                         ))}
-                    </motion.div>
-                </div>
-
-                <div className="relative flex gap-6 w-full max-w-[100vw] overflow-hidden mt-6">
-                    <motion.div
-                        initial={{ x: "-50%" }}
-                        animate={{ x: 0 }}
-                        transition={{ repeat: Infinity, duration: 35, ease: "linear" }}
-                        className="flex gap-6 min-w-max hover:[animation-play-state:paused]"
-                    >
-                        {[
-                            '/assets/modules_screenshots/13_nomina_pagos.png',
-                            '/assets/modules_screenshots/8_elite_database_crm.png',
-                            '/assets/modules_screenshots/14_kernel_inventory.png',
-                            '/assets/modules_screenshots/23_auditoria_roles.png',
-                            '/assets/modules_screenshots/24_caja_negra_trazabilidad.png',
-                            '/assets/modules_screenshots/16_compras_ingresos.png',
-                            '/assets/modules_screenshots/19_promociones_cupones.png',
-                            '/assets/modules_screenshots/27_core_infra_servidores.png',
-                            // Duplicated for seamless loop
-                            '/assets/modules_screenshots/13_nomina_pagos.png',
-                            '/assets/modules_screenshots/8_elite_database_crm.png',
-                            '/assets/modules_screenshots/14_kernel_inventory.png',
-                            '/assets/modules_screenshots/23_auditoria_roles.png',
-                            '/assets/modules_screenshots/24_caja_negra_trazabilidad.png',
-                            '/assets/modules_screenshots/16_compras_ingresos.png',
-                            '/assets/modules_screenshots/19_promociones_cupones.png',
-                            '/assets/modules_screenshots/27_core_infra_servidores.png'
-                        ].map((src, idx) => (
-                            <div key={idx} className="w-[300px] md:w-[500px] lg:w-[600px] shrink-0 rounded-2xl overflow-hidden border-2 border-slate-800 shadow-2xl relative block bg-slate-800 group">
-                                <Image src={src} alt="JAMALI OS Module" width={1200} height={800} className="w-full h-auto object-cover group-hover:scale-[1.02] transition-transform duration-700 opacity-50 group-hover:opacity-100 cursor-pointer" />
-                            </div>
-                        ))}
-                    </motion.div>
+                    </div>
                 </div>
             </section>
 

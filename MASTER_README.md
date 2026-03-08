@@ -93,7 +93,8 @@ Para profundizar en el funcionamiento interno y la escalabilidad del sistema:
 2.  **[Diccionario de Datos](docs/DATA_DICTIONARY.md)**: Esquema de base de datos y reglas de negocio.
 3.  **[Estructura Base de Datos](docs/DATABASE_JAMALISO.md)**: Tablas, RLS y referencialidad.
 4.  **[Guía de Onboarding Elite](docs/ONBOARDING_RESTAURANTS.md)**: Proceso unificado de configuración, personalización de marca y activación de plan.
-5.  **[Resumen Ejecutivo](docs/JAMALI_OS_EXECUTIVE_SUMMARY_2026.md)**: Pitch document (One-Pager) para inversores y partners B2B con modelo estructurado del SaaS.
+5.  **[Simbolismo de Marca](docs/LOGO_SYMBOLISM.md)**: Significado detallado del logo, colores y valores de JAMALI OS.
+6.  **[Resumen Ejecutivo](docs/JAMALI_OS_EXECUTIVE_SUMMARY_2026.md)**: Pitch document (One-Pager) para inversores y partners B2B con modelo estructurado del SaaS.
 
 ---
 ## 🚀 Estructura del Sistema

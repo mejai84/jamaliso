@@ -133,8 +133,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                         userRole={userRole}
                     />
 
+                    <DemoBanner />
+
                     <div className="flex-1 relative overflow-y-auto custom-scrollbar">
-                        <DemoBanner />
                         {children}
                     </div>
 

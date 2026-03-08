@@ -229,4 +229,14 @@ Desde marzo de 2026, JAMALI OS implementa el estándar **Pixora Light**:
 
 ---
 
-*Última actualización: 08 Marzo 2026 — Se añade Inteligencia Predictiva (IA Guardian), Onboarding Elite v2 (Premium UX overhaul), Financial Core v2 (Fiscal Ready) y Multi-Branch Context Isolation.*
+---
+
+## 17. Identidad Visual y Simbolismo (Branding Heritage)
+JAMALI OS no es solo código; es un legado familiar transformado en tecnología de grado industrial.
+- **El Círculo (Armadura):** Simboliza seguridad, integridad y el "Botón de Encendido" del negocio.
+- **El Corazón (Nodos):** 4 puntos cian que representan a la familia central (Jaime, Liliana, Matthias y Mariana) interconectados en una red de datos inteligente (Mesh).
+- **Colores:** Midnight Blue (Estabilidad Industrial) y Cyan Neón (Agilidad Next-gen).
+
+---
+
+*Última actualización: 08 Marzo 2026 — Se añade Simbolismo de Marca, Landing Page 9/10, Inteligencia Predictiva (IA Guardian), Onboarding Elite v2 (Premium UX overhaul), Financial Core v2 (Fiscal Ready) y Multi-Branch Context Isolation.*
