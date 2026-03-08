@@ -3,15 +3,17 @@
 import { useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { supabase } from "@/lib/supabase/client"
-import { Loader2, ShoppingBag, Search, Plus, Minus, X, ChefHat, Star, MessageSquare } from "lucide-react"
+import { Loader2, ShoppingBag, Search, Plus, Minus, X, ChefHat, Star, MessageSquare, Settings2 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { ModifierGroup, SelectedModifier, generateCartKey, getItemTotal, formatModifiers } from "@/app/admin/pos/types"
+import { ModifierModal } from "@/components/admin/pos/ModifierModal"
 
 type Product = {
     id: string
     name: string
-    description: string | null
+    description?: string
     price: number
-    image_url: string | null
+    image_url?: string
     category_id: string
     is_available: boolean
 }
@@ -25,6 +27,8 @@ type CartItem = {
     product: Product
     qty: number
     notes?: string
+    modifiers?: SelectedModifier[]
+    cartKey?: string
 }
 
 export default function QRMesaPage() {
@@ -45,6 +49,12 @@ export default function QRMesaPage() {
     const [showCart, setShowCart] = useState(false)
     const [customerPhone, setCustomerPhone] = useState("")
     const [customerName, setCustomerName] = useState("")
+
+    // Modifiers State
+    const [modifierModalOpen, setModifierModalOpen] = useState(false)
+    const [activeProduct, setActiveProduct] = useState<Product | null>(null)
+    const [modifierGroups, setModifierGroups] = useState<ModifierGroup[]>([])
+    const [modCache, setModCache] = useState<Record<string, ModifierGroup[]>>({})
 
     useEffect(() => {
         if (slug) loadData()
@@ -78,12 +88,59 @@ export default function QRMesaPage() {
     const formatPrice = (price: number) =>
         new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(price)
 
-    const addToCart = (product: Product) => {
+    const addToCart = (product: Product, modifiers: SelectedModifier[] = []) => {
+        const key = generateCartKey(product.id, modifiers)
         setCart(prev => {
-            const existing = prev.find(i => i.product.id === product.id)
-            if (existing) return prev.map(i => i.product.id === product.id ? { ...i, qty: i.qty + 1 } : i)
-            return [...prev, { product, qty: 1 }]
+            const existing = prev.find(i => i.cartKey === key || (!i.cartKey && i.product.id === product.id))
+            if (existing) return prev.map((i, idx) => prev.indexOf(existing) === idx ? { ...i, qty: i.qty + 1 } : i)
+            return [...prev, { product, qty: 1, modifiers, cartKey: key }]
         })
+    }
+
+    const handleProductClick = async (product: Product) => {
+        if (!restaurant) return
+
+        if (modCache[product.id]) {
+            if (modCache[product.id].length > 0) {
+                setActiveProduct(product)
+                setModifierGroups(modCache[product.id])
+                setModifierModalOpen(true)
+            } else {
+                addToCart(product)
+            }
+            return
+        }
+
+        try {
+            const { data } = await supabase
+                .from('product_modifier_groups')
+                .select(`
+                    order_index,
+                    modifier_groups (
+                        id, name, selection_type, min_selections, max_selections, is_required, is_active,
+                        modifier_options ( id, name, price_adjustment, is_available, is_default, display_order )
+                    )
+                `)
+                .eq('product_id', product.id)
+                .order('order_index')
+
+            const groups = data
+                ?.map((d: any) => d.modifier_groups)
+                ?.filter((g: any) => g.is_active && g.modifier_options && g.modifier_options.length > 0) || []
+
+            setModCache(prev => ({ ...prev, [product.id]: groups }))
+
+            if (groups.length > 0) {
+                setActiveProduct(product)
+                setModifierGroups(groups)
+                setModifierModalOpen(true)
+            } else {
+                addToCart(product)
+            }
+        } catch (e) {
+            console.error("Error fetching modifiers:", e)
+            addToCart(product)
+        }
     }
 
     const updateQty = (index: number, delta: number) => {
@@ -98,7 +155,7 @@ export default function QRMesaPage() {
 
     const removeItem = (index: number) => setCart(prev => prev.filter((_, i) => i !== index))
 
-    const cartTotal = cart.reduce((sum, i) => sum + i.product.price * i.qty, 0)
+    const cartTotal = cart.reduce((sum, i) => sum + getItemTotal(i), 0)
     const cartCount = cart.reduce((sum, i) => sum + i.qty, 0)
 
     const handleSendOrder = async () => {
@@ -143,14 +200,31 @@ export default function QRMesaPage() {
                 order_id: order.id,
                 product_id: item.product.id,
                 quantity: item.qty,
-                unit_price: item.product.price,
+                unit_price: getItemTotal(item) / item.qty, // Store adjusted price per unit
                 status: 'pending',
                 notes: item.notes || ''
             }))
 
-            const { error: itemsErr } = await supabase.from('order_items').insert(itemsToInsert)
+            const { data: insertedItems, error: itemsErr } = await supabase.from('order_items').insert(itemsToInsert).select()
 
             if (itemsErr) throw itemsErr
+
+            // 3.5 Modifiers
+            const modifierInserts = cart.flatMap((item, idx) => {
+                const insertedItem = insertedItems[idx]
+                if (!item.modifiers || item.modifiers.length === 0) return []
+                return item.modifiers.map(mod => ({
+                    order_item_id: insertedItem.id,
+                    modifier_option_id: mod.option_id,
+                    price_adjustment: mod.price_adjustment,
+                    quantity: mod.quantity
+                }))
+            })
+
+            if (modifierInserts.length > 0) {
+                const { error: modErr } = await supabase.from('order_item_modifiers').insert(modifierInserts)
+                if (modErr) console.error("Error inserting modifiers:", modErr)
+            }
 
             if (tableId) {
                 await supabase.from('tables').update({ status: 'occupied' }).eq('id', tableId)
@@ -307,7 +381,7 @@ export default function QRMesaPage() {
                                     </div>
                                 ) : (
                                     <button
-                                        onClick={() => addToCart(product)}
+                                        onClick={() => handleProductClick(product)}
                                         className="w-10 h-10 rounded-xl border-2 flex items-center justify-center active:scale-90 transition-transform"
                                         style={{ borderColor: brandColor, color: brandColor }}
                                     >
@@ -388,7 +462,13 @@ export default function QRMesaPage() {
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <p className="text-xs font-black uppercase text-slate-900 truncate">{item.product.name}</p>
-                                            <p className="text-xs font-bold text-slate-400">{formatPrice(item.product.price * item.qty)}</p>
+                                            {item.modifiers && item.modifiers.length > 0 && (
+                                                <p className="text-[9px] text-orange-600 font-bold mt-0.5 flex items-center gap-1 truncate">
+                                                    <Settings2 className="w-3 h-3 shrink-0" />
+                                                    {formatModifiers(item.modifiers)}
+                                                </p>
+                                            )}
+                                            <p className="text-xs font-bold text-slate-400 mt-1">{formatPrice(getItemTotal(item))}</p>
                                         </div>
                                         <div className="flex items-center gap-1">
                                             <button onClick={() => updateQty(i, -1)} className="w-7 h-7 rounded-lg bg-white border border-slate-200 flex items-center justify-center"><Minus className="w-3 h-3" /></button>
@@ -418,6 +498,21 @@ export default function QRMesaPage() {
                     </div>
                 </div>
             )}
+
+            <ModifierModal
+                isOpen={modifierModalOpen}
+                product={activeProduct}
+                modifierGroups={modifierGroups}
+                onConfirm={(modifiers) => {
+                    addToCart(activeProduct!, modifiers)
+                    setModifierModalOpen(false)
+                    setActiveProduct(null)
+                }}
+                onClose={() => {
+                    setModifierModalOpen(false)
+                    setActiveProduct(null)
+                }}
+            />
         </div>
     )
 }

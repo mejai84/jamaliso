@@ -1,9 +1,27 @@
-# 🚀 JAMALI OS - Sistema de Operación Gastronómica Inteligente
-¡Sistema de alto rendimiento implementado! Aquí encontrarás la guía para todas las funcionalidades de nivel empresarial.
+# 🚀 JAMALI OS
 
+AI-powered SaaS POS for restaurants.
+
+## Features
+- POS system
+- Inventory management
+- Restaurant analytics
+- AI marketing automation
+- Online orders
+
+## Tech stack
+- Next.js
+- Typescript
+- PostgreSQL
+- Supabase
+
+---
+
+Aquí encontrarás la guía para todas las funcionalidades de nivel empresarial.
 ## � Transición de Marca (Marzo 2026)
 El sistema ha migrado completamente de "Pargo OS" a **JAMALI OS**. Este cambio incluye:
-- Nueva identidad visual premium (Pixora Light).
+- Nueva identidad visual premium (**Pixora Light v2**).
+- **Onboarding Elite**: Proceso de configuración y pago interactivo unificado (Setup & Checkout).
 - Unificación de dominios y correos electrónicos (@jamali-os.com).
 - Consolidación de base de datos y arquitectura escalable.
 
@@ -74,7 +92,7 @@ Para profundizar en el funcionamiento interno y la escalabilidad del sistema:
 1.  **[Arquitectura JAMALI OS](docs/ARCHITECTURE_JAMALISO.md)**: Stack técnico, patrones de diseño y estándares visuales (Glassmorphism).
 2.  **[Diccionario de Datos](docs/DATA_DICTIONARY.md)**: Esquema de base de datos y reglas de negocio.
 3.  **[Estructura Base de Datos](docs/DATABASE_JAMALISO.md)**: Tablas, RLS y referencialidad.
-4.  **[Guía de Onboarding](docs/ONBOARDING_RESTAURANTS.md)**: Pasos para configurar un nuevo negocio.
+4.  **[Guía de Onboarding Elite](docs/ONBOARDING_RESTAURANTS.md)**: Proceso unificado de configuración, personalización de marca y activación de plan.
 
 ---
 ## 🚀 Estructura del Sistema

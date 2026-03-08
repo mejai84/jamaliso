@@ -25,6 +25,8 @@ export type Order = {
     }
     notes?: string
     priority?: boolean
+    order_type?: 'dine_in' | 'takeout' | 'delivery' | 'online'
+    guest_info?: { name?: string; platform?: string; phone?: string }
 }
 
 export type PrepStation = {

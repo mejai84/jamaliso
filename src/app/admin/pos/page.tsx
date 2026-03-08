@@ -10,7 +10,7 @@ import { formatPrice } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 
 // Types
-import { Product, Category, CartItem } from "./types"
+import { Product, Category, CartItem, ModifierGroup, SelectedModifier, generateCartKey, getItemTotal } from "./types"
 
 // Components
 import { PosHeader } from "@/components/admin/pos/PosHeader"
@@ -18,6 +18,7 @@ import { CategorySidebar } from "@/components/admin/pos/CategorySidebar"
 import { ProductGrid } from "@/components/admin/pos/ProductGrid"
 import { CartPanel } from "@/components/admin/pos/CartPanel"
 import { ReceiptModal } from "@/components/admin/pos/ReceiptModal"
+import { ModifierModal } from "@/components/admin/pos/ModifierModal"
 
 export default function PosPremiumPage() {
     const { restaurant } = useRestaurant()
@@ -34,10 +35,18 @@ export default function PosPremiumPage() {
     const [showCartMobile, setShowCartMobile] = useState(false)
     const [activeSession, setActiveSession] = useState<any>(null)
 
+    // Modifier State
+    const [modifierModalOpen, setModifierModalOpen] = useState(false)
+    const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
+    const [productModifierGroups, setProductModifierGroups] = useState<ModifierGroup[]>([])
+
     // Data State
     const [categories, setCategories] = useState<Category[]>([])
     const [products, setProducts] = useState<Product[]>([])
     const [taxes, setTaxes] = useState<any[]>([])
+
+    // Cache modifier groups per product to avoid re-fetching
+    const [modifierCache, setModifierCache] = useState<Record<string, ModifierGroup[]>>({})
 
     useEffect(() => {
         const timer = setInterval(() => setCurrentTime(new Date()), 1000)
@@ -77,6 +86,77 @@ export default function PosPremiumPage() {
         setLoading(false)
     }
 
+    // Fetch modifier groups for a specific product
+    const fetchModifiers = async (productId: string): Promise<ModifierGroup[]> => {
+        // Check cache first
+        if (modifierCache[productId] !== undefined) return modifierCache[productId]
+
+        try {
+            // Get linked modifier group IDs
+            const { data: links } = await supabase
+                .from('product_modifier_groups')
+                .select('modifier_group_id, sort_order')
+                .eq('product_id', productId)
+                .order('sort_order')
+
+            if (!links || links.length === 0) {
+                setModifierCache(prev => ({ ...prev, [productId]: [] }))
+                return []
+            }
+
+            const groupIds = links.map(l => l.modifier_group_id)
+
+            // Get groups with their options
+            const { data: groups } = await supabase
+                .from('modifier_groups')
+                .select('*')
+                .in('id', groupIds)
+                .eq('is_active', true)
+                .order('sort_order')
+
+            if (!groups) return []
+
+            const { data: options } = await supabase
+                .from('modifier_options')
+                .select('*')
+                .in('group_id', groupIds)
+                .eq('is_available', true)
+                .order('sort_order')
+
+            const result: ModifierGroup[] = groups.map(g => ({
+                ...g,
+                options: (options || []).filter(o => o.group_id === g.id)
+            }))
+
+            setModifierCache(prev => ({ ...prev, [productId]: result }))
+            return result
+        } catch (e) {
+            console.error("Error fetching modifiers:", e)
+            return []
+        }
+    }
+
+    const handleProductClick = async (product: Product) => {
+        const groups = await fetchModifiers(product.id)
+
+        if (groups.length > 0) {
+            // Product has modifiers → open modal
+            setSelectedProduct(product)
+            setProductModifierGroups(groups)
+            setModifierModalOpen(true)
+        } else {
+            // No modifiers → add directly
+            addToCart(product)
+        }
+    }
+
+    const handleModifierConfirm = (modifiers: SelectedModifier[]) => {
+        if (!selectedProduct) return
+        addToCart(selectedProduct, modifiers)
+        setModifierModalOpen(false)
+        setSelectedProduct(null)
+    }
+
     const handleCheckout = async (method: string) => {
         if (!activeSession) {
             toast.error("ERROR: Debes abrir turno/caja antes de vender.")
@@ -102,7 +182,8 @@ export default function PosPremiumPage() {
                 p_items: cart.map(item => ({
                     product_id: item.product.id,
                     quantity: item.qty,
-                    unit_price: item.product.price
+                    unit_price: item.product.price,
+                    modifiers: item.modifiers || []
                 }))
             }
 
@@ -111,6 +192,23 @@ export default function PosPremiumPage() {
             if (error) throw error
 
             if (data?.success) {
+                // Save modifiers to order_item_modifiers if applicable
+                if (data.order_items) {
+                    for (let i = 0; i < cart.length; i++) {
+                        const cartItem = cart[i]
+                        if (cartItem.modifiers && cartItem.modifiers.length > 0 && data.order_items[i]) {
+                            const modifierInserts = cartItem.modifiers.map((m: SelectedModifier) => ({
+                                order_item_id: data.order_items[i].id,
+                                modifier_option_id: m.option_id,
+                                modifier_name: m.name,
+                                price_adjustment: m.price_adjustment,
+                                quantity: m.quantity
+                            }))
+                            await supabase.from('order_item_modifiers').insert(modifierInserts)
+                        }
+                    }
+                }
+
                 toast.success("Venta Procesada Correctamente")
                 setReceiptModal({
                     orderId: data.order_id,
@@ -129,15 +227,21 @@ export default function PosPremiumPage() {
         }
     }
 
-    const addToCart = (product: Product) => {
+    const addToCart = (product: Product, modifiers?: SelectedModifier[]) => {
+        const cartKey = generateCartKey(product.id, modifiers)
+
         setCart(prev => {
-            const existing = prev.find(item => item.product.id === product.id)
+            const existing = prev.find(item => item.cartKey === cartKey)
             if (existing) {
-                return prev.map(item => item.product.id === product.id ? { ...item, qty: item.qty + 1 } : item)
+                return prev.map(item => item.cartKey === cartKey ? { ...item, qty: item.qty + 1 } : item)
             }
-            return [...prev, { product, qty: 1 }]
+            return [...prev, { product, qty: 1, modifiers, cartKey }]
         })
-        toast.success(`+1 ${product.name}`, { duration: 1000 })
+
+        const modText = modifiers && modifiers.length > 0
+            ? ` (${modifiers.map(m => m.name).join(', ')})`
+            : ''
+        toast.success(`+1 ${product.name}${modText}`, { duration: 1000 })
     }
 
     const removeFromCart = (productId: string) => {
@@ -147,12 +251,21 @@ export default function PosPremiumPage() {
         }).filter(item => item.qty > 0))
     }
 
+    const removeCartItem = (cartKey: string) => {
+        setCart(prev => {
+            const item = prev.find(i => i.cartKey === cartKey)
+            if (!item) return prev
+            if (item.qty <= 1) return prev.filter(i => i.cartKey !== cartKey)
+            return prev.map(i => i.cartKey === cartKey ? { ...i, qty: i.qty - 1 } : i)
+        })
+    }
+
     const clearCart = () => {
         setCart([])
         toast.info("Carrito vaciado")
     }
 
-    const subtotal = cart.reduce((acc, curr) => acc + (curr.product.price * curr.qty), 0)
+    const subtotal = cart.reduce((acc, curr) => acc + getItemTotal(curr), 0)
     const taxRate = taxes.reduce((acc, t) => acc + (t.tax_percentage / 100), 0)
     const taxAmount = subtotal * taxRate
     const total = subtotal + taxAmount
@@ -193,13 +306,13 @@ export default function PosPremiumPage() {
                     products={filteredProducts}
                     searchTerm={searchTerm}
                     setSearchTerm={setSearchTerm}
-                    onAdd={addToCart}
+                    onAdd={handleProductClick}
                     showCartMobile={showCartMobile}
                 />
 
                 <CartPanel
                     cart={cart}
-                    onAdd={addToCart}
+                    onAdd={handleProductClick}
                     onRemove={removeFromCart}
                     onClear={clearCart}
                     showCartMobile={showCartMobile}
@@ -230,6 +343,15 @@ export default function PosPremiumPage() {
                 receipt={receiptModal}
                 onClose={() => setReceiptModal(null)}
                 restaurantName={restaurant?.name}
+            />
+
+            {/* Modifier Modal */}
+            <ModifierModal
+                isOpen={modifierModalOpen}
+                product={selectedProduct}
+                modifierGroups={productModifierGroups}
+                onConfirm={handleModifierConfirm}
+                onClose={() => { setModifierModalOpen(false); setSelectedProduct(null) }}
             />
         </div>
     )

@@ -1,13 +1,12 @@
-
 "use client"
 
 import { useState } from "react"
 import { supabase } from "@/lib/supabase/client"
-import { Button } from "@/components/ui/button"
-import { Loader2, Mail, Lock, User, Phone, MapPin, Calendar, Home } from "lucide-react"
+import { Loader2, Mail, Lock, User, Phone, MapPin, Calendar, Home, CheckCircle2, ArrowRight } from "lucide-react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
+import { motion } from "framer-motion"
 
 export default function RegisterPage() {
     const [loading, setLoading] = useState(false)
@@ -29,38 +28,23 @@ export default function RegisterPage() {
         setLoading(true)
         setMessage(null)
 
-        // Validaciones de campos legales
-        if (!termsAccepted) {
-            setMessage({ type: 'error', text: 'Debes aceptar los términos y condiciones.' })
-            setLoading(false)
-            return
-        }
-
-        if (!privacyAccepted) {
-            setMessage({ type: 'error', text: 'Debes aceptar la política de privacidad.' })
+        if (!termsAccepted || !privacyAccepted) {
+            setMessage({ type: 'error', text: 'Debes aceptar los términos y políticas.' })
             setLoading(false)
             return
         }
 
         try {
-            // 1. Crear usuario en Auth
             const { data, error } = await supabase.auth.signUp({
                 email,
                 password,
-                options: {
-                    data: {
-                        full_name: fullName,
-                        // El rol por defecto será 'customer' (cliente)
-                    }
-                }
+                options: { data: { full_name: fullName } }
             })
 
             if (error) throw error
 
             if (data.user) {
                 const now = new Date().toISOString()
-
-                // 2. Crear perfil con todos los campos adicionales
                 const { error: profileError } = await supabase
                     .from('profiles')
                     .upsert({
@@ -79,18 +63,14 @@ export default function RegisterPage() {
                         privacy_accepted_at: privacyAccepted ? now : null
                     })
 
-                if (profileError) {
-                    console.error("Error creating profile:", profileError)
-                    // No bloqueamos, el usuario se creó
-                }
+                if (profileError) console.error("Error creating profile:", profileError)
             }
 
             setMessage({
                 type: 'success',
-                text: '¡Cuenta creada! Revisa tu correo para confirmar o inicia sesión.'
+                text: '¡Cuenta creada con éxito! Redirigiendo...'
             })
 
-            // Opcional: Auto-login o redirigir
             setTimeout(() => router.push('/login'), 2000)
 
         } catch (error: any) {
@@ -104,222 +84,180 @@ export default function RegisterPage() {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4 py-12">
-            <div className="w-full max-w-2xl bg-white rounded-[2.5rem] shadow-2xl overflow-hidden border border-gray-100">
-                <div className="p-8 text-center bg-white">
-                    <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <User className="w-10 h-10 text-primary" />
-                    </div>
-                    <h1 className="text-2xl font-black text-gray-900 tracking-tight uppercase">Crear Cuenta</h1>
-                    <p className="text-gray-500 text-sm mt-2 font-medium">Crea tu cuenta y disfruta de la mejor experiencia</p>
+        <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 py-20 relative overflow-hidden font-sans">
+            {/* Background Blobs */}
+            <div className="absolute top-0 right-1/4 w-[800px] h-[800px] bg-orange-500/5 blur-[150px] rounded-full -z-0" />
+            <div className="absolute bottom-0 left-1/4 w-[800px] h-[800px] bg-blue-500/5 blur-[150px] rounded-full -z-0" />
+
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="w-full max-w-2xl relative z-10"
+            >
+                {/* Logo Area */}
+                <div className="text-center mb-10">
+                    <Link href="/landing" className="inline-block group">
+                        <Image
+                            src="/images/jamali-os-transparent.png"
+                            alt="JAMALI OS"
+                            width={220}
+                            height={70}
+                            className="h-16 w-auto object-contain transition-transform group-hover:scale-105"
+                            priority
+                        />
+                    </Link>
+                    <p className="mt-4 text-slate-400 font-bold text-xs uppercase tracking-widest">
+                        Crea tu Entorno de Gestión
+                    </p>
                 </div>
 
-                <div className="p-8 pt-0 space-y-6">
-                    <form onSubmit={handleRegister} className="space-y-6">
-                        {/* SECCIÓN 1: DATOS BÁSICOS */}
+                <div className="bg-white/70 backdrop-blur-xl border border-white p-10 rounded-[2.5rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] space-y-8">
+                    <div className="space-y-2 text-center lg:text-left">
+                        <h2 className="text-3xl font-black text-slate-900 tracking-tighter">
+                            Crear Cuenta
+                        </h2>
+                        <p className="text-sm text-slate-500 font-medium">
+                            Únete a la red de restaurantes inteligentes de JAMALI OS.
+                        </p>
+                    </div>
+
+                    <form onSubmit={handleRegister} className="space-y-8">
+                        {/* Basic Info */}
                         <div className="space-y-4">
-                            <h3 className="text-xs font-black uppercase tracking-widest text-primary border-b border-primary/20 pb-2">
-                                📋 Datos Básicos
+                            <h3 className="text-xs font-black uppercase tracking-widest text-orange-500 flex items-center gap-2">
+                                <span className="w-8 h-[2px] bg-orange-100 rounded-full" /> Datos de Acceso
                             </h3>
 
-                            <div className="space-y-2">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-3">Nombre Completo *</label>
-                                <div className="relative">
-                                    <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-300" />
-                                    <input
-                                        type="text"
-                                        required
-                                        placeholder="Ej: Juan Pérez"
-                                        className="w-full h-14 pl-12 rounded-2xl bg-gray-50 border-2 border-transparent focus:border-primary/20 focus:bg-white outline-none transition-all font-bold text-gray-900 placeholder:text-gray-300"
-                                        value={fullName}
-                                        onChange={(e) => setFullName(e.target.value)}
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-3">Email *</label>
-                                    <div className="relative">
-                                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-300" />
+                                    <label className="text-xs font-black text-slate-400 uppercase tracking-wider ml-1">Nombre Completo</label>
+                                    <div className="relative group">
+                                        <User className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300 group-focus-within:text-orange-500 transition-colors" />
                                         <input
-                                            type="email"
                                             required
-                                            placeholder="tu@email.com"
-                                            className="w-full h-14 pl-12 rounded-2xl bg-gray-50 border-2 border-transparent focus:border-primary/20 focus:bg-white outline-none transition-all font-bold text-gray-900 placeholder:text-gray-300"
-                                            value={email}
-                                            onChange={(e) => setEmail(e.target.value)}
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-3">Teléfono *</label>
-                                    <div className="relative">
-                                        <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-300" />
-                                        <input
-                                            type="tel"
-                                            required
-                                            placeholder="300 123 4567"
-                                            className="w-full h-14 pl-12 rounded-2xl bg-gray-50 border-2 border-transparent focus:border-primary/20 focus:bg-white outline-none transition-all font-bold text-gray-900 placeholder:text-gray-300"
-                                            value={phone}
-                                            onChange={(e) => setPhone(e.target.value)}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="space-y-2">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-3">Contraseña *</label>
-                                <div className="relative">
-                                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-300" />
-                                    <input
-                                        type="password"
-                                        required
-                                        placeholder="••••••••"
-                                        className="w-full h-14 pl-12 rounded-2xl bg-gray-50 border-2 border-transparent focus:border-primary/20 focus:bg-white outline-none transition-all font-bold text-gray-900 placeholder:text-gray-300"
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* SECCIÓN 2: DIRECCIÓN DE ENTREGA */}
-                        <div className="space-y-4">
-                            <h3 className="text-xs font-black uppercase tracking-widest text-primary border-b border-primary/20 pb-2">
-                                🏠 Dirección de Entrega (Opcional)
-                            </h3>
-                            <p className="text-xs text-gray-500 -mt-2">
-                                Guarda tu dirección para un checkout más rápido en tus pedidos
-                            </p>
-
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-3">Ciudad / Barrio</label>
-                                    <div className="relative">
-                                        <Home className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-300" />
-                                        <input
                                             type="text"
-                                            placeholder="Ej: Bogotá"
-                                            className="w-full h-14 pl-12 rounded-2xl bg-gray-50 border-2 border-transparent focus:border-primary/20 focus:bg-white outline-none transition-all font-bold text-gray-900 placeholder:text-gray-300"
-                                            value={city}
-                                            onChange={(e) => setCity(e.target.value)}
+                                            placeholder="Ej. Juan Pérez"
+                                            className="w-full h-15 pl-14 pr-5 rounded-2xl bg-slate-50 border border-slate-100 text-sm font-bold text-slate-900 focus:bg-white focus:border-orange-500 focus:outline-none transition-all"
+                                            value={fullName}
+                                            onChange={e => setFullName(e.target.value)}
                                         />
                                     </div>
                                 </div>
-
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-3">Fecha Nacimiento</label>
-                                    <div className="relative">
-                                        <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-300" />
+                                    <label className="text-xs font-black text-slate-400 uppercase tracking-wider ml-1">Teléfono</label>
+                                    <div className="relative group">
+                                        <Phone className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300 group-focus-within:text-orange-500 transition-colors" />
                                         <input
-                                            type="date"
-                                            className="w-full h-14 pl-12 rounded-2xl bg-gray-50 border-2 border-transparent focus:border-primary/20 focus:bg-white outline-none transition-all font-bold text-gray-900"
-                                            value={birthDate}
-                                            onChange={(e) => setBirthDate(e.target.value)}
+                                            required
+                                            type="tel"
+                                            placeholder="+57 300..."
+                                            className="w-full h-15 pl-14 pr-5 rounded-2xl bg-slate-50 border border-slate-100 text-sm font-bold text-slate-900 focus:bg-white focus:border-orange-500 focus:outline-none transition-all"
+                                            value={phone}
+                                            onChange={e => setPhone(e.target.value)}
                                         />
                                     </div>
                                 </div>
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-3">Dirección Completa</label>
-                                <div className="relative">
-                                    <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-300" />
+                                <label className="text-xs font-black text-slate-400 uppercase tracking-wider ml-1">Email Corporativo</label>
+                                <div className="relative group">
+                                    <Mail className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300 group-focus-within:text-orange-500 transition-colors" />
                                     <input
-                                        type="text"
-                                        placeholder="Ej: Calle 123 # 45-67"
-                                        className="w-full h-14 pl-12 rounded-2xl bg-gray-50 border-2 border-transparent focus:border-primary/20 focus:bg-white outline-none transition-all font-bold text-gray-900 placeholder:text-gray-300"
-                                        value={address}
-                                        onChange={(e) => setAddress(e.target.value)}
+                                        required
+                                        type="email"
+                                        placeholder="tu@negocio.com"
+                                        className="w-full h-15 pl-14 pr-5 rounded-2xl bg-slate-50 border border-slate-100 text-sm font-bold text-slate-900 focus:bg-white focus:border-orange-500 focus:outline-none transition-all"
+                                        value={email}
+                                        onChange={e => setEmail(e.target.value)}
                                     />
                                 </div>
                             </div>
 
                             <div className="space-y-2">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-3">Referencias</label>
-                                <input
-                                    type="text"
-                                    placeholder="Ej: Cerca del parque, edificio azul"
-                                    className="w-full h-14 px-4 rounded-2xl bg-gray-50 border-2 border-transparent focus:border-primary/20 focus:bg-white outline-none transition-all font-bold text-gray-900 placeholder:text-gray-300"
-                                    value={addressReference}
-                                    onChange={(e) => setAddressReference(e.target.value)}
-                                />
+                                <label className="text-xs font-black text-slate-400 uppercase tracking-wider ml-1">Contraseña</label>
+                                <div className="relative group">
+                                    <Lock className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300 group-focus-within:text-orange-500 transition-colors" />
+                                    <input
+                                        required
+                                        type="password"
+                                        placeholder="••••••••"
+                                        className="w-full h-15 pl-14 pr-5 rounded-2xl bg-slate-50 border border-slate-100 text-sm font-bold text-slate-900 focus:bg-white focus:border-orange-500 focus:outline-none transition-all"
+                                        value={password}
+                                        onChange={e => setPassword(e.target.value)}
+                                    />
+                                </div>
                             </div>
                         </div>
 
-                        {/* SECCIÓN 3: TÉRMINOS LEGALES */}
-                        <div className="space-y-4 bg-amber-50 p-6 rounded-2xl border border-amber-200">
-                            <h3 className="text-xs font-black uppercase tracking-widest text-amber-700 flex items-center gap-2">
-                                ⚖️ Términos Legales *
-                            </h3>
-
+                        {/* Legal */}
+                        <div className="p-6 rounded-3xl bg-slate-50 border border-slate-100 space-y-4">
                             <label className="flex items-start gap-3 cursor-pointer group">
                                 <input
                                     type="checkbox"
                                     required
                                     checked={termsAccepted}
                                     onChange={(e) => setTermsAccepted(e.target.checked)}
-                                    className="w-5 h-5 mt-0.5 rounded border-2 border-gray-300 text-primary focus:ring-2 focus:ring-primary/20 cursor-pointer"
+                                    className="w-5 h-5 mt-0.5 rounded-lg border-2 border-slate-200 text-orange-500 focus:ring-orange-500/20 transition-all pointer-events-auto"
                                 />
-                                <span className="text-sm text-gray-700 leading-tight group-hover:text-gray-900">
-                                    Acepto los{' '}
-                                    <a href="#" className="text-primary font-bold hover:underline" onClick={(e) => e.preventDefault()}>
-                                        Términos y Condiciones
-                                    </a>{' '}
-                                    del servicio *
+                                <span className="text-xs font-bold text-slate-500 leading-tight">
+                                    Acepto los <span className="text-slate-900 underline">Términos y Condiciones</span> del servicio.
                                 </span>
                             </label>
-
                             <label className="flex items-start gap-3 cursor-pointer group">
                                 <input
                                     type="checkbox"
                                     required
                                     checked={privacyAccepted}
                                     onChange={(e) => setPrivacyAccepted(e.target.checked)}
-                                    className="w-5 h-5 mt-0.5 rounded border-2 border-gray-300 text-primary focus:ring-2 focus:ring-primary/20 cursor-pointer"
+                                    className="w-5 h-5 mt-0.5 rounded-lg border-2 border-slate-200 text-orange-500 focus:ring-orange-500/20 transition-all pointer-events-auto"
                                 />
-                                <span className="text-sm text-gray-700 leading-tight group-hover:text-gray-900">
-                                    Acepto la{' '}
-                                    <a href="#" className="text-primary font-bold hover:underline" onClick={(e) => e.preventDefault()}>
-                                        Política de Privacidad
-                                    </a>{' '}
-                                    y el tratamiento de mis datos personales *
+                                <span className="text-xs font-bold text-slate-500 leading-tight">
+                                    Acepto la <span className="text-slate-900 underline">Política de Tratamiento de Datos</span>.
                                 </span>
                             </label>
-
-                            <p className="text-xs text-gray-500 italic">
-                                * Campos obligatorios para completar el registro
-                            </p>
                         </div>
 
-                        <Button
+                        {message && (
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                className={`p-5 rounded-2xl font-bold text-sm text-center ${message.type === 'success' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-rose-50 text-rose-600 border border-rose-100'}`}
+                            >
+                                {message.text}
+                            </motion.div>
+                        )}
+
+                        <button
                             type="submit"
-                            className="w-full h-14 rounded-2xl bg-primary text-white font-black text-lg shadow-xl shadow-primary/20 mt-4 hover:scale-[1.02] transition-transform"
                             disabled={loading}
+                            className="w-full h-16 bg-slate-900 text-white font-black rounded-2xl hover:bg-orange-500 transition-all shadow-xl shadow-slate-900/10 disabled:opacity-50 flex items-center justify-center gap-3 group"
                         >
-                            {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : "REGISTRARME"}
-                        </Button>
+                            {loading ? (
+                                <Loader2 className="w-6 h-6 animate-spin" />
+                            ) : (
+                                <>
+                                    Crear mi Cuenta
+                                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                                </>
+                            )}
+                        </button>
                     </form>
 
-                    {message && (
-                        <div className={`p-4 rounded-xl text-center text-sm font-bold ${message.type === 'success' ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-500'
-                            }`}>
-                            {message.text}
-                        </div>
-                    )}
-
-                    <div className="text-center pt-4 border-t border-gray-50">
-                        <p className="text-gray-400 font-medium text-sm">
+                    <div className="pt-6 border-t border-slate-100 text-center">
+                        <p className="text-sm text-slate-400 font-medium">
                             ¿Ya tienes cuenta?{' '}
-                            <Link href="/login" className="text-primary font-black hover:underline">
+                            <Link href="/login" className="text-orange-500 font-bold hover:underline">
                                 Inicia Sesión
                             </Link>
                         </p>
                     </div>
                 </div>
-            </div>
+
+                <p className="mt-8 text-center text-slate-300 font-bold text-[10px] uppercase tracking-[0.2em]">
+                    JAMALI OS Enterprise · 2026
+                </p>
+            </motion.div>
         </div>
     )
 }

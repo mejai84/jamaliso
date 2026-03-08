@@ -29,7 +29,7 @@ export default function OpenBoxPage() {
             setUser(user)
 
             // Usamos la Server Action para validar estado fiable
-            const status = await getPosStatus(user.id)
+            const status = await getPosStatus()
 
             if (!status.hasActiveShift) {
                 alert("Debes iniciar turno primero")
@@ -55,7 +55,7 @@ export default function OpenBoxPage() {
 
         setLoading(true)
         try {
-            const result = await openCashbox(user.id, shiftId, parseFloat(amount), notes)
+            const result = await openCashbox(shiftId, parseFloat(amount), notes)
             if (result.success) {
                 router.push("/admin/cashier") // Éxito, ir al dashboard
             } else {

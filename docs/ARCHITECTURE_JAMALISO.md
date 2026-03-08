@@ -131,14 +131,14 @@ JAMALISO ahora integra un motor ERP para la gestión de talento humano y adaptac
 ---
 
 ## 8. Onboarding Automático y Pagos (Wizard)
-JAMALI OS cuenta con un asistente de configuración inteligente (`Wizard`) a nivel de aplicación (`/register/wizard`):
-1.  **Información del Restaurante:** Nombre, branding (Logo/Colores), tipo de cocina.
-2.  **Configuración de Mesas:** Creación visual del salón y asignación de códigos QR.
-3.  **Configuración del Menú:** Categorías (Entradas, Platos Fuertes, Bebidass) y primeros productos.
-4.  **Detalles de Cuenta Admin:** Creación del usuario dueño (`Owner`).
-5.  **Suscripción y Pago:** Pasarela de pago nativa con **Mercado Pago** (Starter, Pro, Enterprise).
+JAMALI OS cuenta con un asistente de configuración inteligente de alta fidelidad (`Onboarding Elite`) disponible en `/register/wizard`:
+1.  **Identidad del Negocio:** Nombre y URL personalizada (Slug) con validación en tiempo real.
+2.  **Infraestructura (Kernel):** Configuración visual de mesas, zonas (Bar/Terraza) y capacidad operativa.
+3.  **Branding (Pixora Live):** Personalización cromática con **Live Mockup** (previsualización en tiempo real de cómo se verá el menú en el móvil).
+4.  **Acceso Maestro:** Creación de credenciales administrativas cifradas.
+5.  **Activación de Plan:** Checkout integrado con **Mercado Pago** y aceptación de términos legales estandarizados de la industria.
 
-El sistema solo habilita el acceso total al POS una vez completado el pago exitoso, activando el flag `isPaid` en la tabla `restaurants`.
+El sistema utiliza un flag `isPaid` y `setupCompleted` para orquestar el acceso al Dashboard real una vez finalizado el pago.
 
 ---
 
@@ -214,8 +214,9 @@ Desde marzo de 2026, JAMALI OS implementa el estándar **Pixora Light**:
 *   **Color System:** `Slate-900` textos + `Orange-600` (`#EA580C`) acciones principales.
 *   **Escalado Inteligente:** `font-size` dinámico (100% móvil, 85% tablet, 75% laptop, 65% monitores grandes).
 *   **Branding Dinámico:** CSS Variables (`--primary`) inyectadas vía `RestaurantProvider`.
-*   **Glassmorphism Standard:** Homogeneidad visual mediante fondos de imagen HD blurred (`100px`) con overlay blanco al `80%` (`bg-white/80`), creando un efecto de profundidad premium en todos los módulos administrativos.
+*   **Glassmorphism Standard:** Homogeneidad visual mediante backgrounds premium, sombras profundas y contenedores ultra-translúcidos (`backdrop-blur-3xl`).
+*   **Onboarding Flow:** Eliminación de formularios manuales. El "Registro" es ahora un proceso de configuración interactiva unificada que garantiza que el usuario sea "dueño" visual del software antes de pagar.
 
 ---
 
-*Última actualización: 08 Marzo 2026 — Se añade Inteligencia Predictiva (IA Guardian), Remote Auth y Multi-Sede Elite.*
+*Última actualización: 08 Marzo 2026 — Se añade Inteligencia Predictiva (IA Guardian) y Onboarding Elite v2 (Premium UX overhaul).*

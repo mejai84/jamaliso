@@ -1,9 +1,9 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { ShoppingBag, X, Receipt, Minus, Plus, List, Banknote, Smartphone, Loader2 } from "lucide-react"
+import { ShoppingBag, X, Receipt, Minus, Plus, List, Banknote, Smartphone, Loader2, Settings2 } from "lucide-react"
 import { cn, formatPrice } from "@/lib/utils"
-import { CartItem } from "@/app/admin/pos/types"
+import { CartItem, getItemTotal, formatModifiers } from "@/app/admin/pos/types"
 
 interface CartPanelProps {
     cart: CartItem[]
@@ -63,28 +63,38 @@ export function CartPanel({
                         <p className="text-sm font-black uppercase tracking-[0.4em] italic text-slate-900">Esperando Selección...</p>
                     </div>
                 ) : (
-                    cart.map(item => (
-                        <div key={item.product.id} className="flex items-center gap-4 bg-slate-50 border-2 border-white rounded-[1.8rem] p-4 shadow-sm hover:shadow-md transition-all group overflow-hidden relative">
-                            <div className="w-10 h-10 md:w-12 md:h-12 bg-white border-2 border-slate-100 text-slate-900 flex items-center justify-center rounded-2xl font-black italic text-xs md:text-base shadow-sm group-hover:bg-slate-900 group-hover:text-white group-hover:border-slate-900 transition-all">
-                                {item.qty}x
-                            </div>
-                            <div className="flex-1 min-w-0">
-                                <p className="font-black text-xs md:text-sm text-slate-900 truncate uppercase tracking-tight">{item.product.name}</p>
-                                <p className="text-[10px] md:text-xs font-black italic text-slate-400 uppercase tracking-widest">{formatPrice(item.product.price)}</p>
-                            </div>
-                            <div className="text-right flex flex-col items-end gap-2">
-                                <p className="font-black text-sm md:text-lg text-slate-900 italic tracking-tighter leading-none">${(item.product.price * item.qty).toLocaleString()}</p>
-                                <div className="flex gap-1.5 translate-y-1">
-                                    <button onClick={() => onRemove(item.product.id)} className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-rose-500 hover:bg-rose-500 hover:text-white transition-all shadow-sm">
-                                        <Minus className="w-3 h-3" />
-                                    </button>
-                                    <button onClick={() => onAdd(item.product)} className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-emerald-500 hover:bg-emerald-500 hover:text-white transition-all shadow-sm">
-                                        <Plus className="w-3 h-3" />
-                                    </button>
+                    cart.map((item, idx) => {
+                        const modText = formatModifiers(item.modifiers)
+                        const itemTotal = getItemTotal(item)
+                        return (
+                            <div key={item.cartKey || item.product.id} className="flex items-center gap-4 bg-slate-50 border-2 border-white rounded-[1.8rem] p-4 shadow-sm hover:shadow-md transition-all group overflow-hidden relative">
+                                <div className="w-10 h-10 md:w-12 md:h-12 bg-white border-2 border-slate-100 text-slate-900 flex items-center justify-center rounded-2xl font-black italic text-xs md:text-base shadow-sm group-hover:bg-slate-900 group-hover:text-white group-hover:border-slate-900 transition-all">
+                                    {item.qty}x
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <p className="font-black text-xs md:text-sm text-slate-900 truncate uppercase tracking-tight">{item.product.name}</p>
+                                    {modText && (
+                                        <p className="text-[9px] text-orange-600 font-bold mt-0.5 flex items-center gap-1 truncate">
+                                            <Settings2 className="w-3 h-3 shrink-0" />
+                                            {modText}
+                                        </p>
+                                    )}
+                                    <p className="text-[10px] md:text-xs font-black italic text-slate-400 uppercase tracking-widest">{formatPrice(item.product.price)}{item.modifiers && item.modifiers.length > 0 ? ' + extras' : ''}</p>
+                                </div>
+                                <div className="text-right flex flex-col items-end gap-2">
+                                    <p className="font-black text-sm md:text-lg text-slate-900 italic tracking-tighter leading-none">{formatPrice(itemTotal)}</p>
+                                    <div className="flex gap-1.5 translate-y-1">
+                                        <button onClick={() => onRemove(item.product.id)} className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-rose-500 hover:bg-rose-500 hover:text-white transition-all shadow-sm">
+                                            <Minus className="w-3 h-3" />
+                                        </button>
+                                        <button onClick={() => onAdd(item.product)} className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-emerald-500 hover:bg-emerald-500 hover:text-white transition-all shadow-sm">
+                                            <Plus className="w-3 h-3" />
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    ))
+                        )
+                    })
                 )}
             </div>
 

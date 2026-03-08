@@ -7,11 +7,20 @@ const pool = new Pool({
     ssl: { rejectUnauthorized: false }
 });
 
+import { validateUserRestaurant } from '@/lib/security'
+
 /**
  * Descuenta ingredientes del inventario basados en la receta de los productos de una orden.
  */
 export async function deductInventoryFromOrder(orderId: string, restaurantId: string) {
     if (!orderId || !restaurantId) return { success: false, error: 'Order ID and Restaurant ID are required' }
+
+    // 🛡️ Security Check
+    try {
+        await validateUserRestaurant(restaurantId)
+    } catch (e: any) {
+        return { success: false, error: e.message }
+    }
 
     const client = await pool.connect()
     try {

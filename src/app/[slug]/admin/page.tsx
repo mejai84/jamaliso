@@ -48,10 +48,31 @@ export default function SlugAdminRedirect() {
                 return
             }
 
-            // Verificar que el usuario pertenece a ESTE restaurante
-            if (profile.restaurant_id !== restaurant.id) {
-                setError("No tienes acceso a este restaurante")
-                return
+            // Verificar acceso: mismo restaurante, mismo tenant, o super_admin
+            const hasDirectAccess = profile.restaurant_id === restaurant.id
+            const isSuperAdmin = profile.role === 'super_admin'
+
+            if (!hasDirectAccess && !isSuperAdmin) {
+                // Verificar si pertenece al mismo tenant (multi-sede)
+                const { data: userRestaurant } = await supabase
+                    .from('restaurants')
+                    .select('tenant_id')
+                    .eq('id', profile.restaurant_id)
+                    .maybeSingle()
+
+                const { data: targetRestaurant } = await supabase
+                    .from('restaurants')
+                    .select('tenant_id')
+                    .eq('id', restaurant.id)
+                    .maybeSingle()
+
+                const sameTenant = userRestaurant?.tenant_id && targetRestaurant?.tenant_id
+                    && userRestaurant.tenant_id === targetRestaurant.tenant_id
+
+                if (!sameTenant) {
+                    setError("No tienes acceso a este restaurante")
+                    return
+                }
             }
 
             // Redirigir según rol

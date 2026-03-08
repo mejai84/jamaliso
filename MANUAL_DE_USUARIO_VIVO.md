@@ -9,7 +9,7 @@ Este manual es la referencia oficial para todos los roles del sistema. Está div
 
 ## 1. INTRODUCCIÓN Y CICLO DIARIO
 
-JAMALISO es un sistema POS y ERP modular para restaurantes. Centraliza la operación de salón, cocina, inventario y finanzas en tiempo real. Cada acción queda registrada y es trazable.
+JAMALISO es un sistema operativo SaaS diseñado para la elite del sector gastronómico. Bajo su estándar **Pixora Light v2**, ofrece una experiencia visual premium inspirada en sistemas operativos modernos (Glassmorphism), centralizando la operación de salón, cocina, inventario y finanzas con una latencia mínima.
 
 ### Ciclo Diario de Operación (Resumen Rápido)
 
@@ -410,6 +410,21 @@ Usa esta lista para verificar que todo funcione correcto después de cada actual
 - **Seguridad**: No comparta contraseñas ni PINes. Cada acción queda grabada con el nombre del usuario en los logs de auditoría.
 - **Revisión periódica del Food Cost**: Revise semanalmente el porcentaje de costo de ingredientes por plato. Si supera el 33% del precio de venta, alerte al proveedor o ajuste precios.
 - **Stock al inicio del turno**: El Jefe de Cocina debe verificar el stock crítico antes de abrir el servicio para evitar frustraciones con platos agotados a media jornada.
+
+---
+
+### 🚀 7. ONBOARDING ELITE (Activación de Nuevo Restaurante)
+
+El acceso a JAMALI OS no comienza con un formulario aburrido, sino con una experiencia de configuración interactiva unificada.
+
+#### Pasos para la Activación:
+1.  **Identidad**: Define el nombre de tu restaurante y tu URL exclusiva (ej: `tu-marca.jamaliso.com`).
+2.  **Infraestructura**: Configura tu plano de mesas y zonas de servicio.
+3.  **Branding Live**: Elige tus colores de marca. El sistema te mostrará un **Mockup en Vivo** de cómo verán tus clientes el menú digital.
+4.  **Acceso Maestro**: Crea tu cuenta de propietario con seguridad tipo Enterprise.
+5.  **Activación de Plan**: Selecciona tu potencia (Starter o Pro) y paga de forma segura vía Mercado Pago.
+
+Una vez completado, tu sistema operativo se provisionará en menos de 60 segundos y estarás listo para vender.
 
 ---
 

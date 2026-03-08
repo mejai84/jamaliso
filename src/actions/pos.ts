@@ -19,8 +19,20 @@ export interface PosStatus {
  * Obtiene el estado actual del operador POS.
  * Verifica si tiene turno activo y si tiene caja abierta.
  */
-export async function getPosStatus(userId: string): Promise<PosStatus> {
+export async function getPosStatus(targetUserId?: string): Promise<PosStatus> {
     const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) throw new Error("Unauthorized")
+
+    const userId = targetUserId || user.id
+
+    // Security: only allow looking up own status unless you are an admin
+    if (targetUserId && targetUserId !== user.id) {
+        const { data: myProfile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
+        if (!['admin', 'owner', 'manager'].includes(myProfile?.role || '')) {
+            throw new Error("Unauthorized to view other's POS status")
+        }
+    }
 
     // 1. Buscar turno activo (usando maybeSingle para evitar error si no hay ninguno)
     const { data: shift, error: shiftError } = await supabase
@@ -164,13 +176,16 @@ export async function startShift(shiftDefinitionId: string) {
 }
 
 export async function openCashbox(
-    userId: string,
     shiftId: string,
     openingAmount: number,
     notes?: string
 ) {
-    console.log("Iniciando apertura de caja para usuario:", userId)
     const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) throw new Error("Unauthorized")
+    const userId = user.id
+
+    console.log("Iniciando apertura de caja para usuario:", userId)
 
     try {
         // 1. Validar que el turno pertenezca al usuario y esté abierto
@@ -264,11 +279,13 @@ export async function openCashbox(
  */
 export async function closeCashbox(
     sessionId: string,
-    userId: string,
     closingAmount: number,
     notes?: string
 ) {
     const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) throw new Error("Unauthorized")
+    const userId = user.id
 
     // 1. Obtener la sesión y sus movimientos para calcular el balance teórico
     const { data: sessionData, error: sessionError } = await supabase
@@ -327,11 +344,13 @@ export async function closeCashbox(
  */
 export async function performPartialAudit(
     sessionId: string,
-    userId: string,
     countedAmount: number,
     notes?: string
 ) {
     const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) throw new Error("Unauthorized")
+    const userId = user.id
 
     // 1. Calcular el saldo teórico actual
     const { data: movements, error: movesError } = await supabase
@@ -375,13 +394,15 @@ import { deductInventoryFromOrder } from './inventory-actions'
  */
 export async function processOrderPayment(
     orderId: string,
-    userId: string,
     paymentMethod: 'cash' | 'card' | 'transfer' | 'credit',
     amount: number,
     tipAmount: number = 0
 ) {
     try {
         const supabase = await createClient()
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) throw new Error("Unauthorized")
+        const userId = user.id
 
         // 1. Obtener estado POS para asegurar que hay caja abierta (si es efectivo)
         const posStatus = await getPosStatus(userId)
@@ -439,11 +460,13 @@ export async function processOrderPayment(
  */
 export async function transferToPettyCash(
     sessionId: string,
-    userId: string,
     amount: number,
     description: string
 ) {
     const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) throw new Error("Unauthorized")
+    const userId = user.id
 
     // 1. Obtener restaurante de la sesión
     const { data: session } = await supabase.from('cashbox_sessions').select('restaurant_id').eq('id', sessionId).single()

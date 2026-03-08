@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Clock, Star, Package, Flame, AlertTriangle, Timer, Play, CheckCircle, Bell, SkipForward } from "lucide-react"
+import { Clock, Star, Package, Flame, AlertTriangle, Timer, Play, CheckCircle, Bell, SkipForward, QrCode, Monitor, User } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Order, OrderStatus, PrepStation } from "@/app/admin/kitchen/types"
 
@@ -16,6 +16,14 @@ interface OrderCardProps {
     getTimeStyles: (mins: number) => { text: string, border: string, bg: string }
     stations: PrepStation[]
     activeStationId: string
+}
+
+// Detect order source from guest_info or order_type
+function getOrderSource(order: Order): { label: string; icon: any; color: string; bg: string } {
+    if (order.guest_info?.platform === 'qr') return { label: 'QR DIGITAL', icon: QrCode, color: 'text-purple-700', bg: 'bg-purple-100 border-purple-200' }
+    if (order.order_type === 'takeout') return { label: 'PARA LLEVAR', icon: Package, color: 'text-blue-700', bg: 'bg-blue-100 border-blue-200' }
+    if (order.order_type === 'delivery') return { label: 'DELIVERY', icon: Package, color: 'text-cyan-700', bg: 'bg-cyan-100 border-cyan-200' }
+    return { label: 'MESA', icon: User, color: 'text-slate-600', bg: 'bg-slate-100 border-slate-200' }
 }
 
 export function OrderCard({
@@ -36,6 +44,8 @@ export function OrderCard({
     const progress = (readyItems / totalItems) * 100;
     const minutes = getMinutes(order.created_at);
     const styles = getTimeStyles(minutes);
+    const source = getOrderSource(order);
+    const SourceIcon = source.icon;
 
     return (
         <div className={cn(
@@ -51,12 +61,17 @@ export function OrderCard({
             )}
 
             <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3">
                     <div className={cn(
                         "min-w-[60px] px-4 h-14 rounded-2xl border-2 flex items-center justify-center font-black italic text-lg whitespace-nowrap shadow-sm",
                         styles.bg, styles.text, "border-slate-300"
                     )}>
                         #{order.tables?.table_name || 'H'}
+                    </div>
+                    {/* Order Source Badge */}
+                    <div className={cn("px-3 py-1.5 rounded-xl border text-[8px] font-black uppercase tracking-wider flex items-center gap-1.5", source.bg, source.color)}>
+                        <SourceIcon className="w-3 h-3" />
+                        {source.label}
                     </div>
                     <div className="flex flex-col gap-1">
                         <div className={cn(

@@ -16,6 +16,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { Pool } from 'pg'
+import { validateUserRestaurant } from '@/lib/security'
 
 // Configuración de conexión directa a BD (Bypass RLS & Transaction Support)
 let pool: Pool;
@@ -73,9 +74,16 @@ export interface Receipt {
 // ============================================================================
 
 export async function createOrderWithNotes(orderData: CreateOrderData) {
+    // 🛡️ Security Check & Context Retrieval
+    const { user, profile } = await validateUserRestaurant(orderData.restaurant_id)
+
     const client = await pool.connect()
     try {
         await client.query('BEGIN')
+
+        // 🛡️ Integrity Check: Force IDs from session to prevent impersonation
+        const finalUserId = user.id
+        const finalWaiterId = user.id // For now, the one who creates it is the waiter
 
         // 1. Insertar Orden
         const insertOrderQuery = `
@@ -87,8 +95,8 @@ export async function createOrderWithNotes(orderData: CreateOrderData) {
         `
         const orderValues = [
             orderData.restaurant_id,
-            orderData.user_id,
-            orderData.waiter_id,
+            finalUserId,
+            finalWaiterId,
             orderData.table_id || null,
             orderData.table_id ? 'dine_in' : 'pos',
             'pending',
@@ -145,6 +153,11 @@ export async function createOrderWithNotes(orderData: CreateOrderData) {
 export async function transferOrderBetweenTables(transferData: TransferOrderData) {
     const client = await pool.connect()
     try {
+        // 🛡️ Security Check: Validate order belongs to restaurant
+        const { rows: [order] } = await client.query('SELECT restaurant_id FROM orders WHERE id = $1', [transferData.order_id])
+        if (!order) throw new Error('Orden no encontrada')
+        await validateUserRestaurant(order.restaurant_id)
+
         await client.query('BEGIN')
 
         const transferQuery = `SELECT transfer_order_to_table($1, $2, $3, $4) as result`
@@ -222,6 +235,11 @@ export async function splitOrder(
 ) {
     const client = await pool.connect()
     try {
+        // 🛡️ Security Check
+        const { rows: [order] } = await client.query('SELECT restaurant_id FROM orders WHERE id = $1', [sourceOrderId])
+        if (!order) throw new Error('Orden no encontrada')
+        await validateUserRestaurant(order.restaurant_id)
+
         await client.query('BEGIN')
 
         // 1. Obtener orden original
@@ -350,6 +368,11 @@ export async function generateReceipt(receiptData: Receipt) {
 export async function addItemsToOrder(orderId: string, items: OrderItemWithNotes[]) {
     const client = await pool.connect()
     try {
+        // 🛡️ Security Check
+        const { rows: [order] } = await client.query('SELECT restaurant_id FROM orders WHERE id = $1', [orderId])
+        if (!order) throw new Error('Orden no encontrada')
+        await validateUserRestaurant(order.restaurant_id)
+
         await client.query('BEGIN')
         const insertItemsQuery = `
             INSERT INTO order_items (order_id, product_id, quantity, unit_price, notes)

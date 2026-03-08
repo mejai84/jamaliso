@@ -56,6 +56,8 @@ export interface StockValidation {
 // 1. VALIDACIÓN PREVENTIVA DE STOCK
 // ============================================================================
 
+import { validateUserRestaurant } from '@/lib/security'
+
 /**
  * Valida que haya stock disponible ANTES de agregar al carrito
  * Previene errores de venta con stock insuficiente
@@ -66,6 +68,9 @@ export async function validateProductStock(
     restaurantId: string
 ): Promise<StockValidation> {
     const supabase = await createClient()
+    // No strict security validation needed for stock check usually, 
+    // as it's a read-only check mostly, but RLS on ingredients table 
+    // will protect data if we querying through Supabase and RLS is active.
 
     try {
         const { data, error } = await supabase
@@ -134,6 +139,10 @@ export async function validateCartStock(
  * @throws Error si falla cualquier paso (rollback automático)
  */
 export async function completeSaleAtomic(saleData: CompleteSaleData) {
+    // 🛡️ Security Check & Context
+    const { user } = await validateUserRestaurant(saleData.restaurant_id)
+    const userId = user.id
+
     const supabase = await createClient()
 
     try {
@@ -153,7 +162,7 @@ export async function completeSaleAtomic(saleData: CompleteSaleData) {
         const { data, error } = await supabase
             .rpc('complete_sale_atomic', {
                 p_restaurant_id: saleData.restaurant_id,
-                p_user_id: saleData.user_id,
+                p_user_id: userId,
                 p_cashbox_session_id: saleData.cashbox_session_id,
                 p_items: JSON.stringify(saleData.items),
                 p_payment_method: saleData.payment_method,
@@ -204,13 +213,16 @@ export async function completeSaleAtomic(saleData: CompleteSaleData) {
  */
 export async function cancelSaleAtomic(cancelData: CancelSaleData) {
     const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) throw new Error("Unauthorized")
+    const userId = user.id
 
     try {
         // EJECUTAR REVERSIÓN ATÓMICA
         const { data, error } = await supabase
             .rpc('revert_sale_atomic', {
                 p_order_id: cancelData.order_id,
-                p_user_id: cancelData.user_id,
+                p_user_id: userId,
                 p_approver_id: cancelData.approver_id || null,
                 p_reason: cancelData.reason
             })

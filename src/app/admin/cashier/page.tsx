@@ -42,7 +42,7 @@ export default function CashierPage() {
             setCurrentUser(profile)
 
             try {
-                const posStatus = await getPosStatus(user.id)
+                const posStatus = await getPosStatus()
                 setStatus(posStatus)
 
                 if (!posStatus.hasActiveShift) return router.push("/admin/cashier/start-shift")
@@ -92,7 +92,7 @@ export default function CashierPage() {
         try {
             const { transferToPettyCash } = await import("@/actions/pos")
             if (modalOpen === 'petty-cash-transfer') {
-                await transferToPettyCash(status.activeCashboxSession.id, currentUser.id, amount, reason)
+                await transferToPettyCash(status.activeCashboxSession.id, amount, reason)
                 toast.success("Transferencia a Caja Menor exitosa")
             } else {
                 const type = modalOpen === 'income' ? 'DEPOSIT' : 'WITHDRAWAL'
@@ -121,11 +121,11 @@ export default function CashierPage() {
         try {
             const { closeCashbox, performPartialAudit } = await import("@/actions/pos")
             if (modalOpen === 'audit') {
-                const res = await performPartialAudit(status.activeCashboxSession.id, currentUser.id, amount, reason)
+                const res = await performPartialAudit(status.activeCashboxSession.id, amount, reason)
                 toast.success(`Arqueo registrado. DIFERENCIA: $${res.difference.toLocaleString()}`)
                 setModalOpen(null)
             } else {
-                const result = await closeCashbox(status.activeCashboxSession.id, currentUser.id, amount, reason)
+                const result = await closeCashbox(status.activeCashboxSession.id, amount, reason)
                 setZReportData({ systemAmount: result.systemAmount, countedAmount: amount, difference: result.difference, sales: balance.sales, expenses: balance.expenses })
                 setModalOpen('z-report')
             }

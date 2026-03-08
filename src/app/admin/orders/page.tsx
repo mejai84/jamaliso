@@ -182,7 +182,7 @@ function OrdersContent() {
         }
         try {
             const { processOrderPayment } = await import("@/actions/pos")
-            const res = await processOrderPayment(order.id, currentUser.id, method as any, total, tip)
+            const res = await processOrderPayment(order.id, method as any, total, tip)
             if (res.success) {
                 fetchOrders(); setSelectedOrder(null); toast.success(`VENTA REGISTRADA [$${method.toUpperCase()}]`)
             } else toast.error(res.error)

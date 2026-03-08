@@ -16,6 +16,9 @@ describe('POS - Server Actions (getPosStatus)', () => {
     test('retorna false para hasActiveShift si no hay turno', async () => {
         // Simulamos un supabase instanciado con respuestas prefabricadas
         const mockSupabase = {
+            auth: {
+                getUser: jest.fn().mockResolvedValue({ data: { user: { id: 'usuario-123' } } })
+            },
             from: jest.fn().mockReturnValue({
                 select: jest.fn().mockReturnValue({
                     eq: jest.fn().mockReturnValue({
@@ -43,6 +46,9 @@ describe('POS - Server Actions (getPosStatus)', () => {
     test('retorna true para canSell si el turno y caja estatus existen', async () => {
         // Configuración de Mocks de base de datos Encadenados
         const mockSupabase = {
+            auth: {
+                getUser: jest.fn().mockResolvedValue({ data: { user: { id: 'usuario-123' } } })
+            },
             from: jest.fn().mockImplementation((table: string) => {
                 if (table === 'shifts') {
                     return {

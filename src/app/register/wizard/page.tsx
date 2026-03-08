@@ -17,7 +17,14 @@ import {
     Layers,
     Sparkles,
     ShieldCheck,
-    CreditCard
+    CreditCard,
+    ArrowRight,
+    LayoutDashboard,
+    Zap,
+    X,
+    Lock,
+    Mail,
+    User
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -25,6 +32,8 @@ import { Label } from "@/components/ui/label"
 import { useRouter } from "next/navigation"
 import { supabase } from "@/lib/supabase/client"
 import { toast } from "sonner"
+import Link from "next/link"
+import Image from "next/image"
 
 const STEPS = [
     { id: 1, title: 'Identidad', icon: Store, desc: 'Nombre y URL de tu negocio' },
@@ -66,6 +75,7 @@ function WizardContent() {
     const [currentStep, setCurrentStep] = useState(1)
     const [loading, setLoading] = useState(false)
     const [percent, setPercent] = useState(25)
+    const [acceptedTerms, setAcceptedTerms] = useState(false)
 
     // Form State
     const [formData, setFormData] = useState({
@@ -258,39 +268,44 @@ function WizardContent() {
                 <div className="absolute bottom-[-20%] left-[-10%] w-[50%] h-[50%] bg-blue-500/10 blur-[150px] rounded-full" />
             </div>
 
-            <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch relative z-10">
+            <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch relative z-10">
 
                 {/* Sidebar Status (Visible en desktop) */}
-                <div className="lg:col-span-4 bg-slate-900 rounded-[3rem] p-10 text-white flex flex-col justify-between hidden lg:flex shadow-2xl">
-                    <div className="space-y-12">
-                        <div className="flex items-center gap-4 group">
-                            <div className="w-12 h-12 bg-gradient-to-br from-orange-400 to-orange-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:rotate-12 transition-transform">
-                                <Sparkles className="text-white w-6 h-6" />
-                            </div>
-                            <h2 className="text-3xl font-black italic tracking-tighter uppercase">JAMALI <span className="text-orange-500 drop-shadow-[0_2px_10px_rgba(249,115,22,0.4)]">OS</span></h2>
-                        </div>
+                <div className="lg:col-span-4 bg-slate-900 rounded-[3.5rem] p-12 text-white flex flex-col justify-between hidden lg:flex shadow-[0_40px_80px_-15px_rgba(0,0,0,0.3)] border border-white/5 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-orange-500/10 blur-[100px] rounded-full -mr-32 -mt-32" />
 
-                        <div className="space-y-8">
+                    <div className="space-y-16 relative z-10">
+                        <Link href="/landing" className="flex items-center gap-4 group">
+                            <Image
+                                src="/images/jamali-os-transparent.png"
+                                alt="JAMALI OS"
+                                width={180}
+                                height={60}
+                                className="h-10 w-auto brightness-0 invert opacity-90 group-hover:opacity-100 transition-opacity"
+                            />
+                        </Link>
+
+                        <div className="space-y-10">
                             {STEPS.map((step) => {
                                 const Icon = step.icon
                                 const isActive = currentStep === step.id
                                 const isCompleted = currentStep > step.id
                                 return (
                                     <div key={step.id} className={cn(
-                                        "flex items-start gap-4 transition-all duration-500",
-                                        isActive ? "opacity-100 scale-105" : "opacity-40"
+                                        "flex items-start gap-5 transition-all duration-700",
+                                        isActive ? "opacity-100 translate-x-2" : "opacity-30"
                                     )}>
                                         <div className={cn(
-                                            "w-10 h-10 rounded-xl flex items-center justify-center border-2 transition-all",
-                                            isActive ? "bg-orange-500 border-orange-500 text-white shadow-orange-500/50 shadow-lg" :
-                                                isCompleted ? "bg-emerald-500 border-emerald-500 text-white" : "border-white/20"
+                                            "w-12 h-12 rounded-2xl flex items-center justify-center border-2 transition-all duration-500",
+                                            isActive ? "bg-orange-500 border-orange-500 text-white shadow-[0_0_25px_rgba(249,115,22,0.5)] scale-110" :
+                                                isCompleted ? "bg-emerald-500 border-emerald-500 text-white" : "border-white/10"
                                         )}>
-                                            {isCompleted ? <CheckCircle2 className="w-5 h-5" /> : <Icon className="w-5 h-5" />}
+                                            {isCompleted ? <CheckCircle2 className="w-6 h-6" /> : <Icon className="w-6 h-6" />}
                                         </div>
-                                        <div>
-                                            <p className="text-[10px] font-black uppercase tracking-widest text-orange-500 leading-none mb-1">Paso 0{step.id}</p>
-                                            <h3 className="font-bold text-lg leading-tight uppercase tracking-tight italic">{step.title}</h3>
-                                            <p className="text-[10px] text-white/40 uppercase font-medium">{step.desc}</p>
+                                        <div className="space-y-1">
+                                            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-orange-500/80 leading-none">FASE 0{step.id}</p>
+                                            <h3 className="font-bold text-xl leading-tight uppercase tracking-tight">{step.title}</h3>
+                                            <p className="text-[10px] text-white/40 uppercase font-bold tracking-widest">{step.desc}</p>
                                         </div>
                                     </div>
                                 )
@@ -298,24 +313,24 @@ function WizardContent() {
                         </div>
                     </div>
 
-                    <div className="bg-white/5 border border-white/10 rounded-3xl p-6 space-y-4">
-                        <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-white/40 italic">
-                            <span>PROGRESO DE CONFIGURACIÓN</span>
-                            <span>{percent}%</span>
+                    <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-[2rem] p-8 space-y-5 relative z-10 transition-all hover:border-white/20">
+                        <div className="flex justify-between items-center">
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 italic">CONFIGURACIÓN KERNEL</span>
+                            <span className="text-sm font-black text-orange-500">{percent}%</span>
                         </div>
-                        <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+                        <div className="h-2.5 bg-white/5 rounded-full overflow-hidden border border-white/5">
                             <motion.div
-                                className="h-full bg-orange-500"
+                                className="h-full bg-gradient-to-r from-orange-600 to-orange-400"
                                 initial={{ width: 0 }}
                                 animate={{ width: `${percent}%` }}
-                                transition={{ duration: 0.8, ease: "circOut" }}
+                                transition={{ duration: 1, ease: "easeInOut" }}
                             />
                         </div>
                     </div>
                 </div>
 
                 {/* Main Wizard Form */}
-                <div className="lg:col-span-8 bg-white/80 backdrop-blur-3xl border border-white rounded-[3rem] shadow-2xl p-8 md:p-14 flex flex-col justify-between overflow-hidden relative">
+                <div className="lg:col-span-8 bg-white/70 backdrop-blur-3xl border border-white rounded-[3.5rem] shadow-[0_40px_100px_-20px_rgba(0,0,0,0.08)] p-10 md:p-16 flex flex-col justify-between overflow-hidden relative">
 
                     <AnimatePresence mode="wait">
                         <motion.div
@@ -618,28 +633,59 @@ function WizardContent() {
                                         ))}
                                     </div>
 
-                                    <div className="p-8 bg-slate-900 rounded-[3rem] text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl">
-                                        <div className="flex items-center gap-6">
-                                            <div className="w-16 h-16 bg-white/5 border border-white/20 rounded-3xl flex items-center justify-center">
-                                                <CreditCard className="w-8 h-8 text-orange-400" />
+                                    <div className="p-8 bg-slate-900 rounded-[3rem] text-white flex flex-col gap-6 shadow-2xl relative overflow-hidden">
+                                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-500 to-transparent opacity-20" />
+
+                                        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                                            <div className="flex items-center gap-6">
+                                                <div className="w-16 h-16 bg-white/5 border border-white/20 rounded-3xl flex items-center justify-center">
+                                                    <CreditCard className="w-8 h-8 text-orange-400" />
+                                                </div>
+                                                <div>
+                                                    <h4 className="text-xl font-black italic uppercase tracking-tighter">PAGO SEGURO VÍA MERCADO PAGO</h4>
+                                                    <p className="text-[9px] font-black text-white/30 uppercase tracking-[0.3em] italic leading-tight">ENLACE CIFRADO AES-256</p>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <h4 className="text-xl font-black italic uppercase tracking-tighter">PAGO SEGURO VÍA MERCADO PAGO</h4>
-                                                <p className="text-[9px] font-black text-white/30 uppercase tracking-[0.3em] italic leading-tight">ENLACE CIFRADO AES-256</p>
-                                            </div>
+                                            <button
+                                                onClick={handlePayment}
+                                                disabled={loading || isPaid || !acceptedTerms}
+                                                className={cn(
+                                                    "rounded-2xl h-16 px-10 font-black italic uppercase text-lg tracking-widest w-full md:w-auto shadow-lg active:scale-95 transition-all text-white",
+                                                    isPaid ? "bg-emerald-500 hover:bg-emerald-600 shadow-emerald-500/20" :
+                                                        !acceptedTerms ? "bg-slate-700 text-slate-400 cursor-not-allowed border border-white/5" :
+                                                            "bg-orange-500 hover:bg-orange-600 shadow-orange-500/20"
+                                                )}
+                                            >
+                                                {loading ? <Loader2 className="w-6 h-6 animate-spin mx-auto" /> : (
+                                                    isPaid ? "PLAN ACTIVADO ✓" : "ACTIVAR AHORA"
+                                                )}
+                                            </button>
                                         </div>
-                                        <Button
-                                            onClick={handlePayment}
-                                            disabled={loading || isPaid}
-                                            className={cn(
-                                                "rounded-2xl h-16 px-10 font-black italic uppercase text-lg tracking-widest w-full md:w-auto shadow-lg active:scale-95 transition-all",
-                                                isPaid ? "bg-emerald-500 hover:bg-emerald-600 text-white shadow-emerald-500/20" : "bg-orange-500 hover:bg-orange-600 text-white shadow-orange-500/20"
-                                            )}
-                                        >
-                                            {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : (
-                                                isPaid ? "PLAN ACTIVADO ✓" : "ACTIVAR AHORA"
-                                            )}
-                                        </Button>
+
+                                        <div className="pt-6 border-t border-white/10">
+                                            <label className="flex items-start gap-4 cursor-pointer group">
+                                                <div className="relative mt-1">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={acceptedTerms}
+                                                        onChange={(e) => setAcceptedTerms(e.target.checked)}
+                                                        className="peer h-6 w-6 appearance-none rounded-lg border-2 border-white/20 bg-white/5 transition-all checked:bg-orange-500 checked:border-orange-500 focus:outline-none cursor-pointer"
+                                                    />
+                                                    <CheckCircle2 className="absolute top-1 left-1 w-4 h-4 text-white opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none" />
+                                                </div>
+                                                <div className="space-y-1">
+                                                    <p className="text-xs font-bold text-white/70 leading-relaxed uppercase tracking-tight">
+                                                        Al activar mi plan, acepto los
+                                                        <Link href="#" className="text-orange-500 hover:underline mx-1">Términos de Servicio</Link> y la
+                                                        <Link href="#" className="text-orange-500 hover:underline mx-1">Política de Privacidad</Link>
+                                                        de JAMALI OS.
+                                                    </p>
+                                                    <p className="text-[9px] font-medium text-white/30 uppercase tracking-[0.2em]">
+                                                        Autorizo el tratamiento de mis datos personales según la ley de protección de datos.
+                                                    </p>
+                                                </div>
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
                             )}
@@ -684,9 +730,14 @@ function WizardContent() {
                                             />
                                         </div>
 
-                                        <div className="p-6 bg-emerald-50 rounded-3xl border border-emerald-100 flex items-center gap-4 mt-6">
-                                            <ShieldCheck className="text-emerald-500 w-8 h-8" />
-                                            <p className="text-[9px] font-bold text-emerald-600 uppercase italic leading-tight">LOS DATOS SE ALOJARÁN EN UN NODO DE BASE DE DATOS CIFRADO Y AISLADO (MULTI-TENANT ISOLATION).</p>
+                                        <div className="p-8 bg-emerald-50/50 backdrop-blur-md rounded-[2.5rem] border border-emerald-100 flex items-center gap-6 mt-6 transition-all hover:bg-emerald-50">
+                                            <div className="w-14 h-14 bg-emerald-500 text-white rounded-2xl flex items-center justify-center shrink-0 shadow-lg shadow-emerald-500/20">
+                                                <ShieldCheck className="w-8 h-8" />
+                                            </div>
+                                            <div className="space-y-1">
+                                                <p className="text-xs font-black text-emerald-700 uppercase italic">Seguridad Nivel Enterprise Activa</p>
+                                                <p className="text-[10px] font-medium text-emerald-600/80 leading-relaxed uppercase tracking-tight">TUS DATOS SE ALOJARÁN EN UN NODO DE BASE DE DATOS CIFRADO Y AISLADO (MULTI-TENANT ISOLATION).</p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -695,37 +746,40 @@ function WizardContent() {
                     </AnimatePresence>
 
                     {/* Navigation Buttons */}
-                    <div className="flex items-center justify-between mt-12 pt-8 border-t border-slate-100">
-                        <Button
-                            variant="ghost"
+                    <div className="flex flex-col md:flex-row items-center justify-between mt-12 pt-10 border-t border-slate-100/50 gap-6">
+                        <button
                             onClick={handleBack}
                             disabled={currentStep === 1 || loading}
-                            className="h-14 md:h-16 px-8 rounded-2xl font-black uppercase text-xs italic tracking-widest flex items-center gap-2"
+                            className="order-2 md:order-1 flex items-center gap-3 px-8 py-4 text-xs font-black uppercase tracking-[0.2em] text-slate-400 hover:text-slate-900 disabled:opacity-30 transition-all group"
                         >
-                            <ChevronLeft className="w-5 h-5" /> ATRÁS
-                        </Button>
+                            <ChevronLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" /> VOLVER
+                        </button>
 
-                        {currentStep === 5 ? (
-                            <Button
-                                onClick={handleFinalize}
-                                disabled={loading || !isPaid}
-                                className={cn(
-                                    "h-14 md:h-16 px-12 rounded-2xl font-black uppercase text-lg italic tracking-widest flex items-center gap-4 shadow-2xl active:scale-95 transition-all w-full md:w-auto",
-                                    isPaid ? "bg-slate-900 text-white hover:bg-orange-600" : "bg-slate-200 text-slate-400 opacity-50 cursor-not-allowed"
-                                )}
-                            >
-                                {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : (
-                                    <>DESPEGAR <Rocket className="w-6 h-6 animate-bounce" /></>
-                                )}
-                            </Button>
-                        ) : (
-                            <Button
-                                onClick={handleNext}
-                                className="h-14 md:h-16 px-12 rounded-2xl bg-orange-500 text-white font-black uppercase text-lg italic tracking-widest flex items-center gap-4 hover:shadow-orange-500/50 shadow-2xl active:scale-95 transition-all w-full md:w-auto"
-                            >
-                                CONTINUAR <ChevronRight className="w-6 h-6" />
-                            </Button>
-                        )}
+                        <div className="order-1 md:order-2 w-full md:w-auto">
+                            {currentStep === 5 ? (
+                                <button
+                                    onClick={handleFinalize}
+                                    disabled={loading || !isPaid}
+                                    className={cn(
+                                        "w-full md:w-auto h-16 md:h-20 px-14 rounded-3xl font-black uppercase text-xl leading-none tracking-widest flex items-center justify-center gap-4 shadow-2xl active:scale-95 transition-all duration-300",
+                                        isPaid
+                                            ? "bg-slate-900 text-white hover:bg-orange-500 shadow-slate-900/20"
+                                            : "bg-slate-100 text-slate-300 cursor-not-allowed"
+                                    )}
+                                >
+                                    {loading ? <Loader2 className="w-6 h-6 animate-spin text-white" /> : (
+                                        <>ACTIVAR JAMALI OS <Rocket className="w-7 h-7 text-orange-400 group-hover:animate-bounce" /></>
+                                    )}
+                                </button>
+                            ) : (
+                                <button
+                                    onClick={handleNext}
+                                    className="w-full md:w-auto h-16 md:h-20 px-14 rounded-3xl bg-orange-500 text-white font-black uppercase text-xl leading-none tracking-widest flex items-center justify-center gap-4 shadow-[0_20px_40px_-10px_rgba(249,115,22,0.4)] hover:bg-orange-600 hover:-translate-y-1 active:scale-95 transition-all duration-300"
+                                >
+                                    SIGUIENTE PASO <ChevronRight className="w-7 h-7 group-hover:translate-x-1 transition-transform" />
+                                </button>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
