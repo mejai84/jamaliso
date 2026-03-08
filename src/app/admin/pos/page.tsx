@@ -212,6 +212,9 @@ export default function PosPremiumPage() {
                 toast.success("Venta Procesada Correctamente")
                 setReceiptModal({
                     orderId: data.order_id,
+                    subtotal: subtotal,
+                    taxAmount: taxAmount,
+                    taxDetails: taxes.map(t => ({ name: t.tax_name, percentage: t.tax_percentage, amount: subtotal * (t.tax_percentage / 100) })),
                     total: total,
                     items: [...cart],
                     method: method,
@@ -342,7 +345,7 @@ export default function PosPremiumPage() {
             <ReceiptModal
                 receipt={receiptModal}
                 onClose={() => setReceiptModal(null)}
-                restaurantName={restaurant?.name}
+                restaurant={restaurant}
             />
 
             {/* Modifier Modal */}

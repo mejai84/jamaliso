@@ -5,6 +5,7 @@ import { supabase } from "@/lib/supabase/client"
 import { getPosStatus, PosStatus } from "@/actions/pos"
 import { Loader2, Activity } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { useRestaurant } from "@/providers/RestaurantProvider"
 import { toast } from "sonner"
 import { Movement } from "./types"
 
@@ -16,10 +17,12 @@ import { MovementLog } from "@/components/admin/cashier/MovementLog"
 import { MovementModal } from "@/components/admin/cashier/MovementModal"
 import { CalculatorModal } from "@/components/admin/cashier/CalculatorModal"
 import { ZReportModal } from "@/components/admin/cashier/ZReportModal"
+import { VoucherModal } from "@/components/admin/cashier/VoucherModal"
 
 const CASH_LIMIT = 1000000
 
 export default function CashierPage() {
+    const { restaurant } = useRestaurant()
     const router = useRouter()
     const [loading, setLoading] = useState(true)
     const [refreshing, setRefreshing] = useState(false)
@@ -32,6 +35,7 @@ export default function CashierPage() {
     const [modalOpen, setModalOpen] = useState<'income' | 'expense' | 'audit' | 'close' | 'z-report' | 'petty-cash-transfer' | null>(null)
     const [submittingModal, setSubmittingModal] = useState(false)
     const [zReportData, setZReportData] = useState<any>(null)
+    const [activeVoucher, setActiveVoucher] = useState<any>(null)
 
     useEffect(() => {
         const init = async () => {
@@ -89,13 +93,14 @@ export default function CashierPage() {
     const handleMovementSubmit = async (amount: number, reason: string) => {
         if (!status?.activeCashboxSession || amount <= 0) return
         setSubmittingModal(true)
+        const currentModal = modalOpen
         try {
             const { transferToPettyCash } = await import("@/actions/pos")
-            if (modalOpen === 'petty-cash-transfer') {
+            if (currentModal === 'petty-cash-transfer') {
                 await transferToPettyCash(status.activeCashboxSession.id, amount, reason)
                 toast.success("Transferencia a Caja Menor exitosa")
             } else {
-                const type = modalOpen === 'income' ? 'DEPOSIT' : 'WITHDRAWAL'
+                const type = currentModal === 'income' ? 'DEPOSIT' : 'WITHDRAWAL'
                 const { error } = await supabase.from('cash_movements').insert({
                     cashbox_session_id: status.activeCashboxSession.id,
                     user_id: currentUser.id,
@@ -105,6 +110,16 @@ export default function CashierPage() {
                 })
                 if (error) throw error
                 toast.success("Movimiento registrado con éxito")
+
+                // Open professional voucher
+                setActiveVoucher({
+                    id: (Math.random() * 1000000).toString(), // Fallback if no ID available
+                    type: currentModal === 'petty-cash-transfer' ? 'PETTY_CASH' : (currentModal === 'income' ? 'DEPOSIT' : 'WITHDRAWAL'),
+                    amount,
+                    description: reason,
+                    date: new Date(),
+                    user: currentUser?.full_name || 'ADMINISTRADOR'
+                })
             }
             setModalOpen(null)
             fetchDashboardData(status.activeCashboxSession.id)
@@ -211,6 +226,12 @@ export default function CashierPage() {
                 data={zReportData}
                 onPrint={() => window.print()}
                 onExit={() => router.push('/admin')}
+            />
+
+            <VoucherModal
+                data={activeVoucher}
+                onClose={() => setActiveVoucher(null)}
+                restaurant={restaurant}
             />
 
             <style jsx global>{`
