@@ -66,6 +66,21 @@ export default function AdminDashboard() {
     const fetchDashboardStats = async (resId: string) => {
         setLoading(true)
         try {
+            const isDemo = new URL(window.location.href).searchParams.get('demo') === 'true'
+            if (isDemo || resId === '00000000-0000-0000-0000-000000000000') {
+                setStats({
+                    todayRevenue: 1250000,
+                    activeOrders: 8,
+                    criticalStock: 3,
+                    occupiedTables: 12,
+                    totalTables: 24,
+                    newCustomers: 15,
+                    rating: 4.9
+                })
+                setLoading(false)
+                return
+            }
+
             // 1. Ventas de Hoy
             const today = new Date()
             today.setHours(0, 0, 0, 0)
@@ -188,6 +203,25 @@ export default function AdminDashboard() {
                         </div>
                     </div>
                 </div>
+
+                {/* Demo Notice Banner */}
+                {typeof window !== 'undefined' && new URL(window.location.href).searchParams.get('demo') === 'true' && (
+                    <div className="bg-slate-900 text-white p-6 md:p-8 rounded-[2.5rem] flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl relative overflow-hidden border border-white/10 shrink-0">
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-orange-500/20 blur-[80px] rounded-full -translate-x-1/2 -translate-y-1/2" />
+                        <div className="flex items-center gap-6 relative z-10">
+                            <div className="w-16 h-16 bg-orange-500 rounded-[1.5rem] flex items-center justify-center animate-pulse shadow-[0_0_30px_rgba(249,115,22,0.4)]">
+                                <Sparkles className="w-8 h-8 text-white" />
+                            </div>
+                            <div>
+                                <h3 className="text-xl md:text-2xl font-black tracking-tight italic uppercase">ENTORNO DEMO ACTIVO</h3>
+                                <p className="font-medium text-slate-400">Bienvenido al Tour Interactivo. Estás explorando el ecosistema JAMALISO con datos de prueba.</p>
+                            </div>
+                        </div>
+                        <Link href="/landing" className="px-10 py-5 bg-orange-500 text-white font-black rounded-2xl hover:bg-orange-600 transition-all shadow-xl whitespace-nowrap relative z-10 uppercase text-xs tracking-widest italic">
+                            Volver a la Web
+                        </Link>
+                    </div>
+                )}
 
                 {/* KPI CARDS (Pixora Light Style) */}
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5 md:gap-8 shrink-0">

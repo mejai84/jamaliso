@@ -33,9 +33,21 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     useEffect(() => {
         const checkAuth = async () => {
             try {
+                // Check if we are in demo mode via URL param
+                const isDemoMode = new URL(window.location.href).searchParams.get('demo') === 'true'
+                const demoUser = new URL(window.location.href).searchParams.get('user') || 'Demo User'
+
                 const { data: { session } } = await supabase.auth.getSession()
 
                 if (!session) {
+                    if (isDemoMode) {
+                        // Bypass auth for demo mode
+                        setUserRole('admin')
+                        setUserName(demoUser)
+                        setAuthorized(true)
+                        setLoading(false)
+                        return
+                    }
                     router.push("/login")
                     return
                 }

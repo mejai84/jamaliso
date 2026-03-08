@@ -21,6 +21,8 @@ import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 
+import { saveDemoLead } from "@/actions/leads"
+
 const steps = [
     {
         id: "type",
@@ -66,9 +68,17 @@ export default function DemoWizard() {
         }
     }
 
-    const startSimulation = (e: React.FormEvent) => {
+    const startSimulation = async (e: React.FormEvent) => {
         e.preventDefault()
         setIsSimulating(true)
+
+        // Capturar el lead en segundo plano
+        saveDemoLead({
+            name: profile.name,
+            email: profile.email,
+            type: selections.type || 'unknown',
+            challenge: selections.challenge || 'unknown'
+        })
     }
 
     useEffect(() => {
@@ -78,7 +88,8 @@ export default function DemoWizard() {
                     if (prev >= 100) {
                         clearInterval(interval)
                         setTimeout(() => {
-                            router.push(`/admin?demo=true&type=${selections.type}&challenge=${selections.challenge}&user=${profile.name}`)
+                            // Redirigir al dashboard con los flags de demo
+                            router.push(`/admin?demo=true&type=${selections.type}&challenge=${selections.challenge}&user=${encodeURIComponent(profile.name)}`)
                         }, 800)
                         return 100
                     }
@@ -93,7 +104,7 @@ export default function DemoWizard() {
         hidden: { opacity: 0, y: 20 },
         visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
         exit: { opacity: 0, y: -20, transition: { duration: 0.4 } }
-    }
+    } as any
 
     return (
         <div className="min-h-screen bg-slate-50 font-sans selection:bg-orange-500/20 selection:text-orange-900 overflow-hidden flex flex-col">
@@ -151,8 +162,8 @@ export default function DemoWizard() {
                                                 key={option.id}
                                                 onClick={() => handleSelect(steps[currentStep].id, option.id)}
                                                 className={`group p-6 rounded-[2rem] border-2 text-left transition-all relative overflow-hidden ${isSelected
-                                                        ? "border-orange-500 bg-white shadow-xl shadow-orange-500/10"
-                                                        : "border-slate-200 bg-white hover:border-orange-200 hover:shadow-lg"
+                                                    ? "border-orange-500 bg-white shadow-xl shadow-orange-500/10"
+                                                    : "border-slate-200 bg-white hover:border-orange-200 hover:shadow-lg"
                                                     }`}
                                             >
                                                 <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-4 transition-all ${isSelected ? "bg-orange-500 text-white" : "bg-slate-50 text-slate-400 group-hover:bg-orange-50 group-hover:text-orange-500"

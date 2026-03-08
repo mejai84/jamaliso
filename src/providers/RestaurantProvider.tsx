@@ -63,11 +63,34 @@ export const RestaurantProvider = ({ children }: { children: ReactNode }) => {
     const [loading, setLoading] = useState(true)
     const [accessibleRestaurants, setAccessibleRestaurants] = useState<Restaurant[]>([])
 
+    const MOCK_RESTAURANT: Restaurant = {
+        id: '00000000-0000-0000-0000-000000000000',
+        name: 'JAMALI Sandbox',
+        subdomain: 'demo',
+        logo_url: '/images/jamali-os-logo.png',
+        primary_color: '#F97316',
+        theme: 'light',
+        currency_symbol: '$',
+        tax_percentage: 19,
+        apply_service_charge: true,
+        service_charge_percentage: 10
+    }
+
     const initRestaurant = async () => {
         try {
             setLoading(true)
             const hostname = typeof window !== 'undefined' ? window.location.hostname : ''
             const pathname = typeof window !== 'undefined' ? window.location.pathname : ''
+            const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null
+            const isDemo = searchParams?.get('demo') === 'true'
+
+            if (isDemo) {
+                setRestaurant(MOCK_RESTAURANT)
+                setAccessibleRestaurants([MOCK_RESTAURANT])
+                applyBranding(MOCK_RESTAURANT)
+                setLoading(false)
+                return
+            }
 
             // 1. Resolver por Subdominio (Prioridad Máxima)
             let currentRes: Restaurant | null = null
