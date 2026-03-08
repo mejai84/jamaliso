@@ -1,5 +1,5 @@
 # 📘 Manual de Usuario Vivo — JAMALISO
-> **Versión:** 3.5 ELITE | **Estado:** Documento Vivo | **Última revisión:** 08 Marzo 2026 (Refuerzo Guardian, Offline Resiliency & Food Cost)
+> **Versión:** 4.0 ELITE | **Estado:** Documento Vivo | **Última revisión:** 08 Marzo 2026 (Anti-Fraud Shield Pro, State Machine Fix, Real-time Waiter)
 
 Este manual es la referencia oficial para todos los roles del sistema. Está divido en dos tipos de secciones:
 - 🟢 **Guías Operativas**: Cómo usar cada módulo paso a paso.
@@ -16,8 +16,8 @@ JAMALISO es un sistema operativo SaaS diseñado para la elite del sector gastron
 | Momento | Responsable | Acción |
 | :--- | :--- | :--- |
 | Apertura de Jornada | Cajero | Inicia turno y abre sesión de caja con saldo base |
-| Durante el Servicio | Mesero / Cocina | Toma de comandas → Producción KDS → Despacho |
-| Control del Turno | Admin / Cajero | Gastos de caja menor, arqueos parciales |
+| Durante el Servicio | Mesero / Cocina | Toma de comandas → Producción KDS → Despacho → Solicitud de Cobro |
+| Control del Turno | Admin / Cajero | Gastos de caja menor, arqueos parciales (ciegos) |
 | Cierre y Auditoría | Cajero / Admin | Conteo físico ciego, generación de reportes |
 
 ---
@@ -52,7 +52,7 @@ El blindaje financiero del negocio. Ninguna venta puede procesarse sin una caja 
 #### Durante el Turno (Movimientos):
 - **Para registrar un gasto de caja menor** (ej: comprar bolsas): Vaya a **Caja Menor** → cree un comprobante con motivo y monto.
 - **Para registrar un retiro de efectivo**: En la sesión activa, use el botón **RETIRO** e ingrese siempre un motivo descriptivo. *Nunca lo deje en blanco.*
-- **Para un arqueo parcial**: Puede contar el efectivo durante el turno sin cerrarlo para verificar que todo cuadra.
+- **Para un arqueo parcial**: Puede contar el efectivo durante el turno sin cerrarlo. **⚠️ ARQUEO CIEGO:** El cajero NO verá el saldo teórico del sistema. Debe contar a ciegas y declarar su conteo. Solo el supervisor verá la diferencia real.
 
 5. El sistema calculará y guardará la **Diferencia / Descuadre** automáticamente.
 
@@ -128,9 +128,10 @@ Herramienta de alta velocidad para el salón. Optimizada para móvil y tablet. S
 | **Dividir Cuenta** | Separa ítems específicos en una nueva orden paralela |
 | **Unir Mesas** | Fusiona la orden de dos mesas ocupadas en una sola |
 | **Transferir Ítems** | Mueve un producto específico de una mesa a otra |
-| **Notificar Cobro** | El estado de la mesa cambia a "WAITING_PAYMENT" notificando al cajero. El mesero ya no procesa el pago. |
-| **Entregar al Cliente** | Marca la orden como entregada (solo visible si está en READY) |
-| **Liberar Mesa** | Pone la mesa en verde (solo si el pago ya fue procesado) |
+| **Notificar Cobro** | El estado de la orden cambia a `payment_requested`, notificando al cajero en tiempo real. El mesero ya no procesa el pago. |
+| **Entregar al Cliente** | Marca la orden como `delivered` (solo visible si está en `ready`) |
+| **Anular Orden** | ⚠️ Requiere **PIN de Supervisor** + motivo. Queda registrado en `void_logs`. |
+| **Liberar Mesa** | Pone la mesa en verde (requiere que el pago esté procesado o autorización de supervisor) |
 
 #### 🔄 3.4.2. Continuidad y Resiliencia (Modo Offline PWA)
 **JAMALI OS** está blindado contra fallos de internet en el restaurante.
@@ -158,7 +159,16 @@ JAMALI OS separa estrictamente las responsabilidades por seguridad financiera.
 **¿Cómo manejar problemas comunes?**
 1.  **"Ese plato no lo consumismos":** El mesero debe informar al cajero. El cajero es el único con permiso para editar la comanda en el POS antes de cerrar la venta. Este evento queda grabado en el log de auditoría.
 2.  **"Queremos pagar por separado":** El mesero debe usar la función **"Dividir Cuenta"** en su portal antes de enviar al cliente a la caja. Esto crea sub-cuentas que el cajero verá de forma independiente.
-3.  **Cliente que se va sin pagar (Robo/Error):** El Administrador debe entrar al Guardian o al Maestro de Mesas y usar **"FORZAR LIBERACIÓN"**. Esto libera la mesa pero genera una alerta de seguridad de alta prioridad.
+3.  **Cliente que se va sin pagar (Robo/Error):** El Administrador debe entrar al Guardian o al Maestro de Mesas y usar **"FORZAR LIBERACIÓN"**. Esto requiere PIN de supervisor, libera la mesa y genera una alerta de seguridad de alta prioridad.
+
+#### 🛡️ 3.4.5. Blindaje Anti-Fraude (Novedades v4.0)
+
+| Protección | Descripción |
+| :--- | :--- |
+| **Anulaciones con PIN** | Ningún plato o pedido marchado puede anularse sin PIN de supervisor. Cada anulación queda en `void_logs` con operador, supervisor y razón. |
+| **Notificaciones Real-time** | El mesero recibe notificación instantánea (🍽️) cuando la cocina marca un pedido como LISTO. |
+| **Máquina de Estados** | `pending → preparing → ready → delivered → payment_requested → paid`. Cada módulo solo puede realizar transiciones específicas. |
+| **Liberación Atómica** | No se puede liberar una mesa con pedido activo sin autorización de supervisor y sin pago registrado. |
 
 ---
 
@@ -189,8 +199,11 @@ Monitor táctil que reemplaza las comandas en papel. Sincronización en tiempo r
 3. Toca **[INICIAR →]** en cada ítem que empiezas a preparar.
    - ⚡ **Automatización**: Al iniciar el primer ítem, la orden entera pasa sola a **EN MARCHA**.
 4. Cuando un ítem está listo, toca **[✓ LISTO]** → queda tachado.
-5. Cuando todos los ítems están listos, toca **"MARCAR TODO LISTO"** → tarjeta pasa a **LISTO**.
+5. Cuando todos los ítems están listos, toca **"MARCAR TODO LISTO"** → tarjeta pasa a **LISTO**. El mesero recibe notificación automática.
 6. El mesero recoge los platos y confirma entrega → **tarjeta desaparece**.
+
+> [!IMPORTANT]
+> **Restricción de Transiciones (v4.0):** La cocina solo puede mover órdenes de `pending → preparing` y de `preparing → ready`. No puede marcar órdenes como entregadas ni cancelarlas directamente.
 
 #### Notas de Ítems y Notas de Orden:
 - **Bloque naranja** bajo un ítem: nota especial del cliente (ej: `SIN CEBOLLA`, `TÉRMINO MEDIO`).
