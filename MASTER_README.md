@@ -57,7 +57,12 @@ Este documento es la referencia definitiva para:
 - **Inteligencia Predictiva**: Scoring IA de sospecha (0-100%) y detección de ráfagas (Burst Detection).
 - **Multi-Sede Central**: Gestión unificada de todas las sucursales desde la misma interfaz.
 
-### 9. 🛡️ Arquitectura Enterprise & Seguridad
+### 9. 📅 [JAMALI GUEST BOOK (Reservations)](/admin/reservations)
+- **Agenda Inteligente**: Gestión de reservas desde la web pública con confirmación manual.
+- **Auditoría de Concierge**: Registro automático de eventos de reserva en el log de seguridad.
+- **Wizard de Sincronización**: Importación masiva de agendas externas vía CSV.
+
+### 10. 🛡️ Arquitectura Enterprise & Seguridad
 - **Modo Offline (PWA)**: Interfaz resiliente ante caídas de internet en el restaurante.
 - **Testing & CI/CD**: Suite de Jest automatizada conectada a GitHub Actions.
 - **Edge Security**: Rate Limiting y CORS estrictos para repeler ataques automatizados.

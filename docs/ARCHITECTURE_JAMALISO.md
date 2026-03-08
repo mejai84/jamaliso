@@ -99,6 +99,7 @@ La aplicación se divide en áreas funcionales cohesionadas.
 | **Identidad Visual** | Configuración dinámica de marca blanca (logos, colores). | `/src/app/admin/settings` |
 | **Nómina (Payroll)** | Gestión de sueldos, contratos, comisiones e impuestos. | `/src/app/admin/payroll` |
 | **Ventas Online Central** | Activación web, modo e-commerce/menú, SEO y redes. | `/src/app/admin/online-sales` |
+| **JAMALI GUEST BOOK** | Sistema de Reservas, Agenda y Concierge IA. | `/src/app/admin/reservations` |
 | **Data Flow Engine** | Importación y exportación masiva de datos (CSV) con Wizard de mapeo. | `/src/lib/data-flow.ts` |
 
 ---

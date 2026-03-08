@@ -16,6 +16,7 @@ En esta sesión se ha transformado el sistema de un POS robusto a una plataforma
 | **Predictive Intelligence** | Motor IA estadístico con Score de Sospecha (0-100%). | Identificación de "ladrones silenciosos" antes de que el descuadre de caja sea evidente. |
 | **Inventory Watchdog** | Triggers reactivos que monitorean el stock crítico en cada venta. | Prevención de pérdida de ventas por agotados y control de merma. |
 | **Multi-Sede Central** | Agregación dinámica de datos por `restaurant_id`. | Escalabilidad total para cadenas de restaurantes (Franquicias). |
+| **JAMALI GUEST BOOK** | Sistema de Reservas con Concierge IA y Auditoría Social. | Aumento en la tasa de conversión de clientes desde la web pública y control de aforo. |
 
 ---
 
@@ -25,8 +26,8 @@ En esta sesión se ha transformado el sistema de un POS robusto a una plataforma
 - **Tablas SQL**: **41+ tablas** (Incremento por `security_audit` y lógicas de IA).
 - **Vistas Inteligentes**: 1 (`guardian_employee_risk`) que actúa como el "Cerebro" del sistema.
 - **Engine de Nómina**: Motor ACID con cálculos de Parafiscales y Provisiones (Nómina PRO).
-- **Triggers de Seguridad**: 4 niveles (Anulaciones, Descuentos, Stock Crítico, Patrones de Ráfaga).
-- **Server Actions**: +4 funciones críticas en `src/actions/guardian.ts` para orquestación segura.
+- **Triggers de Seguridad**: 5 niveles (Anulaciones, Descuentos, Stock Crítico, Ráfagas, Reservas).
+- **Server Actions**: +7 funciones críticas (Guardian & Reservations) para orquestación segura.
 - **Estética**: Implementación del "Dark Elite Guardian" (Variante premium de Pixora Light).
 
 ### 🔒 Capa de Seguridad (Post-Audit)
@@ -51,6 +52,7 @@ Se ha cumplido la **Regla Estricta de Documentación** previa al cierre:
 - [x] **DATABASE_JAMALISO.md**: Documentada la nueva vista de IA y triggers.
 - [x] **MANUAL_DE_USUARIO_VIVO.md**: Elevado a Versión 3.0 Elite con guías de uso para el Propietario.
 - [x] **IMPLEMENTATION_JAMALI_GUARDIAN.md**: Marcado como 100% fases completadas.
+- [x] **JAMALI_GUEST_BOOK**: Sistema de reservas 100% funcional y documentado.
 
 ---
 

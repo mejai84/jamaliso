@@ -60,6 +60,7 @@ Administración del personal, entregas a domicilio y liquidación automática de
 | `payroll_runs` | Liquidaciones | Ejecución en bóveda (Transacción). Guarda totales por periodo. |
 | `payroll_items` | Desprendibles | Detalles cruzados (Empleado -> Concepto -> Valor $). |
 | `delivery_tracking` | Logística | Manejo de despachos y tiempos de entrega de Domicilios, KPIs de repartidores. |
+| `reservations` | Guest Book | Gestión de reservas de mesas. Incluye datos de contacto, fecha, hora, número de personas y estados (pending, confirmed, etc). |
 | `security_audit` | Auditoría Forense | Log de eventos de seguridad, autorizaciones remotas, alertas push de inventario e IA. |
 
 ## 6. Subsistema de Inteligencia Predictiva (IA Guardian)

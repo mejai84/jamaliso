@@ -79,9 +79,18 @@ Réplica visual de la distribución física del restaurante.
 - **Pedidos por QR (Auto-servicio)**: El cliente escanea el código en su mesa. Al enviar el pedido, este aparece en el **KDS de Cocina** inmediatamente. La mesa en el mapa cambiará a **Naranja (Ocupada)** automáticamente.
 - **Administración del plano**: El administrador puede reorganizar mesas con **Drag & Drop**, cambiar su forma y definir zonas.
 
+### 📅 3.3. Libro de Reservas — JAMALI GUEST BOOK (`/admin/reservations`)
+Gestión premium de la agenda de clientes.
+
+#### Flujo de Reserva:
+1.  **Desde la Web Pública**: El cliente presiona **"RESERVAR MESA"**, llena sus datos (Nombre, WhatsApp, Fecha, Hora, Notas) y envía la solicitud.
+2.  **En el Admin**: La reserva aparece en estado **"PENDIENTE"** con una alerta en el dashboard.
+3.  **Confirmación**: El administrador revisa la disponibilidad y presiona el botón de **[CONFIRMAR]** (ícono verde).
+4.  **Concierge IA**: El sistema analiza la ocupación estimada y genera alertas si se detecta una noche de alta demanda (Overbooking detection).
+
 ---
 
-### 👨‍💼 3.3. Portal de Meseros — Waiter Pro (`/admin/waiter`)
+### 👨‍💼 3.4. Portal de Meseros — Waiter Pro (`/admin/waiter`)
 
 Herramienta de alta velocidad para el salón. Optimizada para móvil y tablet. Sin papel, sin radio.
 
@@ -125,7 +134,7 @@ Herramienta de alta velocidad para el salón. Optimizada para móvil y tablet. S
 
 ---
 
-### 👨‍🍳 3.4. Cocina — KDS PRO (`/admin/kitchen`)
+### 👨‍🍳 3.5. Cocina — KDS PRO (`/admin/kitchen`)
 
 Monitor táctil que reemplaza las comandas en papel. Sincronización en tiempo real con el portal del mesero. El cocinero trabaja desde su estación sin papel ni gritos.
 
@@ -172,7 +181,7 @@ Monitor táctil que reemplaza las comandas en papel. Sincronización en tiempo r
 
 ---
 
-### 🖥️ 3.5. Terminal POS — Venta Directa (`/admin/pos`)
+### 🖥️ 3.6. Terminal POS — Venta Directa (`/admin/pos`)
 
 El corazón operativo para cobros rápidos y ventas de mostrador. Optimizada bajo la estética **Pixora Light** para máxima legibilidad y velocidad.
 
@@ -198,7 +207,7 @@ Diseñado para la **barra, counter o caja principal**. Su objetivo es procesar t
 
 ---
 
-### 🌐 3.6. Presencia Digital — Ventas Online (`/admin/online-sales`)
+### 🌐 3.7. Presencia Digital — Ventas Online (`/admin/online-sales`)
 
 Este módulo es tu centro de control para internet. Aquí decides qué ve el mundo y cómo te compra.
 
@@ -226,7 +235,7 @@ JAMALISO usa un sistema de "Slots" que permite que cada restaurante tenga una id
 
 ---
 
-### 🛡️ 3.10. JAMALI GUARDIAN — App del Propietario (`/admin/guardian`)
+### 🛡️ 3.8. JAMALI GUARDIAN — App del Propietario (`/admin/guardian`)
 
 Este es el módulo más sensible y potente del ecosistema. Está diseñado exclusivamente para **Propietarios y Desarrolladores** (No accesible para Managers o Cajeros). Es "El Ojo del Dueño" en su bolsillo.
 
@@ -272,7 +281,7 @@ Ajustes estructurales del restaurante. **Crucial para la legalidad y moneda.**
 
 ---
 
-### 💼 3.8. JAMALI PAYROLL PRO (`/admin/payroll`)
+### 💼 3.9. JAMALI PAYROLL PRO (`/admin/payroll`)
 
 El sistema ha evolucionado a un motor legal de grado enterprise, diseñado para cumplir con la normativa **Colombiana (DIAN/UGPP)** y estándares internacionales **(IFRS/NIIF)**.
 
@@ -303,7 +312,7 @@ El sistema está optimizado para generar el soporte de **Nómina Electrónica**,
 
 ---
 
-### 📦 3.7. Inventario y Recetas (`/admin/inventory`)
+### 📦 3.10. Inventario y Recetas (`/admin/inventory`)
 
 Control de materias primas y cálculo de Food Cost.
 
@@ -314,7 +323,7 @@ Control de materias primas y cálculo de Food Cost.
 
 ---
 
-### 📊 3.8. Reportes y BI (`/admin/reports`)
+### 📊 3.11. Reportes y BI (`/admin/reports`)
 
 Inteligencia del negocio para el Administrador o Dueño.
 
@@ -328,7 +337,7 @@ Inteligencia del negocio para el Administrador o Dueño.
 
 ---
 
-### 📤 3.9. Data Flow: Importación y Exportación (`/admin/...`)
+### 📤 3.12. Data Flow: Importación y Exportación (`/admin/...`)
 
 JAMALI OS permite la gestión masiva de datos para acelerar la puesta en marcha y auditoría externa. Esta función está disponible en los módulos de **Inventario**, **Productos**, **Clientes** y **Empleados**.
 

@@ -24,6 +24,8 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { motion, AnimatePresence } from "framer-motion"
+import { ReservationForm } from "@/components/landing/ReservationForm"
 
 type Restaurant = {
     id: string
@@ -56,6 +58,7 @@ export default function RestaurantLandingPage() {
     const [restaurant, setRestaurant] = useState<Restaurant | null>(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+    const [showReservation, setShowReservation] = useState(false)
 
     useEffect(() => {
         const handleScroll = () => setScrolled(window.scrollY > 50)
@@ -192,7 +195,41 @@ export default function RestaurantLandingPage() {
                         >
                             VER CARTA DIGITAL <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
                         </Button>
+                        <Button
+                            onClick={() => setShowReservation(true)}
+                            className="bg-white text-slate-900 border-2 border-slate-950 rounded-3xl h-16 px-12 text-xs font-black uppercase tracking-[0.2em] hover:bg-slate-50 transition-all w-full sm:w-auto flex items-center gap-3"
+                        >
+                            RESERVAR MESA <Clock className="w-5 h-5" />
+                        </Button>
                     </div>
+
+                    {/* RESERVATION MODAL */}
+                    <AnimatePresence>
+                        {showReservation && (
+                            <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8">
+                                <motion.div
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    onClick={() => setShowReservation(false)}
+                                    className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+                                />
+                                <motion.div
+                                    initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                                    exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                                    className="relative z-10 w-full max-w-2xl bg-white rounded-[2.5rem] shadow-2xl overflow-hidden"
+                                    onClick={e => e.stopPropagation()}
+                                >
+                                    <ReservationForm
+                                        restaurantId={restaurant.id}
+                                        restaurantName={restaurant.name}
+                                        onClose={() => setShowReservation(false)}
+                                    />
+                                </motion.div>
+                            </div>
+                        )}
+                    </AnimatePresence>
 
                     <div className="pt-12 flex items-center justify-center gap-12 border-t border-slate-100/50">
                         <div className="text-center group">

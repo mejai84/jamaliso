@@ -44,6 +44,8 @@ import { toast } from "sonner"
 import { DataFlow, CSVColumn } from "@/lib/data-flow"
 import { DataImportWizard } from "@/components/admin/shared/DataImportWizard"
 import { DataFlowActions } from "@/components/admin/shared/DataFlowActions"
+import { useRestaurant } from "@/providers/RestaurantProvider"
+import { updateReservationStatus, getReservationsByRestaurant } from "@/actions/reservations"
 
 type Reservation = {
     id: string
@@ -58,6 +60,7 @@ type Reservation = {
 }
 
 export default function AdminReservationsPremium() {
+    const { restaurant } = useRestaurant()
     const [reservations, setReservations] = useState<Reservation[]>([])
     const [loading, setLoading] = useState(true)
     const [filter, setFilter] = useState('upcoming')
@@ -67,20 +70,30 @@ export default function AdminReservationsPremium() {
 
     useEffect(() => {
         const timer = setInterval(() => setCurrentTime(new Date()), 1000)
-        loadReservations()
+        if (restaurant) loadReservations()
         return () => clearInterval(timer)
-    }, [filter])
+    }, [filter, restaurant])
 
     const loadReservations = async () => {
+        if (!restaurant) return
         setLoading(true)
-        // Simulate real data for premium UI
-        const mockRes: Reservation[] = [
-            { id: '1', customer_name: 'Jaime Rodríguez', customer_phone: '3001234567', customer_email: 'jaime@example.com', reservation_date: '2026-02-10', reservation_time: '20:00', num_people: 4, notes: 'Aniversario, mesa al lado de la ventana', status: 'confirmed' },
-            { id: '2', customer_name: 'Elena Gómez', customer_phone: '3109876543', customer_email: 'elena@example.com', reservation_date: '2026-02-10', reservation_time: '21:30', num_people: 2, notes: 'Sin gluten', status: 'pending' },
-            { id: '3', customer_name: 'Andrés Castro', customer_phone: '3204567890', customer_email: 'andres@example.com', reservation_date: '2026-02-11', reservation_time: '19:00', num_people: 6, notes: 'Cena de negocios', status: 'confirmed' },
-        ]
-        setReservations(mockRes)
+        const res = await getReservationsByRestaurant(restaurant.id)
+        if (res.success) {
+            setReservations(res.data || [])
+        } else {
+            toast.error("Error cargando reservas: " + res.error)
+        }
         setLoading(false)
+    }
+
+    const handleUpdateStatus = async (id: string, status: string) => {
+        const res = await updateReservationStatus(id, status)
+        if (res.success) {
+            toast.success(`Estado de reserva actualizado a ${status}`)
+            loadReservations()
+        } else {
+            toast.error("Error al actualizar estado: " + res.error)
+        }
     }
 
     const handleExport = () => {
@@ -274,7 +287,7 @@ export default function AdminReservationsPremium() {
                                     <div className="flex gap-2">
                                         {res.status === 'pending' && (
                                             <Button
-                                                onClick={() => toast.success(`RESERVA DE ${res.customer_name} CONFIRMADA`)}
+                                                onClick={() => handleUpdateStatus(res.id, 'confirmed')}
                                                 className="h-12 w-12 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl active:scale-95 transition-all"
                                             >
                                                 <Check className="w-5 h-5" />
