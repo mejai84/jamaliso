@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react"
 import { supabase } from "@/lib/supabase/client"
-import { Loader2, ShoppingBag } from "lucide-react"
-import { useRouter } from "next/navigation"
+import { Loader2, ShoppingBag, Bell, ArrowRight } from "lucide-react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useRestaurant } from "@/providers/RestaurantProvider"
 import { toast } from "sonner"
 import { formatPrice } from "@/lib/utils"
@@ -18,6 +18,7 @@ import { CategorySidebar } from "@/components/admin/pos/CategorySidebar"
 import { ProductGrid } from "@/components/admin/pos/ProductGrid"
 import { CartPanel } from "@/components/admin/pos/CartPanel"
 import { ReceiptModal } from "@/components/admin/pos/ReceiptModal"
+import { CheckoutModal } from "@/components/admin/pos/CheckoutModal"
 import { ModifierModal } from "@/components/admin/pos/ModifierModal"
 
 export default function PosPremiumPage() {
@@ -34,6 +35,9 @@ export default function PosPremiumPage() {
     const [currentTime, setCurrentTime] = useState(new Date())
     const [showCartMobile, setShowCartMobile] = useState(false)
     const [activeSession, setActiveSession] = useState<any>(null)
+    const [activeOrderId, setActiveOrderId] = useState<string | null>(null)
+    const [pendingTables, setPendingTables] = useState<any[]>([])
+    const [checkoutModalOpen, setCheckoutModalOpen] = useState(false)
 
     // Modifier State
     const [modifierModalOpen, setModifierModalOpen] = useState(false)
@@ -53,6 +57,9 @@ export default function PosPremiumPage() {
         if (restaurant) fetchData()
         return () => clearInterval(timer)
     }, [restaurant])
+
+    const searchParams = useSearchParams()
+    const tableId = searchParams.get('table')
 
     const fetchData = async () => {
         setLoading(true)
@@ -83,6 +90,44 @@ export default function PosPremiumPage() {
 
         if (cats) setCategories(cats)
         if (prods) setProducts(prods as any)
+
+        // 4. Si viene de una mesa, cargar el carrito con la orden activa
+        if (tableId && prods) {
+            const { data: order } = await supabase
+                .from('orders')
+                .select('*, order_items(*)')
+                .eq('table_id', tableId)
+                .in('status', ['pending', 'preparing', 'ready', 'delivered', 'payment_requested'])
+                .order('created_at', { ascending: false })
+                .limit(1)
+                .maybeSingle()
+
+            if (order && order.order_items) {
+                setActiveOrderId(order.id)
+                const tableCartItems: CartItem[] = order.order_items.map((oi: any) => {
+                    const product = prods.find(p => p.id === oi.product_id)
+                    if (!product) return null
+                    return {
+                        product: product as any,
+                        qty: oi.quantity,
+                        cartKey: generateCartKey(oi.product_id, []),
+                        modifiers: [] // TODO: Load modifiers if they exist
+                    }
+                }).filter(Boolean) as CartItem[]
+
+                setCart(tableCartItems)
+                toast.info(`Orden de mesa cargada: ${formatPrice(order.total)}`)
+            }
+        }
+
+        // 5. Buscar mesas solicitando cobro (usan payment_requested)
+        const { data: qpTables } = await supabase
+            .from('orders')
+            .select('table_id, tables(table_name), total')
+            .in('status', ['payment_requested', 'delivered'])
+            .eq('restaurant_id', restaurant?.id)
+        if (qpTables) setPendingTables(qpTables)
+
         setLoading(false)
     }
 
@@ -140,12 +185,10 @@ export default function PosPremiumPage() {
         const groups = await fetchModifiers(product.id)
 
         if (groups.length > 0) {
-            // Product has modifiers → open modal
             setSelectedProduct(product)
             setProductModifierGroups(groups)
             setModifierModalOpen(true)
         } else {
-            // No modifiers → add directly
             addToCart(product)
         }
     }
@@ -157,74 +200,80 @@ export default function PosPremiumPage() {
         setSelectedProduct(null)
     }
 
-    const handleCheckout = async (method: string) => {
+    const handleCheckout = () => {
         if (!activeSession) {
             toast.error("ERROR: Debes abrir turno/caja antes de vender.")
             router.push('/admin/cashier')
             return
         }
+        setCheckoutModalOpen(true)
+    }
 
+    const handleFinalConfirm = async (checkoutData: any) => {
         setIsProcessing(true)
         const { data: { user } } = await supabase.auth.getUser()
 
         if (!user) {
             toast.error("Sesión expirada")
+            setIsProcessing(false)
             return
         }
 
         try {
-            const orderData = {
+            const p_items = cart.map(item => ({
+                product_id: item.product.id,
+                quantity: item.qty,
+                unit_price: item.product.price,
+                modifiers: item.modifiers || []
+            }))
+
+            const { data, error } = await supabase.rpc('complete_sale_atomic', {
                 p_user_id: user.id,
                 p_cashbox_session_id: activeSession.id,
-                p_payment_method: method,
+                p_payment_method: checkoutData.payments.length > 1 ? 'mixed' : (checkoutData.payments[0]?.method || 'cash'),
                 p_subtotal: subtotal,
-                p_total: total,
-                p_items: cart.map(item => ({
-                    product_id: item.product.id,
-                    quantity: item.qty,
-                    unit_price: item.product.price,
-                    modifiers: item.modifiers || []
-                }))
-            }
-
-            const { data, error } = await supabase.rpc('complete_sale_atomic', orderData)
+                p_tax: taxAmount,
+                p_total: checkoutData.total,
+                p_items: JSON.stringify(p_items),
+                p_table_id: tableId || null,
+                p_notes: JSON.stringify({
+                    ...checkoutData,
+                    applied_tax: taxAmount,
+                    active_order_id: activeOrderId
+                })
+            })
 
             if (error) throw error
 
             if (data?.success) {
-                // Save modifiers to order_item_modifiers if applicable
-                if (data.order_items) {
-                    for (let i = 0; i < cart.length; i++) {
-                        const cartItem = cart[i]
-                        if (cartItem.modifiers && cartItem.modifiers.length > 0 && data.order_items[i]) {
-                            const modifierInserts = cartItem.modifiers.map((m: SelectedModifier) => ({
-                                order_item_id: data.order_items[i].id,
-                                modifier_option_id: m.option_id,
-                                modifier_name: m.name,
-                                price_adjustment: m.price_adjustment,
-                                quantity: m.quantity
-                            }))
-                            await supabase.from('order_item_modifiers').insert(modifierInserts)
-                        }
+                if (tableId) {
+                    await supabase.from('tables').update({ status: 'free' }).eq('id', tableId)
+                    if (activeOrderId) {
+                        await supabase.from('orders').update({ status: 'completed' }).eq('id', activeOrderId)
                     }
                 }
 
-                toast.success("Venta Procesada Correctamente")
+                toast.success(checkoutData.is_incident ? "Incidente registrado y mesa liberada" : "Venta procesada exitosamente")
+
                 setReceiptModal({
-                    orderId: data.order_id,
-                    subtotal: subtotal,
-                    taxAmount: taxAmount,
-                    taxDetails: taxes.map(t => ({ name: t.tax_name, percentage: t.tax_percentage, amount: subtotal * (t.tax_percentage / 100) })),
-                    total: total,
-                    items: [...cart],
-                    method: method,
-                    date: new Date()
+                    id: data.sale_id,
+                    total: checkoutData.total,
+                    payment_method: 'ADVANCED',
+                    items: cart,
+                    created_at: new Date().toISOString(),
+                    payments: checkoutData.payments,
+                    change: (checkoutData.payments.reduce((acc: number, curr: any) => acc + curr.amount, 0)) - checkoutData.total
                 })
+
                 setCart([])
+                setCheckoutModalOpen(false)
+                setActiveOrderId(null)
+                if (tableId) router.replace('/admin/pos')
+                fetchData()
             }
-        } catch (error: any) {
-            console.error("Checkout Error:", error)
-            toast.error(error.message || "Error al procesar el pago")
+        } catch (e: any) {
+            console.error("Sale Error:", e)
+            toast.error("Error al procesar venta: " + (e.message || "Error desconocido"))
         } finally {
             setIsProcessing(false)
         }
@@ -232,7 +281,6 @@ export default function PosPremiumPage() {
 
     const addToCart = (product: Product, modifiers?: SelectedModifier[]) => {
         const cartKey = generateCartKey(product.id, modifiers)
-
         setCart(prev => {
             const existing = prev.find(item => item.cartKey === cartKey)
             if (existing) {
@@ -240,10 +288,7 @@ export default function PosPremiumPage() {
             }
             return [...prev, { product, qty: 1, modifiers, cartKey }]
         })
-
-        const modText = modifiers && modifiers.length > 0
-            ? ` (${modifiers.map(m => m.name).join(', ')})`
-            : ''
+        const modText = modifiers && modifiers.length > 0 ? ` (${modifiers.map(m => m.name).join(', ')})` : ''
         toast.success(`+1 ${product.name}${modText}`, { duration: 1000 })
     }
 
@@ -299,11 +344,39 @@ export default function PosPremiumPage() {
             <PosHeader currentTime={currentTime} />
 
             <div className="relative z-10 flex-1 flex flex-col md:flex-row overflow-hidden">
-                <CategorySidebar
-                    categories={categories}
-                    activeCategory={activeCategory}
-                    setActiveCategory={setActiveCategory}
-                />
+                <div className="flex flex-col gap-4">
+                    <CategorySidebar
+                        categories={categories}
+                        activeCategory={activeCategory}
+                        setActiveCategory={setActiveCategory}
+                    />
+
+                    {/* Bóveda de Cobros Pendientes */}
+                    {pendingTables.length > 0 && (
+                        <div className="hidden md:flex flex-col p-4 space-y-4 bg-slate-900/5 backdrop-blur-md rounded-[2.5rem] border border-white/40 shadow-xl ml-4">
+                            <div className="flex items-center gap-2 px-2">
+                                <Bell className="w-4 h-4 text-orange-500 animate-bounce" />
+                                <h4 className="text-[10px] font-black uppercase text-slate-500 tracking-tighter italic">Cobros Pendientes</h4>
+                            </div>
+                            <div className="space-y-2 overflow-y-auto max-h-[40vh] custom-scrollbar pr-2">
+                                {pendingTables.map((pt, idx) => (
+                                    <button
+                                        key={idx}
+                                        onClick={() => router.push(`/admin/pos?table=${pt.table_id}`)}
+                                        className="w-full p-4 bg-white rounded-2xl border border-slate-100 hover:border-orange-500 hover:shadow-lg transition-all text-left flex flex-col gap-1 group active:scale-95"
+                                    >
+                                        <span className="text-xs font-black italic uppercase tracking-tighter text-slate-900">{pt.tables?.table_name || 'MESA'}</span>
+                                        <span className="text-lg font-black text-orange-600 tracking-tight">{formatPrice(pt.total)}</span>
+                                        <div className="flex items-center justify-between mt-2">
+                                            <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest italic">CARGAR COMANDA</span>
+                                            <ArrowRight className="w-3 h-3 text-slate-300 group-hover:translate-x-1 transition-transform" />
+                                        </div>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </div>
 
                 <ProductGrid
                     products={filteredProducts}
@@ -355,6 +428,18 @@ export default function PosPremiumPage() {
                 modifierGroups={productModifierGroups}
                 onConfirm={handleModifierConfirm}
                 onClose={() => { setModifierModalOpen(false); setSelectedProduct(null) }}
+            />
+
+            {/* Advanced Checkout Modal */}
+            <CheckoutModal
+                isOpen={checkoutModalOpen}
+                onClose={() => setCheckoutModalOpen(false)}
+                cart={cart}
+                subtotal={subtotal}
+                taxAmount={taxAmount}
+                total={total}
+                onConfirm={handleFinalConfirm}
+                isProcessing={isProcessing}
             />
         </div>
     )

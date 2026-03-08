@@ -75,7 +75,7 @@ export default function CloseShiftPage() {
                     .from('orders')
                     .select('total, payment_method')
                     .gte('created_at', session.opened_at)
-                    .eq('status', 'delivered')
+                    .in('status', ['delivered', 'paid', 'payment_requested'])
                     .eq('payment_status', 'paid')
 
                 const salesByMethod = (orders || []).reduce((acc: any, order) => {

@@ -2,17 +2,7 @@
 
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts"
 
-const data = [
-    { name: "Lun", total: 4000, fiscal: 3200 },
-    { name: "Mar", total: 3000, fiscal: 2400 },
-    { name: "Mie", total: 2000, fiscal: 1600 },
-    { name: "Jue", total: 2780, fiscal: 2200 },
-    { name: "Vie", total: 1890, fiscal: 1500 },
-    { name: "Sab", total: 2390, fiscal: 1900 },
-    { name: "Dom", total: 3490, fiscal: 2800 },
-]
-
-export function BillingChart() {
+export function BillingChart({ data }: { data: { name: string, total: number, fiscal: number }[] }) {
     return (
         <div className="h-[400px] w-full bg-card/10 backdrop-blur-xl border border-border/10 rounded-[2.5rem] p-8 animate-in zoom-in-95 duration-700">
             <div className="flex items-center justify-between mb-8">
@@ -22,11 +12,11 @@ export function BillingChart() {
                 </div>
                 <div className="flex gap-4">
                     <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full bg-primary/40" />
+                        <div className="w-3 h-3 rounded-full bg-[#EA580C]" />
                         <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Total Ventas</span>
                     </div>
                     <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full bg-primary" />
+                        <div className="w-3 h-3 rounded-full bg-white border-2 border-[#EA580C] border-dashed" />
                         <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Reportado DIAN</span>
                     </div>
                 </div>

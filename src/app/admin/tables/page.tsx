@@ -107,7 +107,7 @@ export default function TablesAdminPage() {
     }
 
     const initiateTransfer = async (table: Table) => {
-        const { data: order } = await supabase.from('orders').select('id').eq('table_id', table.id).in('status', ['pending', 'preparing', 'ready', 'delivered', 'paying']).single()
+        const { data: order } = await supabase.from('orders').select('id').eq('table_id', table.id).in('status', ['pending', 'preparing', 'ready', 'delivered', 'payment_requested', 'paying']).single()
         if (!order) return toast.error("Sin pedido activo para transferir")
         setTransferSourceTable(table)
         setActiveOrderToTransfer(order.id)

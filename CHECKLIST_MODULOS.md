@@ -63,9 +63,9 @@
 
 - [✅] Arqueo a ciegas: Integridad forense en el cierre (Blind closure. ✅)
 - [✅] Transferencia SMART a Caja Menor: Integración de flujos (Cash-Flow Sync. ✅)
-- [✅] Alertas de "Efectivo Excedido": Seguridad operativa (Cash Limit Alerts. ✅)
+- [✅] Alertas de "Efectivo Excedido" y PIN de Autorización: (Security Shield Active. ✅)
 - [✅] Impresión de Reporte Z: Comprobante térmico de cierre (Z-Report Hub. ✅)
-- [✅] Registro de Novedades y Anomalias: Historial de descuadres (Audit Log. ✅)
+- [✅] Registro de Novedades y Auditoría Forense: (Audit Log Active. ✅)
 
 ## 🚀 Escalabilidad Técnica
 *Garantizar que el sistema soporte miles de restaurantes*

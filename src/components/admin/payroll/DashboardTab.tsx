@@ -1,8 +1,12 @@
 "use client"
 
-import { Activity, Users, TrendingUp } from "lucide-react"
+import { Activity, Users, TrendingUp, FileDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Shift, Employee } from "@/app/admin/payroll/types"
+import { supabase } from "@/lib/supabase/client"
+import { toast } from "sonner"
+import { getPayrollSlipData } from "@/actions/payroll-engine"
+import { generatePayrollPDF } from "@/lib/pdf-generator"
 
 interface DashboardTabProps {
     activeShifts: Shift[]
@@ -60,13 +64,37 @@ export function DashboardTab({ activeShifts, employees, onFinalizeShift }: Dashb
                         {employees.slice(0, 10).map((emp, i) => (
                             <div key={i} className="flex items-center justify-between p-3 rounded-2xl bg-white border border-slate-100 hover:border-orange-500/30 transition-colors shadow-sm">
                                 <div className="flex items-center gap-3">
-                                    <div className="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center font-black italic text-orange-500">{emp.full_name[0]}</div>
-                                    <div>
-                                        <p className="text-[11px] font-black italic uppercase tracking-tight">{emp.full_name}</p>
+                                    <div className="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center font-black italic text-orange-500 shrink-0">{emp.full_name[0]}</div>
+                                    <div className="min-w-0">
+                                        <p className="text-[11px] font-black italic uppercase tracking-tight truncate">{emp.full_name}</p>
                                         <p className="text-[8px] font-bold text-emerald-500 uppercase tracking-widest">PAGO PROCESADO</p>
                                     </div>
                                 </div>
-                                <TrendingUp className="w-3 h-3 text-emerald-500/40" />
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        onClick={async () => {
+                                            const { data: run } = await supabase.from('payroll_runs').select('id').eq('restaurant_id', emp.restaurant_id).order('created_at', { ascending: false }).limit(1).single()
+                                            if (run) {
+                                                toast.promise(async () => {
+                                                    const res = await getPayrollSlipData(run.id, emp.id)
+                                                    if (res.success && res.data) {
+                                                        const { data: restaurant } = await supabase.from('restaurants').select('*').eq('id', emp.restaurant_id).single()
+                                                        generatePayrollPDF(restaurant, res.data.employee, {
+                                                            name: res.data.run.period_name,
+                                                            start_date: res.data.run.start_date,
+                                                            end_date: res.data.run.end_date
+                                                        }, res.data.items, res.data.totals)
+                                                    } else throw new Error(res.error)
+                                                }, { loading: 'Generando PDF...', success: 'Desprendible generado!', error: 'Error al generar PDF' })
+                                            }
+                                        }}
+                                        className="w-8 h-8 rounded-lg bg-slate-50 text-slate-400 hover:bg-slate-900 hover:text-white flex items-center justify-center transition-all"
+                                        title="Descargar Desprendible"
+                                    >
+                                        <FileDown className="w-4 h-4" />
+                                    </button>
+                                    <TrendingUp className="w-3 h-3 text-emerald-500/40" />
+                                </div>
                             </div>
                         ))}
                     </div>

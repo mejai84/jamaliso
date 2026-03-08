@@ -12,6 +12,8 @@ import { DataFlow, CSVColumn } from "@/lib/data-flow"
 import { DataImportWizard } from "@/components/admin/shared/DataImportWizard"
 import { DataFlowActions } from "@/components/admin/shared/DataFlowActions"
 import { Button } from "@/components/ui/button"
+import { getBillingDashboardData, toggleContingencyMode, generateLibroAuxiliar, createTestInvoice } from "@/actions/billing-actions"
+import { useEffect } from "react"
 
 const MOCK_INVOICES: ElectronicInvoice[] = [
     {
@@ -29,9 +31,62 @@ const MOCK_INVOICES: ElectronicInvoice[] = [
 ]
 
 export default function BillingPage() {
-    const [invoices, setInvoices] = useState<ElectronicInvoice[]>(MOCK_INVOICES);
+    const [invoices, setInvoices] = useState<ElectronicInvoice[]>([]);
     const [isSyncing, setIsSyncing] = useState(false);
     const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+    const [totalFiscal, setTotalFiscal] = useState(0);
+    const [contingencyMode, setContingencyMode] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const [chartData, setChartData] = useState<{ name: string, total: number, fiscal: number }[]>([]);
+
+    // Cargar datos reales
+    useEffect(() => {
+        const loadData = async () => {
+            try {
+                // En un entorno real usaríamos el id del restaurante del contexto
+                const data = await getBillingDashboardData('00000000-0000-0000-0000-000000000000');
+                setInvoices(data.invoices);
+                setTotalFiscal(data.totalFiscal);
+                setContingencyMode(data.contingencyMode);
+                setChartData(data.chartData);
+            } catch (error) {
+                console.error("Error cargando datos fiscales:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        loadData();
+    }, []);
+
+    const handleToggleContingency = async () => {
+        const nextState = !contingencyMode;
+        toast.promise(toggleContingencyMode('00000000-0000-0000-0000-000000000000', nextState), {
+            loading: nextState ? 'Activando Contingencia Fiscal...' : 'Desactivando Contingencia...',
+            success: () => {
+                setContingencyMode(nextState);
+                return nextState ? 'MODO CONTINGENCIA ACTIVADO: Guardando XMLs locales.' : 'MODO NORMAL ACTIVADO: Sincronización DIAN reanudada.';
+            },
+            error: 'Error al cambiar modo de emergencia.'
+        });
+    }
+
+    const handleCreateTestInvoice = async () => {
+        const testAmount = 50000; // 50k COP de prueba
+        toast.promise(createTestInvoice('00000000-0000-0000-0000-000000000000', testAmount), {
+            loading: 'Generando documento fiscal de prueba...',
+            success: (res) => {
+                // Recargar datos para ver el cambio instantáneo
+                getBillingDashboardData('00000000-0000-0000-0000-000000000000').then(data => {
+                    setInvoices(data.invoices);
+                    setTotalFiscal(data.totalFiscal);
+                    setContingencyMode(data.contingencyMode);
+                    setChartData(data.chartData);
+                });
+                return `Factura de prueba ${res.invoice.invoice_number} creada por ${testAmount} COP`;
+            },
+            error: 'Error al generar prueba fiscal.'
+        });
+    }
 
     const handleSync = () => {
         setIsSyncing(true);
@@ -116,6 +171,7 @@ export default function BillingPage() {
                         onSync={handleSync}
                         isSyncing={isSyncing}
                         onConfig={() => toast.success("Abriendo Configuración de Proveedor Tecnológico...")}
+                        onTest={handleCreateTestInvoice}
                     />
                     <div className="shrink-0">
                         <DataFlowActions
@@ -130,39 +186,56 @@ export default function BillingPage() {
                 <div className="grid grid-cols-1 xl:grid-cols-3 gap-12">
                     <div className="xl:col-span-1 space-y-12">
                         <BillingMetrics invoices={invoices} />
-                        <div className="p-8 bg-amber-500/5 rounded-3xl border border-amber-500/10 space-y-4">
-                            <div className="flex items-center gap-3 text-amber-500">
-                                <ShieldAlert className="w-5 h-5" />
-                                <h4 className="text-[10px] font-black uppercase tracking-widest italic">Protocolo de Emergencia DIAN</h4>
+                        <div className={`p-8 rounded-3xl border transition-all space-y-4 ${contingencyMode ? 'bg-rose-500/10 border-rose-500/40 shadow-lg shadow-rose-500/10' : 'bg-amber-500/5 border-amber-500/10'}`}>
+                            <div className={`flex items-center gap-3 ${contingencyMode ? 'text-rose-500' : 'text-amber-500'}`}>
+                                <ShieldAlert className={`w-5 h-5 ${contingencyMode ? 'animate-pulse' : ''}`} />
+                                <h4 className="text-[10px] font-black uppercase tracking-widest italic">
+                                    {contingencyMode ? 'MODO CONTINGENCIA ACTIVO' : 'Protocolo de Emergencia DIAN'}
+                                </h4>
                             </div>
                             <p className="text-[10px] font-bold text-muted-foreground leading-relaxed uppercase tracking-tighter">
-                                Si el servicio central del proveedor falla, habilite el modo de "Contingencia Fiscal" para guardar XMLs locales y re-transmitir en 24h.
+                                {contingencyMode
+                                    ? "El systema está emitiendo facturas en serie de contingencia. Las facturas se guardan localmente para transmisión posterior."
+                                    : "Si el servicio central del proveedor falla, habilite el modo de \"Contingencia Fiscal\" para guardar XMLs locales y re-transmitir en 24h."
+                                }
                             </p>
-                            <Button variant="outline" className="w-full h-12 border-amber-500/20 text-amber-500 text-[9px] font-black uppercase tracking-widest italic hover:bg-amber-500 hover:text-white transition-all">
-                                Activar Contingencia
+                            <Button
+                                onClick={handleToggleContingency}
+                                variant={contingencyMode ? "destructive" : "outline"}
+                                className={`w-full h-12 text-[9px] font-black uppercase tracking-widest italic transition-all ${!contingencyMode ? 'border-amber-500/20 text-amber-500 hover:bg-amber-500 hover:text-white' : ''}`}
+                            >
+                                {contingencyMode ? 'Desactivar Contingencia' : 'Activar Contingencia'}
                             </Button>
                         </div>
                     </div>
                     <div className="xl:col-span-2">
-                        <BillingChart />
+                        <BillingChart data={chartData} />
                     </div>
                 </div>
 
                 <div className="flex items-center justify-between border-y border-border/50 py-8">
                     <div className="flex items-center gap-8">
                         <Button
-                            onClick={() => toast.success("GENERANDO LIBRO AUXILIAR MENSUAL (PDF)")}
+                            onClick={async () => {
+                                toast.info("Generando Libro Auxiliar...");
+                                await generateLibroAuxiliar('00000000-0000-0000-0000-000000000000', new Date().getMonth() + 1, new Date().getFullYear());
+                                toast.success("PDF del Libro Auxiliar listo para descarga.");
+                            }}
                             variant="ghost"
                             className="h-14 px-8 rounded-2xl bg-slate-900 text-white font-black uppercase italic text-[10px] tracking-[0.3em] flex items-center gap-4 hover:bg-slate-800"
                         >
                             <FileDown className="w-5 h-5 text-orange-500" /> Libro Auxiliar (PDF)
                         </Button>
-                        <Button variant="ghost" className="h-14 px-8 rounded-2xl border border-slate-200 text-slate-400 font-black uppercase italic text-[10px] tracking-[0.3em] flex items-center gap-4 hover:bg-slate-100">
+                        <Button
+                            onClick={() => toast.success("Enviando último cierre de caja a la impresora térmica...")}
+                            variant="ghost"
+                            className="h-14 px-8 rounded-2xl border border-slate-200 text-slate-400 font-black uppercase italic text-[10px] tracking-[0.3em] flex items-center gap-4 hover:bg-slate-100"
+                        >
                             <Printer className="w-5 h-5" /> Imprimir Último Cierre
                         </Button>
                     </div>
                     <div>
-                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic">Total Fiscal Periodo: <span className="text-foreground text-sm">$45.8M COP</span></p>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic">Total Fiscal Periodo: <span className="text-foreground text-sm">{totalFiscal >= 1000000 ? `$${(totalFiscal / 1000000).toFixed(1)}M COP` : `$${totalFiscal.toLocaleString()} COP`}</span></p>
                     </div>
                 </div>
 

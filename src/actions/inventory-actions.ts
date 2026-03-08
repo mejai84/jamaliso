@@ -47,14 +47,32 @@ export async function deductInventoryFromOrder(orderId: string, restaurantId: st
             for (const ingredient of recipeRes.rows) {
                 const amountToDeduct = ingredient.ingredient_qty * item.quantity
 
-                // 3. Descontar del stock actual
+                // 3. Obtener stock previo para el log
+                const { rows: [ingData] } = await client.query('SELECT current_stock, name FROM ingredients WHERE id = $1', [ingredient.ingredient_id])
+
+                // 4. Descontar del stock actual
                 await client.query(
                     'UPDATE ingredients SET current_stock = current_stock - $1 WHERE id = $2 AND restaurant_id = $3',
                     [amountToDeduct, ingredient.ingredient_id, restaurantId]
                 )
 
-                // 4. Registrar movimiento (si existe tabla de movimientos)
-                // Omitido por ahora para simplificar, pero se puede añadir luego
+                // 5. Registrar movimiento de inventario para trazabilidad total (Food Cost & Robo Hormiga)
+                await client.query(`
+                    INSERT INTO inventory_movements (
+                        ingredient_id, restaurant_id, movement_type, quantity, 
+                        previous_stock, new_stock, reference_id, reference_type, notes
+                    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+                `, [
+                    ingredient.ingredient_id,
+                    restaurantId,
+                    'SALE_DEDUCTION',
+                    amountToDeduct,
+                    ingData.current_stock,
+                    ingData.current_stock - amountToDeduct,
+                    orderId,
+                    'order',
+                    `Descuento automático por venta de producto (ID: ${item.product_id})`
+                ])
             }
         }
 

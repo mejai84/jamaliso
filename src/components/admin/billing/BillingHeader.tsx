@@ -7,10 +7,11 @@ import Link from "next/link"
 interface BillingHeaderProps {
     onSync: () => void;
     onConfig: () => void;
+    onTest?: () => void;
     isSyncing: boolean;
 }
 
-export function BillingHeader({ onSync, onConfig, isSyncing }: BillingHeaderProps) {
+export function BillingHeader({ onSync, onConfig, onTest, isSyncing }: BillingHeaderProps) {
     return (
         <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-10">
             <div className="space-y-4">
@@ -36,6 +37,13 @@ export function BillingHeader({ onSync, onConfig, isSyncing }: BillingHeaderProp
             </div>
 
             <div className="flex items-center gap-4">
+                <Button
+                    variant="outline"
+                    className="h-14 px-8 rounded-2xl border-orange-500/30 bg-orange-500/10 text-orange-600 font-black uppercase italic tracking-widest text-xs hover:bg-orange-500 hover:text-white transition-all"
+                    onClick={onTest}
+                >
+                    Generar Prueba
+                </Button>
                 <Button
                     variant="outline"
                     className="h-14 px-8 rounded-2xl border-border bg-card font-black uppercase italic tracking-widest text-xs hover:bg-muted transition-all"

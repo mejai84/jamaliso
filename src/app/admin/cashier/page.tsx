@@ -31,6 +31,7 @@ export default function CashierPage() {
 
     const [movements, setMovements] = useState<Movement[]>([])
     const [balance, setBalance] = useState({ total: 0, sales: 0, expenses: 0, incomes: 0 })
+    const [pendingOrders, setPendingOrders] = useState<any[]>([])
 
     const [modalOpen, setModalOpen] = useState<'income' | 'expense' | 'audit' | 'close' | 'z-report' | 'petty-cash-transfer' | null>(null)
     const [submittingModal, setSubmittingModal] = useState(false)
@@ -97,6 +98,35 @@ export default function CashierPage() {
         const opening = Number(session?.opening_amount || 0)
 
         setBalance({ total: opening + sales + partials - expenses, sales, expenses, incomes: partials })
+
+        // Fetch mesas con pedidos pendientes de cobro (query corregida — sin relación FK)
+        const { data: occupiedTables } = await supabase
+            .from('tables')
+            .select('id, table_name, table_number, status')
+            .eq('restaurant_id', restaurant?.id)
+            .eq('status', 'occupied')
+
+        // Buscar órdenes activas de esas mesas
+        const tableIds = (occupiedTables || []).map(t => t.id)
+        let filteredPending: any[] = []
+        if (tableIds.length > 0) {
+            const { data: activeOrders } = await supabase
+                .from('orders')
+                .select('id, table_id, total, status')
+                .in('table_id', tableIds)
+                .in('status', ['payment_requested', 'delivered', 'ready'])
+                .order('created_at', { ascending: false })
+
+            // Unir mesa + su orden más reciente que esté por cobrar
+            filteredPending = (occupiedTables || [])
+                .map(t => {
+                    const order = (activeOrders || []).find(o => o.table_id === t.id)
+                    return order ? { ...t, active_order: order } : null
+                })
+                .filter(Boolean)
+        }
+        setPendingOrders(filteredPending)
+
         setRefreshing(false)
     }
 
@@ -152,12 +182,33 @@ export default function CashierPage() {
             const { closeCashbox, performPartialAudit } = await import("@/actions/pos")
             if (modalOpen === 'audit') {
                 const res = await performPartialAudit(status.activeCashboxSession.id, amount, reason)
-                toast.success(`Arqueo registrado. DIFERENCIA: $${res.difference.toLocaleString()}`)
+                if (res.isBlind) {
+                    toast.success("ARQUEO CIEGO REGISTRADO", {
+                        description: "Informe de arqueo guardado. La conciliación final será realizada por un supervisor.",
+                        icon: "🔒"
+                    })
+                } else {
+                    toast.success(`Arqueo registrado. DIFERENCIA: $${res.difference?.toLocaleString()}`)
+                }
                 setModalOpen(null)
             } else {
                 const result = await closeCashbox(status.activeCashboxSession.id, amount, reason)
-                setZReportData({ systemAmount: result.systemAmount, countedAmount: amount, difference: result.difference, sales: balance.sales, expenses: balance.expenses })
-                setModalOpen('z-report')
+                if (result.isBlind) {
+                    toast.success("CIERRE DE CAJA REGISTRADO", {
+                        description: "Turno finalizado exitosamente. Sesión blindada.",
+                        icon: "🔒"
+                    })
+                    router.push('/admin')
+                } else {
+                    setZReportData({
+                        systemAmount: result.systemAmount,
+                        countedAmount: amount,
+                        difference: result.difference,
+                        sales: balance.sales,
+                        expenses: balance.expenses
+                    })
+                    setModalOpen('z-report')
+                }
             }
         } catch (e: any) {
             toast.error(e.message)
@@ -193,6 +244,42 @@ export default function CashierPage() {
                             onPettyCash={() => setModalOpen('petty-cash-transfer')}
                             onAudit={() => setModalOpen('audit')}
                         />
+
+                        {/* 📋 WIDGET DE MESAS POR COBRAR */}
+                        <div className="bg-slate-900 rounded-[2.5rem] p-8 space-y-6 shadow-2xl relative overflow-hidden group">
+                            <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:rotate-12 transition-transform">
+                                <Activity className="w-24 h-24 text-white" />
+                            </div>
+                            <div className="flex items-center justify-between relative z-10">
+                                <h3 className="text-xl font-black italic uppercase tracking-tighter text-white">Mesas por <span className="text-orange-500">Cobrar</span></h3>
+                                <span className="bg-orange-500 text-white text-[10px] font-black px-3 py-1 rounded-full animate-bounce">
+                                    {pendingOrders.length} PENDIENTES
+                                </span>
+                            </div>
+
+                            <div className="space-y-3 relative z-10">
+                                {pendingOrders.length > 0 ? pendingOrders.map((table) => (
+                                    <div key={table.id} className="bg-white/5 border border-white/10 rounded-2xl p-4 flex items-center justify-between hover:bg-white/10 transition-all cursor-pointer" onClick={() => router.push('/admin/waiter')}>
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-10 h-10 rounded-xl bg-orange-500 flex items-center justify-center font-black italic text-white">
+                                                {table.table_name.replace(/\D/g, '') || table.table_number}
+                                            </div>
+                                            <div>
+                                                <p className="text-[10px] font-black text-white/40 uppercase tracking-widest italic leading-none mb-1">Cuenta Pedida</p>
+                                                <p className="text-white font-black italic uppercase tracking-tighter leading-none">{table.table_name}</p>
+                                            </div>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="text-orange-500 font-black italic text-lg tracking-tighter">${(table.active_order as any)?.total?.toLocaleString()}</p>
+                                        </div>
+                                    </div>
+                                )) : (
+                                    <div className="py-10 text-center opacity-30">
+                                        <p className="text-[10px] font-black uppercase tracking-widest italic">No hay cuentas pendientes por cobrar</p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
                     </div>
 
                     <div className="lg:col-span-8 flex flex-col min-h-0 bg-white border-2 border-slate-100 rounded-[2.5rem] overflow-hidden shadow-xl shadow-slate-900/5">

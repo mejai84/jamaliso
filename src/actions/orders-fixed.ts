@@ -131,12 +131,45 @@ export async function createOrderWithNotes(orderData: CreateOrderData) {
                     item.unit_price,
                     item.notes || null
                 ])
+
+                // 2.2 Descontar Inventario por Receta (Food Cost Engine)
+                const { rows: recipes } = await client.query('SELECT id FROM recipes_new WHERE product_id = $1 AND restaurant_id = $2', [item.product_id, orderData.restaurant_id])
+                for (const recipe of recipes) {
+                    const { rows: recipeItems } = await client.query('SELECT ingredient_id, quantity FROM recipe_items WHERE recipe_id = $1', [recipe.id])
+                    for (const ri of recipeItems) {
+                        const totalDeduction = ri.quantity * item.quantity
+                        // Actualizar stock y registrar movimiento
+                        await client.query(`
+                            UPDATE ingredients 
+                            SET current_stock = current_stock - $1,
+                                updated_at = NOW()
+                            WHERE id = $2 AND restaurant_id = $3
+                        `, [totalDeduction, ri.ingredient_id, orderData.restaurant_id])
+
+                        await client.query(`
+                            INSERT INTO inventory_movements (
+                                restaurant_id, ingredient_id, movement_type, quantity, 
+                                reference_id, reference_type, notes, created_by, created_at
+                            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW())
+                        `, [
+                            orderData.restaurant_id,
+                            ri.ingredient_id,
+                            'OUT',
+                            totalDeduction,
+                            order.id,
+                            'ORDER',
+                            'Descuento automático por venta de producto',
+                            finalUserId
+                        ])
+                    }
+                }
             }
         }
 
         await client.query('COMMIT')
 
         revalidatePath('/admin/orders')
+        revalidatePath('/admin/inventory')
         if (orderData.table_id) revalidatePath('/admin/tables')
 
         return { success: true, data: { ...order, created_at: undefined }, message: 'Pedido creado exitosamente' }
@@ -392,18 +425,46 @@ export async function addItemsToOrder(orderId: string, items: OrderItemWithNotes
             await client.query(insertItemsQuery, [
                 orderId, item.product_id, item.quantity, item.unit_price, item.notes || null
             ])
+
+            // 2.2 Descontar Inventario por Receta (Food Cost Engine)
+            const { rows: recipes } = await client.query('SELECT id FROM recipes_new WHERE product_id = $1 AND restaurant_id = $2', [item.product_id, order.restaurant_id])
+            for (const recipe of recipes) {
+                const { rows: recipeItems } = await client.query('SELECT ingredient_id, quantity FROM recipe_items WHERE recipe_id = $1', [recipe.id])
+                for (const ri of recipeItems) {
+                    const totalDeduction = ri.quantity * item.quantity
+                    await client.query(`
+                        UPDATE ingredients 
+                        SET current_stock = current_stock - $1,
+                            updated_at = NOW()
+                        WHERE id = $2 AND restaurant_id = $3
+                    `, [totalDeduction, ri.ingredient_id, order.restaurant_id])
+
+                    await client.query(`
+                        INSERT INTO inventory_movements (
+                            restaurant_id, ingredient_id, movement_type, quantity, 
+                            reference_id, reference_type, notes, created_at
+                        ) VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())
+                    `, [order.restaurant_id, ri.ingredient_id, 'OUT', totalDeduction, orderId, 'ORDER_ADD', 'Adición de producto manual'])
+                }
+            }
         }
+
+        // 3. Recalcular total (Fixing aggregate error)
+        const { rows: [{ subtotal_sum }] } = await client.query('SELECT COALESCE(SUM(subtotal), 0) as subtotal_sum FROM order_items WHERE order_id = $1', [orderId])
+
         await client.query(`
             UPDATE orders 
-            SET subtotal = (SELECT COALESCE(SUM(subtotal), 0) FROM order_items WHERE order_id = $1),
-                total = (SELECT COALESCE(SUM(subtotal), 0) FROM order_items WHERE order_id = $1) + COALESCE(tax, 0) + COALESCE(service_charge, 0),
+            SET subtotal = $2,
+                total = $2 + COALESCE(tax, 0) + COALESCE(service_charge, 0),
                 updated_at = NOW()
             WHERE id = $1
-        `, [orderId])
+        `, [orderId, subtotal_sum])
+
         await client.query('COMMIT')
 
         revalidatePath('/admin/orders')
         revalidatePath('/admin/tables')
+        revalidatePath('/admin/inventory')
 
         return { success: true, message: 'Productos adicionados exitosamente' }
     } catch (dbError: any) {
@@ -416,7 +477,7 @@ export async function addItemsToOrder(orderId: string, items: OrderItemWithNotes
 }
 
 /**
- * Une dos mesas fusionando sus órdenes activas.
+ * Une dos mesas fusionando sus órdenes activas o moviendo la orden si el destino está libre.
  */
 export async function mergeTables(sourceTableId: string, targetTableId: string, userId: string) {
     let client;
@@ -426,32 +487,44 @@ export async function mergeTables(sourceTableId: string, targetTableId: string, 
         await client.query('BEGIN')
 
         // 1. Obtener órdenes activas
-        const { rows: [sourceOrder] } = await client.query('SELECT id FROM orders WHERE table_id = $1 AND status IN (\'pending\', \'preparing\', \'ready\')', [sourceTableId])
-        const { rows: [targetOrder] } = await client.query('SELECT id FROM orders WHERE table_id = $1 AND status IN (\'pending\', \'preparing\', \'ready\')', [targetTableId])
+        const activeStatuses = ['pending', 'preparing', 'ready', 'delivered'];
+        const { rows: [sourceOrder] } = await client.query('SELECT id FROM orders WHERE table_id = $1 AND status = ANY($2)', [sourceTableId, activeStatuses])
+        let { rows: [targetOrder] } = await client.query('SELECT id FROM orders WHERE table_id = $1 AND status = ANY($2)', [targetTableId, activeStatuses])
 
-        if (!sourceOrder || !targetOrder) throw new Error('Ambas mesas deben tener órdenes activas')
+        if (!sourceOrder) throw new Error('La mesa origen no tiene una orden activa')
 
-        // 2. Mover items de la fuente al destino
-        await client.query('UPDATE order_items SET order_id = $1 WHERE order_id = $2', [targetOrder.id, sourceOrder.id])
+        if (!targetOrder) {
+            // Si el destino no tiene orden, simplemente movemos la orden completa a la nueva mesa
+            await client.query('UPDATE orders SET table_id = $1 WHERE id = $2', [targetTableId, sourceOrder.id])
+            await client.query('UPDATE tables SET status = \'occupied\' WHERE id = $1', [targetTableId])
+        } else {
+            // Si ambas tienen orden, fusionamos items
+            await client.query('UPDATE order_items SET order_id = $1 WHERE order_id = $2', [targetOrder.id, sourceOrder.id])
+            await client.query('UPDATE orders SET status = \'cancelled\', notes = \'Fusionada con Mesa \' || $1 WHERE id = $2', [targetTableId, sourceOrder.id])
+        }
 
-        // 3. Eliminar (o cancelar) la orden fuente
-        await client.query('UPDATE orders SET status = \'cancelled\', notes = \'Fusionada con Mesa \' || $1 WHERE id = $2', [targetTableId, sourceOrder.id])
+        // 2. Liberar mesa origen
         await client.query('UPDATE tables SET status = \'free\' WHERE id = $1', [sourceTableId])
 
-        // 4. Recalcular totales destino
+        // 3. Recalcular totales destino
+        const finalOrderId = targetOrder?.id || sourceOrder.id
+        const { rows: [{ subtotal_sum }] } = await client.query('SELECT COALESCE(SUM(subtotal), 0) as subtotal_sum FROM order_items WHERE order_id = $1', [finalOrderId])
+
         await client.query(`
             UPDATE orders 
-            SET subtotal = (SELECT COALESCE(SUM(subtotal), 0) FROM order_items WHERE order_id = $1),
-                total = (SELECT COALESCE(SUM(subtotal), 0) FROM order_items WHERE order_id = $1) + COALESCE(tax, 0) + COALESCE(service_charge, 0),
+            SET subtotal = $2,
+                total = $2 + COALESCE(tax, 0) + COALESCE(service_charge, 0),
                 updated_at = NOW()
             WHERE id = $1
-        `, [targetOrder.id])
+        `, [finalOrderId, subtotal_sum])
 
         await client.query('COMMIT')
         revalidatePath('/admin/tables')
-        return { success: true, message: 'Mesas fusionadas exitosamente' }
+        revalidatePath('/admin/waiter')
+        return { success: true, message: 'Mesas gestionadas exitosamente' }
     } catch (e: any) {
         if (client) await client.query('ROLLBACK')
+        console.error('Error mergeTables:', e)
         return { success: false, error: e.message }
     } finally {
         if (client) client.release()
@@ -469,7 +542,7 @@ export async function transferOrderItem(sourceOrderId: string, targetTableId: st
         await client.query('BEGIN')
 
         // 1. Obtener o crear orden en mesa destino
-        let { rows: [targetOrder] } = await client.query('SELECT * FROM orders WHERE table_id = $1 AND status IN (\'pending\', \'preparing\', \'ready\')', [targetTableId])
+        let { rows: [targetOrder] } = await client.query('SELECT * FROM orders WHERE table_id = $1 AND status IN (\'pending\', \'preparing\', \'ready\', \'delivered\')', [targetTableId])
 
         if (!targetOrder) {
             const { rows: [sourceOrder] } = await client.query('SELECT * FROM orders WHERE id = $1', [sourceOrderId])
@@ -481,9 +554,13 @@ export async function transferOrderItem(sourceOrderId: string, targetTableId: st
             await client.query('UPDATE tables SET status = \'occupied\' WHERE id = $1', [targetTableId])
         }
 
-        // 2. Mover item logic (similar a split)
-        const { rows: [dbItem] } = await client.query('SELECT * FROM order_items WHERE id = $1', [itemId])
-        if (quantity >= dbItem.quantity) {
+        // 2. Mover item logic
+        const { rows: [dbItem] } = await client.query('SELECT * FROM order_items WHERE id = $1 AND order_id = $2', [itemId, sourceOrderId])
+        if (!dbItem) throw new Error('El ítem no pertenece a la orden origen o no existe')
+
+        const actualQty = Math.min(quantity, dbItem.quantity)
+
+        if (actualQty >= dbItem.quantity) {
             await client.query('UPDATE order_items SET order_id = $1 WHERE id = $2', [targetOrder.id, itemId])
         } else {
             await client.query('UPDATE order_items SET quantity = quantity - $1 WHERE id = $2', [quantity, itemId])
@@ -494,13 +571,15 @@ export async function transferOrderItem(sourceOrderId: string, targetTableId: st
         // 3. Recalcular ambos
         const ordersToRecalc = [sourceOrderId, targetOrder.id]
         for (const id of ordersToRecalc) {
+            const { rows: [{ subtotal_sum }] } = await client.query('SELECT COALESCE(SUM(subtotal), 0) as subtotal_sum FROM order_items WHERE order_id = $1', [id])
+
             await client.query(`
                 UPDATE orders 
-                SET subtotal = (SELECT COALESCE(SUM(subtotal), 0) FROM order_items WHERE order_id = $1),
-                    total = (SELECT COALESCE(SUM(subtotal), 0) FROM order_items WHERE order_id = $1) + COALESCE(tax, 0) + COALESCE(service_charge, 0),
+                SET subtotal = $2,
+                    total = $2 + COALESCE(tax, 0) + COALESCE(service_charge, 0),
                     updated_at = NOW()
                 WHERE id = $1
-            `, [id])
+            `, [id, subtotal_sum])
         }
 
         await client.query('COMMIT')
@@ -529,4 +608,225 @@ export async function sendKitchenMessage(restaurantId: string, sender: string, m
     if (error) return { success: false, error: error.message }
     revalidatePath('/admin/kitchen')
     return { success: true, message: 'Mensaje enviado a cocina' }
+}
+
+// ============================================================================
+// 6. BLINDAJE DE ANULACIONES (VOID FLOW)
+// ============================================================================
+
+/**
+ * Anula un ítem específico de una orden con autorización de supervisor.
+ */
+export async function voidOrderItem(orderItemId: string, supervisorPin: string, reason: string) {
+    let client;
+    try {
+        if (!pool) throw new Error("Conexión directa fallida");
+        client = await pool.connect()
+
+        // 1. Obtener datos del ítem y restaurante
+        const { rows: [itemData] } = await client.query(`
+            SELECT oi.*, o.restaurant_id, o.status as order_status 
+            FROM order_items oi 
+            JOIN orders o ON oi.order_id = o.id 
+            WHERE oi.id = $1
+        `, [orderItemId])
+
+        if (!itemData) throw new Error('Ítem no encontrado');
+
+        // 2. Validar PIN de Supervisor
+        const { rows: [auth] } = await client.query('SELECT * FROM validate_supervisor_auth($1, $2)', [supervisorPin, itemData.restaurant_id])
+        if (!auth?.authorized) return { success: false, error: "AUTORIZACIÓN DENEGADA: PIN Incorrecto o sin permisos de supervisor" }
+
+        await client.query('BEGIN')
+
+        // 3. Registrar en Void Logs
+        const { data: { user } } = await (await createClient()).auth.getUser()
+        await client.query(`
+            INSERT INTO void_logs (restaurant_id, order_id, item_id, voided_by, authorized_by, amount, reason)
+            VALUES ($1, $2, $3, $4, $5, $6, $7)
+        `, [
+            itemData.restaurant_id,
+            itemData.order_id,
+            orderItemId,
+            user?.id,
+            auth.supervisor_id,
+            itemData.unit_price * itemData.quantity,
+            reason
+        ])
+
+        // 4. Anular ítem (Eliminarlo o marcarlo)
+        await client.query('DELETE FROM order_items WHERE id = $1', [orderItemId])
+
+        // 5. Recalcular Orden
+        const { rows: [{ subtotal_sum }] } = await client.query('SELECT COALESCE(SUM(subtotal), 0) as subtotal_sum FROM order_items WHERE order_id = $1', [itemData.order_id])
+        await client.query('UPDATE orders SET subtotal = $2, total = $2 + COALESCE(tax, 0) + COALESCE(service_charge, 0) WHERE id = $1', [itemData.order_id, subtotal_sum])
+
+        // 6. Auditoría de Seguridad
+        await client.query(`
+            INSERT INTO security_audit (event_type, severity, description, order_id, restaurant_id, performed_by, metadata)
+            VALUES ($1, $2, $3, $4, $5, $6, $7)
+        `, [
+            'VOID_ITEM_HIGH_PRIORITY',
+            'HIGH',
+            `Ítem anulado por ${auth.supervisor_name}. Razón: ${reason}`,
+            itemData.order_id,
+            itemData.restaurant_id,
+            user?.id,
+            { item_id: orderItemId, amount: itemData.unit_price * itemData.quantity, authorizer_name: auth.supervisor_name }
+        ])
+
+        await client.query('COMMIT')
+        revalidatePath('/admin/orders')
+        revalidatePath('/admin/waiter')
+        return { success: true, message: "Ítem anulado correctamente" }
+
+    } catch (e: any) {
+        if (client) await client.query('ROLLBACK')
+        return { success: false, error: e.message }
+    } finally {
+        if (client) client.release()
+    }
+}
+
+/**
+ * Anula una orden completa con autorización de supervisor.
+ */
+export async function voidFullOrder(orderId: string, supervisorPin: string, reason: string) {
+    let client;
+    try {
+        if (!pool) throw new Error("Conexión directa fallida");
+        client = await pool.connect()
+
+        const { rows: [order] } = await client.query('SELECT * FROM orders WHERE id = $1', [orderId])
+        if (!order) throw new Error('Orden no encontrada')
+
+        // Validar Supervisor
+        const { rows: [auth] } = await client.query('SELECT * FROM validate_supervisor_auth($1, $2)', [supervisorPin, order.restaurant_id])
+        if (!auth?.authorized) return { success: false, error: "AUTORIZACIÓN DENEGADA" }
+
+        await client.query('BEGIN')
+
+        const { data: { user } } = await (await createClient()).auth.getUser()
+
+        // 1. Log en Void Logs
+        await client.query(`
+            INSERT INTO void_logs (restaurant_id, order_id, voided_by, authorized_by, amount, reason)
+            VALUES ($1, $2, $3, $4, $5, $6)
+        `, [order.restaurant_id, orderId, user?.id, auth.supervisor_id, order.total, reason])
+
+        // 2. Cancelar Orden
+        await client.query('UPDATE orders SET status = \'cancelled\', notes = \'ANULADA: \' || $2 WHERE id = $1', [orderId, reason])
+
+        // 3. Liberar mesa si existe
+        if (order.table_id) {
+            await client.query('UPDATE tables SET status = \'available\' WHERE id = $1', [order.table_id])
+        }
+
+        // 4. Auditoría Crítica
+        await client.query(`
+            INSERT INTO security_audit (event_type, severity, description, order_id, restaurant_id, performed_by)
+            VALUES ($1, $2, $3, $4, $5, $6)
+        `, ['VOID_ORDER_CRITICAL', 'CRITICAL', `Orden Completa Anulada por ${auth.supervisor_name}. Monto: ${order.total}. Razón: ${reason}`, orderId, order.restaurant_id, user?.id])
+
+        await client.query('COMMIT')
+        revalidatePath('/admin/orders')
+        revalidatePath('/admin/waiter')
+        revalidatePath('/admin/tables')
+        return { success: true, message: "Orden anulada exitosamente" }
+
+    } catch (e: any) {
+        if (client) await client.query('ROLLBACK')
+        return { success: false, error: e.message }
+    } finally {
+        if (client) client.release()
+    }
+}
+
+// ============================================================================
+// 7. ACTUALIZAR ESTADO DE ORDEN (SERVER ACTION SEGURA)
+// ============================================================================
+
+/**
+ * Cambia el estado de una orden validando la sesión y las transiciones permitidas.
+ * Reemplaza las llamadas directas via Supabase Client desde el mesero.
+ */
+export async function updateOrderStatusSecure(orderId: string, newStatus: string) {
+    try {
+        const supabase = await createClient()
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) return { success: false, error: "Sesión no válida" }
+
+        // Obtener estado actual
+        const { data: order, error: fetchErr } = await supabase
+            .from('orders')
+            .select('id, status, restaurant_id')
+            .eq('id', orderId)
+            .single()
+
+        if (fetchErr || !order) return { success: false, error: "Orden no encontrada" }
+
+        // Validar transiciones permitidas para el mesero
+        const allowedTransitions: Record<string, string[]> = {
+            'pending': ['preparing'],
+            'preparing': ['ready'],
+            'ready': ['delivered', 'payment_requested'],
+            'delivered': ['payment_requested'],
+            'payment_requested': [] // Solo caja puede mover de aquí
+        }
+
+        if (!allowedTransitions[order.status]?.includes(newStatus)) {
+            return { success: false, error: `Transición no permitida: ${order.status} → ${newStatus}` }
+        }
+
+        const { error } = await supabase
+            .from('orders')
+            .update({ status: newStatus })
+            .eq('id', orderId)
+
+        if (error) return { success: false, error: error.message }
+
+        revalidatePath('/admin/waiter')
+        revalidatePath('/admin/orders')
+        revalidatePath('/admin/kitchen')
+        return { success: true }
+    } catch (e: any) {
+        return { success: false, error: e.message }
+    }
+}
+
+/**
+ * Solicitud de cuenta: cambia el estado a 'payment_requested' con validación server-side.
+ */
+export async function requestPayment(orderId: string) {
+    try {
+        const supabase = await createClient()
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) return { success: false, error: "Sesión no válida" }
+
+        const { data: order } = await supabase
+            .from('orders')
+            .select('id, status, restaurant_id')
+            .eq('id', orderId)
+            .single()
+
+        if (!order) return { success: false, error: "Orden no encontrada" }
+
+        // Solo se puede pedir cuenta de órdenes en ready o delivered
+        if (!['ready', 'delivered'].includes(order.status)) {
+            return { success: false, error: `No se puede solicitar cobro en estado: ${order.status}` }
+        }
+
+        const { error } = await supabase
+            .from('orders')
+            .update({ status: 'payment_requested' })
+            .eq('id', orderId)
+
+        if (error) return { success: false, error: error.message }
+
+        revalidatePath('/admin/waiter')
+        revalidatePath('/admin/cashier')
+        return { success: true }
+    } catch (e: any) {
+        return { success: false, error: e.message }
+    }
 }

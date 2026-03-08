@@ -33,10 +33,10 @@ export function TableGrid({
                 <h2 className="text-5xl font-black italic tracking-tighter uppercase leading-none text-slate-900">
                     {mergeMode.active ? (
                         <span className="text-indigo-600 animate-pulse flex items-center gap-2">
-                            <Link2 className="w-8 h-8" /> SELECCIONA MESA DESTINO
+                            <Link2 className="w-8 h-8" /> PULSA LA MESA PARA UNIR
                         </span>
                     ) : (
-                        <>Gestión de <span className="text-orange-600">Salón</span></>
+                        <>Mapa de <span className="text-orange-600">Mesas</span></>
                     )}
                 </h2>
                 <div className="flex gap-4">
@@ -45,10 +45,10 @@ export function TableGrid({
                     ) : (
                         <>
                             <div className="px-5 py-3 bg-white border-2 border-slate-100 rounded-2xl text-[10px] font-black text-slate-400 uppercase tracking-widest italic shadow-sm">
-                                {tables.filter(t => t.status === 'free').length} Libres
+                                {tables.filter(t => t.status === 'free' || !t.active_order).length} MESAS LIBRES
                             </div>
                             <div className="px-5 py-3 bg-orange-500/10 border-2 border-orange-500/20 rounded-2xl text-[10px] font-black text-orange-600 uppercase tracking-widest italic shadow-sm">
-                                {tables.filter(t => t.status === 'occupied').length} Ocupadas
+                                {tables.filter(t => t.status === 'occupied' && t.active_order).length} MESAS EN SERVICIO
                             </div>
                         </>
                     )}
@@ -105,18 +105,24 @@ export function TableGrid({
                                             {table.capacity}
                                         </div>
 
-                                        {table.status === 'occupied' && (
+                                        {isActive && (
                                             <div className="flex flex-col items-end gap-2">
                                                 <div className={cn(
-                                                    "px-3 py-1.5 rounded-xl border flex items-center gap-1.5 shadow-sm bg-white",
-                                                    table.active_order?.status === 'ready' ? "border-emerald-200 text-emerald-600" : "border-slate-200 text-slate-900"
+                                                    "px-3 py-1.5 rounded-xl border flex items-center gap-1.5 shadow-sm bg-white/80 backdrop-blur-sm",
+                                                    table.active_order?.status === 'ready' ? "border-emerald-200 text-emerald-600 ring-4 ring-emerald-500/10" :
+                                                        table.active_order?.status === 'delivered' ? "border-amber-200 text-amber-600 ring-4 ring-amber-500/10" :
+                                                            "border-slate-200 text-slate-900"
                                                 )}>
                                                     <div className={cn(
                                                         "w-1.5 h-1.5 rounded-full animate-pulse",
-                                                        table.active_order?.status === 'ready' ? "bg-emerald-500" : "bg-orange-600"
+                                                        table.active_order?.status === 'ready' ? "bg-emerald-500" :
+                                                            table.active_order?.status === 'delivered' ? "bg-amber-500" :
+                                                                "bg-orange-600"
                                                     )} />
                                                     <p className="text-[8px] font-black italic tracking-widest uppercase">
-                                                        {table.active_order?.status === 'ready' ? 'READY' : 'IN_SERVICE'}
+                                                        {table.active_order?.status === 'ready' ? 'LISTO' :
+                                                            table.active_order?.status === 'delivered' ? 'CUENTA PEDIDA' :
+                                                                'EN SERVICIO'}
                                                     </p>
                                                 </div>
                                             </div>
@@ -126,14 +132,14 @@ export function TableGrid({
                                     <div className="relative z-10">
                                         <div className="flex items-center gap-2 mb-2">
                                             <div className={cn(
-                                                "w-1 h-1 rounded-full",
-                                                table.status === 'free' ? "bg-emerald-500" : "bg-orange-500"
+                                                "w-1.5 h-1.5 rounded-full",
+                                                !isActive ? "bg-emerald-500" : "bg-orange-500 shadow-[0_0_10px_rgba(234,88,12,0.4)]"
                                             )} />
-                                            <p className="text-[8px] font-black text-slate-400 uppercase tracking-[0.2em] italic leading-none">
-                                                {table.status === 'free' ? 'AVAILABLE' : 'BUSY_TABLE'}
+                                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] italic leading-none">
+                                                {!isActive ? 'DISPONIBLE' : 'MESA OCUPADA'}
                                             </p>
                                         </div>
-                                        <h3 className="text-3xl font-black italic tracking-tighter text-slate-900 uppercase leading-none group-hover:text-orange-600 transition-colors">
+                                        <h3 className="text-2xl md:text-3xl font-black italic tracking-tighter text-slate-900 uppercase leading-none group-hover:text-orange-600 transition-colors">
                                             {table.table_name}
                                         </h3>
 

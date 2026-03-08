@@ -22,9 +22,12 @@ En esta sesión se ha transformado el sistema de un POS robusto a una plataforma
 | **Onboarding Elite** | Unificación de Demo, Setup y Pago en un flujo interactivo de 5 fases. | Reducción drástica del abandono en registro (Churn) y activación inmediata. |
 | **Financial Core v2** | Facturación Fiscal con desglose de impuestos y Vouchers contables profesionales. | Legalidad total y control de Caja Menor con impresión térmica 80mm. |
 | **Branch Isolation v2** | Sincronización dinámica de KPIs, POS y Cajas al cambiar de sede (sucursal). | Eliminación de contaminación de datos y reportes erróneos en cadenas multi-sede. |
-| **Landing Branding v4** | Landing Page overhaul 9/10 (SaaS Premium), IA Marketing destacado. | Impacto visual inmediato y posicionamiento de marca de lujo (High-End). Aumenta conversión a nivel B2B. |
-| **Executive Summary** | Creación de resumen persuasivo técnico-comercial para inversores. | Posicionamiento claro del modelo de negocio, tecnología de vanguardia y pricing SaaS. |
-| **Multilingüismo Pro** | Internalización (i18n) dinámica de módulos administrativos (Dashboard, KDS, Inventory). | Escalabilidad internacional. Detección automática de idioma y persistencia por restaurante. |
+| **Landing Branding v4** | Landing Page overhaul 9/10 (SaaS Premium), IA Marketing destacado. | Impacto visual inmediato y posicionamiento de marca de lujo (High-End). |
+| **Executive Summary** | Creación de resumen persuasivo técnico-comercial para inversores. | Posicionamiento claro del modelo de negocio y pricing SaaS. |
+| **Smart Cashier Shield** | Sistema de autorización por PIN y protocolo contra 30 tipos de fraude. | Eliminación del riesgo de robo por anulación, descuentos o fraudes de caja. |
+| **Atomic POS Safeguard** | Bloqueo de liberación de mesas sin pago y arqueo ciego forzado. | Integridad financiera del 100% y eliminación de 'manual balancing'. |
+| **Inventory Shrinkage** | Traceable inventory deduction based on recipes and movements. | Control total de costos (Food Cost) y detección de 'robo hormiga'. |
+| **Waiter Portal v2.0** | Operaciones atómicas de unión/transferencia y traducción total. | Fluidez operativa en salón y eliminación de errores de estado en mesas. |
 
 ---
 
@@ -63,7 +66,12 @@ Se ha cumplido la **Regla Estricta de Documentación** previa al cierre:
 - [x] **Premium UX Rehaul**: Landing Page llevada a nivel 9/10 SaaS (hero robusto, social proof, UI metrics).
 - [x] **Financial Core v2**: Facturación fiscal y comprobantes contables con diseño premium.
 - [x] **Executive Summary**: Creado `JAMALI_OS_EXECUTIVE_SUMMARY_2026.md` para pitch a inversores/partners.
-- [x] **Multilingüismo Pro**: Implementada localización total (ES/EN) en Dashboard, KDS e Inventario.
+- [x] **Multilingüismo Pro**: Implementada localización total (ES/EN) en Dashboard, KDS, Inventario y Portal Mesero.
+- [x] **Smart Cashier Protocol**: Documentado el blindaje en `JAMALI_CASHIER_SECURITY_PROTOCOL.md`.
+- [x] **Anti-Fraud Shield Pro**: Implementado sistema de Anulaciones con PIN, Arqueo Ciego y Vínculo Atómico.
+- [x] **Inventory Traceability**: Implementado seguimiento de insumos con deducción automática y logs de movimientos.
+- [x] **Waiter Portal v2.0**: Actualizado el manual de usuario con las nuevas lógicas de salón.
+- [x] **POS State Machine Fix**: Corregida máquina de estados (`payment_requested`), Real-time en mesero, query cajero, restricción cocina, Server Actions.
 
 ---
 

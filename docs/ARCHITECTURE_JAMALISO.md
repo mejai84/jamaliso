@@ -42,10 +42,12 @@ graph TD
     Client --> USR
     Client --> GRD
 
-    %% Intelligence Layer
+    %% Intelligence & Resilience Layer
     Postgres -->|Triggers| Audit[(Security Audit Table)]
     Audit -->|Realtime| GRD
     GRD -->|Remote Auth| Nextjs
+    Client ---|Offline Sync| LocalStorage[(Browser LocalStorage/PWA)]
+    LocalStorage -.->|Background Sync| Nextjs
 ```
 
 ---

@@ -132,10 +132,10 @@ export function CartPanel({
                         <List className="w-4 h-4" /> GESTIÓN DE CUENTA
                     </button>
 
-                    <div className="flex gap-2 md:gap-4">
+                    <div className="grid grid-cols-1 gap-4">
                         <Button
-                            onClick={() => onCheckout('CASH')}
-                            className="flex-1 h-16 md:h-24 bg-orange-600 hover:bg-orange-500 text-slate-950 font-black uppercase text-lg md:text-2xl italic tracking-tighter rounded-[1.8rem] md:rounded-[2.5rem] shadow-[0_10px_40px_rgba(234,88,12,0.3)] group active:scale-95 transition-all flex flex-col items-center justify-center leading-tight"
+                            onClick={() => onCheckout('ADVANCED')}
+                            className="w-full h-20 md:h-24 bg-orange-600 hover:bg-orange-500 text-slate-950 font-black uppercase text-lg md:text-2xl italic tracking-tighter rounded-[1.8rem] md:rounded-[2.5rem] shadow-[0_10px_40px_rgba(234,88,12,0.3)] group active:scale-95 transition-all flex flex-col items-center justify-center leading-tight"
                             disabled={cart.length === 0 || isProcessing}
                         >
                             {isProcessing ? (
@@ -144,18 +144,11 @@ export function CartPanel({
                                 <>
                                     <div className="flex items-center gap-3">
                                         <Banknote className="w-6 h-6 md:w-8 md:h-8 group-hover:scale-110 transition-transform" />
-                                        <span>PAGAR AHORA</span>
+                                        <span>PAGAR Y CERRAR</span>
                                     </div>
-                                    <span className="text-[8px] md:text-[10px] opacity-60 tracking-[0.3em] mt-1">VENTA DIRECTA RÁPIDA</span>
+                                    <span className="text-[8px] md:text-[10px] opacity-60 tracking-[0.3em] mt-1">SISTEMA ANTI-FRICCIÓN ACTIVO</span>
                                 </>
                             )}
-                        </Button>
-                        <Button
-                            onClick={() => onCheckout('DEBIT')}
-                            variant="ghost" className="h-16 w-16 md:h-24 md:w-24 bg-white/10 border-2 border-white/5 rounded-[1.8rem] md:rounded-[2.5rem] hover:bg-white/20 hover:border-white/20 transition-all flex items-center justify-center p-0"
-                            disabled={cart.length === 0 || isProcessing}
-                        >
-                            <Smartphone className="w-6 h-6 md:w-10 md:h-10 text-white" />
                         </Button>
                     </div>
                 </div>

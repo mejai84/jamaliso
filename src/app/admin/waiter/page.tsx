@@ -10,7 +10,11 @@ import {
     mergeTables,
     transferOrderItem,
     sendKitchenMessage,
-    splitOrder
+    splitOrder,
+    voidFullOrder,
+    voidOrderItem,
+    updateOrderStatusSecure,
+    requestPayment
 } from "@/actions/orders-fixed"
 import { toast } from "sonner"
 import { Table, Product, Category, CartItem } from "./types"
@@ -24,6 +28,7 @@ import { KitchenChatModal } from "@/components/admin/waiter/KitchenChatModal"
 import { BillPreviewModal } from "@/components/admin/waiter/BillPreviewModal"
 import { TransferItemModal } from "@/components/admin/waiter/TransferItemModal"
 import { SplitCheckModal } from "@/components/admin/waiter/SplitCheckModal"
+import { VoidAuthModal } from "@/components/admin/orders/VoidAuthModal"
 
 export default function WaiterAppPremium() {
     const { restaurant, loading: contextLoading } = useRestaurant()
@@ -57,12 +62,60 @@ export default function WaiterAppPremium() {
     const [itemToTransfer, setItemToTransfer] = useState<any>(null)
     const [isSplitMode, setIsSplitMode] = useState(false)
     const [selectedForSplit, setSelectedForSplit] = useState<{ itemId: string, quantity: number }[]>([])
+    const [pendingSync, setPendingSync] = useState<any[]>([])
+    const [voidAuth, setVoidAuth] = useState<{ active: boolean, type: 'order' | 'item' | 'release', id: string, extra?: any } | null>(null)
 
+    // Load pending orders on mount
     useEffect(() => {
-        if (!contextLoading) {
+        const saved = localStorage.getItem('jamali_pending_orders')
+        if (saved) setPendingSync(JSON.parse(saved))
+    }, [])
+
+    // Background Sync Effect
+    useEffect(() => {
+        const syncInterval = setInterval(async () => {
+            if (pendingSync.length > 0 && navigator.onLine) {
+                console.log("Attempting to sync pending orders...", pendingSync.length)
+                const toSync = [...pendingSync]
+                const remaining = []
+
+                for (const order of toSync) {
+                    try {
+                        const result = await createOrderWithNotes(order)
+                        if (!result.success) remaining.push(order)
+                        else {
+                            toast.success(`PEDIDO SINCRONIZADO: MESA ${order.table_id.substring(0, 4)}...`)
+                        }
+                    } catch (e) {
+                        remaining.push(order)
+                    }
+                }
+
+                setPendingSync(remaining)
+                localStorage.setItem('jamali_pending_orders', JSON.stringify(remaining))
+            }
+        }, 30000) // Every 30 seconds
+
+        return () => clearInterval(syncInterval)
+    }, [pendingSync])
+
+    // ⚡ Real-time subscription + data fetch
+    useEffect(() => {
+        if (!contextLoading && restaurant) {
             fetchData()
             const timer = setInterval(() => setCurrentTime(new Date()), 10000)
-            return () => clearInterval(timer)
+
+            // Real-time: escuchar cambios de órdenes (cocina marca ready, nuevos pedidos, etc.)
+            const channel = supabase.channel('waiter-orders-realtime')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'orders', filter: `restaurant_id=eq.${restaurant.id}` }, (payload) => {
+                    fetchData()
+                    if (payload.eventType === 'UPDATE' && (payload.new as any)?.status === 'ready') {
+                        toast.info('🍽️ PEDIDO LISTO PARA ENTREGAR', { duration: 8000, icon: '✅' })
+                    }
+                })
+                .subscribe()
+
+            return () => { clearInterval(timer); supabase.removeChannel(channel) }
         }
     }, [restaurant, contextLoading])
 
@@ -90,19 +143,21 @@ export default function WaiterAppPremium() {
                     .from('orders')
                     .select('id, table_id, total, status, priority, created_at')
                     .eq('restaurant_id', restaurant.id)
-                    .in('status', ['pending', 'preparing', 'ready'])
+                    .in('status', ['pending', 'preparing', 'ready', 'delivered', 'payment_requested'])
                     .order('created_at', { ascending: false })
 
+                // Fix: Para cada mesa, encontrar SOLO la orden más reciente (evita "mesa zombi")
                 const enrichedTables = tables.map(t => {
-                    const order = activeOrders?.find(o => o.table_id === t.id)
+                    const tableOrders = (activeOrders || []).filter(o => o.table_id === t.id)
+                    const latestOrder = tableOrders.length > 0 ? tableOrders[0] : null // Ya viene ordenado DESC
                     return {
                         ...t,
-                        active_order: order ? {
-                            id: order.id,
-                            total: order.total,
-                            status: order.status,
-                            priority: order.priority,
-                            created_at: order.created_at
+                        active_order: latestOrder ? {
+                            id: latestOrder.id,
+                            total: latestOrder.total,
+                            status: latestOrder.status,
+                            priority: latestOrder.priority,
+                            created_at: latestOrder.created_at
                         } : undefined
                     }
                 })
@@ -169,15 +224,28 @@ export default function WaiterAppPremium() {
                 priority: isPriority
             }
 
-            const result = await createOrderWithNotes(orderData)
-            if (result.success) {
-                await supabase.from('tables').update({ status: 'occupied' }).eq('id', selectedTable.id)
-                toast.success("COMANDA ENVIADA A COCINA")
-                setCart([]); setOrderNotes(""); setIsPriority(false); setView('tables');
-                fetchData()
-            } else toast.error(result.error)
-        } catch (e: any) {
-            toast.error(e.message)
+            try {
+                const result = await createOrderWithNotes(orderData)
+                if (result.success) {
+                    await supabase.from('tables').update({ status: 'occupied' }).eq('id', selectedTable.id)
+                    toast.success("COMANDA ENVIADA A COCINA")
+                    setCart([]); setOrderNotes(""); setIsPriority(false); setView('tables');
+                    fetchData()
+                } else {
+                    throw new Error(result.error)
+                }
+            } catch (err: any) {
+                // Si falla por red, guardamos localmente
+                if (!navigator.onLine || err.message.includes("fetch") || err.message.includes("network")) {
+                    const newPending = [...pendingSync, orderData]
+                    setPendingSync(newPending)
+                    localStorage.setItem('jamali_pending_orders', JSON.stringify(newPending))
+                    toast.warning("SIN CONEXIÓN: Pedido guardado localmente. Se enviará automáticamente al volver el Wi-Fi.", { duration: 10000 })
+                    setCart([]); setOrderNotes(""); setIsPriority(false); setView('tables');
+                } else {
+                    toast.error(err.message)
+                }
+            }
         } finally {
             setSubmitting(false)
         }
@@ -187,10 +255,12 @@ export default function WaiterAppPremium() {
         if (!selectedTable?.active_order || submitting) return
         setSubmitting(true)
         try {
-            const { error } = await supabase.from('orders').update({ status: 'delivered' }).eq('id', selectedTable.active_order.id)
-            if (!error) {
+            const result = await updateOrderStatusSecure(selectedTable.active_order.id, 'delivered')
+            if (result.success) {
                 toast.success("ORDEN ENTREGADA")
                 setView('tables'); fetchData()
+            } else {
+                toast.error(result.error || "Error al entregar")
             }
         } finally { setSubmitting(false) }
     }
@@ -218,12 +288,24 @@ export default function WaiterAppPremium() {
         setSubmitting(true)
         try {
             const { data: { user } } = await supabase.auth.getUser()
-            if (!user) return
+            if (!user) {
+                toast.error("Sesión no válida")
+                return
+            }
             const result = await mergeTables(mergeMode.sourceId, targetId, user.id)
             if (result.success) {
-                toast.success("MESAS UNIDAS"); setMergeMode({ active: false, sourceId: null }); fetchData()
-            } else toast.error(result.error)
-        } finally { setSubmitting(false) }
+                toast.success("MESAS UNIDAS EXITOSAMENTE")
+                setMergeMode({ active: false, sourceId: null })
+                setView('tables')
+                await fetchData()
+            } else {
+                toast.error(result.error || "No se pudo unir las mesas")
+            }
+        } catch (e: any) {
+            toast.error("Error de red: " + e.message)
+        } finally {
+            setSubmitting(false)
+        }
     }
 
     const handleTransferItem = async (targetTableId: string) => {
@@ -234,20 +316,64 @@ export default function WaiterAppPremium() {
             if (!user) return
             const result = await transferOrderItem(selectedTable.active_order.id, targetTableId, itemToTransfer.id, 1, user.id)
             if (result.success) {
-                toast.success("ÍTEM TRANSFERIDO"); setIsTransferMode(false); setItemToTransfer(null); setView('tables'); fetchData()
+                toast.success("ÍTEM TRANSFERIDO");
+                setIsTransferMode(false);
+                setItemToTransfer(null);
+                setView('tables');
+                await fetchData();
+            } else {
+                toast.error(result.error || "Ocurrió un error al transferir");
             }
-        } finally { setSubmitting(false) }
+        } catch (e: any) {
+            toast.error(e.message || "Error de red");
+        } finally {
+            setSubmitting(false);
+        }
     }
 
     const handleSendKitchenMsg = async () => {
         if (!kitchenMsg || submitting) return
         setSubmitting(true)
-        const { data: { user } } = await supabase.auth.getUser()
-        const result = await sendKitchenMessage(restaurant!.id, user?.email || "Mesero", kitchenMsg)
-        if (result.success) {
-            toast.success("MENSAJE ENVIADO"); setKitchenMsg(""); setIsChatOpen(false)
+        try {
+            const { data: { user } } = await supabase.auth.getUser()
+            const result = await sendKitchenMessage(restaurant!.id, user?.email || "Mesero", kitchenMsg)
+            if (result.success) {
+                toast.success("MENSAJE ENVIADO"); setKitchenMsg(""); setIsChatOpen(false)
+            }
+        } finally {
+            setSubmitting(false)
         }
-        setSubmitting(false)
+    }
+
+    const handleConfirmVoid = async (pin: string, reason: string) => {
+        if (!voidAuth || submitting) return
+        setSubmitting(true)
+        try {
+            let result;
+            if (voidAuth.type === 'order') {
+                result = await voidFullOrder(voidAuth.id, pin, reason)
+            } else if (voidAuth.type === 'item') {
+                result = await voidOrderItem(voidAuth.id, pin, reason)
+            } else if (voidAuth.type === 'release') {
+                if (selectedTable?.active_order) {
+                    result = await voidFullOrder(selectedTable.active_order.id, pin, "FORCAR LIBERACIÓN: " + reason)
+                } else {
+                    const { error } = await supabase.from('tables').update({ status: 'free' }).eq('id', voidAuth.id)
+                    result = { success: !error, error: error?.message }
+                }
+            }
+
+            if (result?.success) {
+                toast.success("OPERACIÓN AUTORIZADA Y REGISTRADA")
+                setVoidAuth(null)
+                setView('tables')
+                fetchData()
+            } else {
+                toast.error(result?.error || "Error en la operación")
+            }
+        } finally {
+            setSubmitting(false)
+        }
     }
 
     return (
@@ -263,7 +389,7 @@ export default function WaiterAppPremium() {
                     onOpenChat={() => setIsChatOpen(true)}
                 />
 
-                <main className="flex-1 overflow-hidden relative">
+                <main className="flex-1 overflow-y-auto relative custom-scrollbar">
                     {view === 'tables' ? (
                         <TableGrid
                             loading={loading}
@@ -274,7 +400,7 @@ export default function WaiterAppPremium() {
                             onMerge={handleMergeTables}
                             onTableClick={(table) => {
                                 setSelectedTable(table)
-                                setView(table.status === 'occupied' ? 'options' : 'order')
+                                setView((table.status === 'occupied' && table.active_order) ? 'options' : 'order')
                             }}
                             onFetchData={fetchData}
                         />
@@ -296,12 +422,31 @@ export default function WaiterAppPremium() {
                                 const { data: items } = await supabase.from('order_items').select('*, products(name)').eq('order_id', selectedTable?.active_order?.id)
                                 if (items) { (selectedTable as any).items = items; setIsTransferMode(true) }
                             }}
-                            onPay={() => router.push(`/admin/pos?table=${selectedTable?.id}`)}
+                            onPay={async () => {
+                                if (!selectedTable?.active_order) return;
+                                setSubmitting(true);
+                                try {
+                                    const result = await requestPayment(selectedTable.active_order.id)
+                                    if (result.success) {
+                                        toast.success("COBRO NOTIFICADO AL CAJERO", {
+                                            description: "La cuenta ha sido solicitada. Dirija al cliente a caja.",
+                                            icon: "🔔"
+                                        });
+                                    } else {
+                                        toast.error(result.error || "Error al solicitar cobro")
+                                    }
+                                    setView('tables');
+                                    fetchData();
+                                } finally {
+                                    setSubmitting(false);
+                                }
+                            }}
                             onDeliver={handleDeliverOrder}
-                            onRelease={async () => {
-                                if (!confirm("¿LIBERAR MESA?")) return
-                                await supabase.from('tables').update({ status: 'free' }).eq('id', selectedTable?.id)
-                                fetchData(); setView('tables')
+                            onRelease={() => {
+                                setVoidAuth({ active: true, type: 'release', id: selectedTable!.id })
+                            }}
+                            onVoidOrder={() => {
+                                setVoidAuth({ active: true, type: 'order', id: selectedTable!.active_order?.id || '' })
                             }}
                         />
                     ) : (
@@ -364,6 +509,19 @@ export default function WaiterAppPremium() {
                 onSplit={handleSplitCheck}
                 submitting={submitting}
             />
+
+            {voidAuth?.active && (
+                <VoidAuthModal
+                    title={voidAuth.type === 'release' ? "AUTORIZAR LIBERACIÓN" : "AUTORIZAR ANULACIÓN"}
+                    description={
+                        voidAuth.type === 'release'
+                            ? "La liberación manual de mesas activas es un evento de alta prioridad."
+                            : "Esta acción quedará registrada en el log de auditoría del restaurante."
+                    }
+                    onConfirm={handleConfirmVoid}
+                    onCancel={() => setVoidAuth(null)}
+                />
+            )}
 
             <style jsx global>{`
                 .custom-scrollbar::-webkit-scrollbar { width: 3px; }

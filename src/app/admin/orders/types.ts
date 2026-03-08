@@ -20,7 +20,7 @@ export interface OrderItem {
 export interface Order {
     id: string
     created_at: string
-    status: 'pending' | 'preparing' | 'ready' | 'out_for_delivery' | 'delivered' | 'cancelled' | 'payment_pending'
+    status: 'pending' | 'preparing' | 'ready' | 'out_for_delivery' | 'delivered' | 'payment_requested' | 'cancelled' | 'payment_pending'
     order_type: 'pickup' | 'delivery'
     total: number
     subtotal: number

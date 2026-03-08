@@ -23,7 +23,7 @@ Estructura de ventas en piso.
 | `categories` | Menú | Clasificación de productos (Ej: "Bebidas", "Fuertes"). |
 | `products` | Menú | Productos a la venta final (precio, visibilidad, imagen). |
 | `tables` | Salón | Disposición del salón. Atributos: `status` (Libre, Ocupada, Sucia). |
-| `orders` | Comandas | Cabeza de un pedido. Atributos críticos: `status` (PENDING, PREPARING, DELIVERED, COMPLETED), `total`. FKs: `waiter_id`, `table_id`. |
+| `orders` | Comandas | Cabeza de un pedido. **Máquina de Estados:** `pending → preparing → ready → delivered → payment_requested → paid`. FKs: `waiter_id`, `table_id`. |
 | `order_items` | Detalles | Cada producto de una orden. Permite estados de preparación individuales, modificaciones al plato y notas directas. |
 
 ## 3. Subsistema de Inventario y Recetas (ERP Culinario)
@@ -47,6 +47,7 @@ Control estricto contra descuadres robos.
 | `cashbox_sessions` | Transaccional | Turno de un cajero. Guarda: base inicial, dinero esperado vs declarado, responsable y descuadres. Agregadas columnas: `closed_with_pending`, `transferred_to`. |
 | `cash_movements` | Flujo | Entradas y salidas manuales durante una sesión activa. |
 | `petty_cash_vouchers` | Egresos | Pagos a proveedores en efectivo, recibos. |
+| `void_logs` | **Anulaciones** | Registro forense de cada anulación. Campos: operador, supervisor PIN, razón, monto, severidad. |
 
 ## 5. Subsistema Laboral y Nómina (Payroll Engine)
 Administración del personal, entregas a domicilio y liquidación automática de pagos.

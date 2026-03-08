@@ -207,3 +207,49 @@ export async function calculatePayrollForPeriod(
         client.release()
     }
 }
+
+/**
+ * Obtiene los datos necesarios para generar el PDF del desprendible de nómina
+ */
+export async function getPayrollSlipData(runId: string, employeeId: string) {
+    const client = await pool.connect()
+    try {
+        const [empRes, runRes, itemsRes] = await Promise.all([
+            client.query('SELECT full_name, role, document_id FROM public.profiles WHERE id = $1', [employeeId]),
+            client.query(`
+                SELECT pr.id, pr.status, pr.net_total, pr.total_earnings, pr.total_deductions,
+                       pp.name as period_name, pp.start_date, pp.end_date
+                FROM public.payroll_runs pr
+                JOIN public.payroll_periods pp ON pr.period_id = pp.id
+                WHERE pr.id = $1
+            `, [runId]),
+            client.query(`
+                SELECT pi.amount, pi.description, pc.name as concept_name, pc.type
+                FROM public.payroll_items pi
+                JOIN public.payroll_concepts pc ON pi.concept_id = pc.id
+                WHERE pi.run_id = $1 AND pi.employee_id = $2
+            `, [runId, employeeId])
+        ])
+
+        if (empRes.rowCount === 0 || runRes.rowCount === 0) throw new Error("Datos no encontrados")
+
+        return {
+            success: true,
+            data: {
+                employee: empRes.rows[0],
+                run: runRes.rows[0],
+                items: itemsRes.rows,
+                totals: {
+                    earnings: runRes.rows[0].total_earnings,
+                    deductions: runRes.rows[0].total_deductions,
+                    net_total: runRes.rows[0].net_total
+                }
+            }
+        }
+    } catch (e: any) {
+        console.error("Error fetching payroll slip data:", e)
+        return { success: false, error: e.message }
+    } finally {
+        client.release()
+    }
+}

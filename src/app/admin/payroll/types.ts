@@ -13,6 +13,7 @@ export type Employee = {
     arl_risk_level?: number
     transport_allowance_eligible?: boolean
     is_integral_salary?: boolean
+    restaurant_id: string
 }
 
 export type Concept = {

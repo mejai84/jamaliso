@@ -3,9 +3,10 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { openCashbox, getPosStatus } from "@/actions/pos"
+import { openCashbox, getPosStatus, forceCloseSessionBySupervisor, transferSessionOperator } from "@/actions/pos"
 import { supabase } from "@/lib/supabase/client"
-import { Loader2, Wallet, ArrowRight, Banknote, ShieldCheck } from "lucide-react"
+import { Loader2, Wallet, ArrowRight, Banknote, ShieldCheck, ShieldAlert, RotateCcw, UserPlus } from "lucide-react"
+import { toast } from "sonner"
 
 export default function OpenBoxPage() {
     const router = useRouter()
@@ -15,6 +16,9 @@ export default function OpenBoxPage() {
     const [shiftId, setShiftId] = useState<string | null>(null)
     const [amount, setAmount] = useState<string>("")
     const [notes, setNotes] = useState("")
+    const [errorMsg, setErrorMsg] = useState<string | null>(null)
+    const [isSupervisor, setIsSupervisor] = useState(false)
+    const [blockedSessionId, setBlockedSessionId] = useState<string | null>(null)
 
     // Validar que tenga turno activo antes de permitir abrir caja
     useEffect(() => {
@@ -43,6 +47,10 @@ export default function OpenBoxPage() {
                 return
             }
 
+            // Verificar rol de supervisor
+            const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
+            setIsSupervisor(['admin', 'owner', 'manager'].includes(profile?.role || ''))
+
             setShiftId(status.activeShift.id)
             setValidating(false)
         }
@@ -57,14 +65,44 @@ export default function OpenBoxPage() {
         try {
             const result = await openCashbox(shiftId, parseFloat(amount), notes)
             if (result.success) {
-                router.push("/admin/cashier") // Éxito, ir al dashboard
+                toast.success("CAJA ABIERTA EXITOSAMENTE")
+                router.push("/admin/cashier")
             } else {
-                alert("Atención: " + (result.error || "Error al abrir caja"))
+                setErrorMsg(result.error || "Error al abrir caja")
+                // Si el error es de caja ya abierta, intentamos buscar el ID de esa sesión para el supervisor
+                if (result.error?.includes("ya cuenta con una sesión abierta") || result.error?.includes("ya tiene una sesión activa")) {
+                    const { data: active } = await supabase.from('cashbox_sessions').select('id').eq('status', 'OPEN').limit(1).maybeSingle()
+                    if (active) setBlockedSessionId(active.id)
+                }
                 setLoading(false)
             }
         } catch (error: any) {
-            alert("Error crítico: " + error.message)
+            toast.error("Error crítico: " + error.message)
             setLoading(false)
+        }
+    }
+
+    const handleForceClose = async () => {
+        if (!blockedSessionId) return
+        setLoading(true)
+        const res = await forceCloseSessionBySupervisor(blockedSessionId, "Cierre de emergencia por supervisor")
+        if (res.success) {
+            toast.success("SESIÓN PREVIA CERRADA. Ya puedes intentar abrir la tuya.")
+            setBlockedSessionId(null); setErrorMsg(null); setLoading(false);
+        } else {
+            toast.error(res.error || "No se pudo cerrar la sesión"); setLoading(false);
+        }
+    }
+
+    const handleTransfer = async () => {
+        if (!blockedSessionId || !user) return
+        setLoading(true)
+        const res = await transferSessionOperator(blockedSessionId, user.id, "Transferencia de emergencia (Cambio de operador)")
+        if (res.success) {
+            toast.success("TE HAS REGISTRADO COMO EL NUEVO RESPONSABLE. Entrando al POS...")
+            router.push("/admin/cashier")
+        } else {
+            toast.error(res.error || "No se pudo transferir la sesión"); setLoading(false);
         }
     }
 
@@ -95,6 +133,42 @@ export default function OpenBoxPage() {
                         Ingresa el saldo base inicial para comenzar a operar.
                     </p>
                 </div>
+
+                {errorMsg && (
+                    <div className="bg-rose-50 border-2 border-rose-100 rounded-[2rem] p-8 space-y-4 animate-in slide-in-from-top-4 duration-500">
+                        <div className="flex items-start gap-4 text-rose-600">
+                            <ShieldAlert className="w-8 h-8 shrink-0" />
+                            <div>
+                                <h3 className="text-sm font-black uppercase italic tracking-wider">Acceso Bloqueado</h3>
+                                <p className="text-xs font-medium text-rose-500/80 leading-relaxed mt-1">{errorMsg}</p>
+                            </div>
+                        </div>
+
+                        {isSupervisor && blockedSessionId && (
+                            <div className="pt-4 grid grid-cols-2 gap-4">
+                                <Button
+                                    onClick={handleForceClose}
+                                    disabled={loading}
+                                    variant="ghost"
+                                    className="h-14 rounded-2xl bg-rose-600 text-white font-black text-[10px] uppercase italic tracking-widest hover:bg-rose-700 shadow-lg shadow-rose-200"
+                                >
+                                    <RotateCcw className="w-4 h-4 mr-2" /> Cierre de Emergencia
+                                </Button>
+                                <Button
+                                    onClick={handleTransfer}
+                                    disabled={loading}
+                                    variant="ghost"
+                                    className="h-14 rounded-2xl bg-slate-900 text-white font-black text-[10px] uppercase italic tracking-widest hover:bg-slate-800 shadow-lg shadow-slate-200"
+                                >
+                                    <UserPlus className="w-4 h-4 mr-2" /> Tomar Control
+                                </Button>
+                                <p className="col-span-2 text-[8px] text-center font-bold text-rose-400 uppercase tracking-widest italic">
+                                    Acciones de Supervisor: Estas operaciones quedan registradas en la auditoría de seguridad.
+                                </p>
+                            </div>
+                        )}
+                    </div>
+                )}
 
                 <form onSubmit={handleOpenBox} className="space-y-6">
                     <div className="space-y-4">

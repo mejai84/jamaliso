@@ -1,5 +1,5 @@
 # 📘 Manual de Usuario Vivo — JAMALISO
-> **Versión:** 3.0 ELITE | **Estado:** Documento Vivo | **Última revisión:** 08 Marzo 2026 (Refuerzo Guardian & Ventas Online)
+> **Versión:** 3.5 ELITE | **Estado:** Documento Vivo | **Última revisión:** 08 Marzo 2026 (Refuerzo Guardian, Offline Resiliency & Food Cost)
 
 Este manual es la referencia oficial para todos los roles del sistema. Está divido en dos tipos de secciones:
 - 🟢 **Guías Operativas**: Cómo usar cada módulo paso a paso.
@@ -128,9 +128,39 @@ Herramienta de alta velocidad para el salón. Optimizada para móvil y tablet. S
 | **Dividir Cuenta** | Separa ítems específicos en una nueva orden paralela |
 | **Unir Mesas** | Fusiona la orden de dos mesas ocupadas en una sola |
 | **Transferir Ítems** | Mueve un producto específico de una mesa a otra |
-| **Pagar Cuenta** | Redirige al módulo POS para procesar el cobro |
+| **Notificar Cobro** | El estado de la mesa cambia a "WAITING_PAYMENT" notificando al cajero. El mesero ya no procesa el pago. |
 | **Entregar al Cliente** | Marca la orden como entregada (solo visible si está en READY) |
 | **Liberar Mesa** | Pone la mesa en verde (solo si el pago ya fue procesado) |
+
+#### 🔄 3.4.2. Continuidad y Resiliencia (Modo Offline PWA)
+**JAMALI OS** está blindado contra fallos de internet en el restaurante.
+1.  **Toma de Pedidos sin Wi-Fi:** Si el sistema detecta que no hay conexión, el Portal de Mesero no se bloquea. Guarda los pedidos en una **Cola Local Segura**.
+2.  **Aviso Visual:** Verás una alerta de "SIN CONEXIÓN: Pedido guardado localmente".
+3.  **Sincronización Automática:** El sistema intenta enviar los pedidos cada 30 segundos. En cuanto el Wi-Fi vuelve, los pedidos viajan solos a la cocina.
+
+#### 🥘 3.4.3. Control de Inventario por Recetas (Food Cost)
+El sistema ha evolucionado de descontar platos a descontar **insumos base**.
+- **Ingeniería de Menú:** Cada plato tiene una "Receta" vinculada. Al vender una Hamburguesa, el sistema descuenta automáticamente: Carne, Pan, Queso, etc.
+- **Auditoría Forense:** Cada descuento automático genera un registro en el historial de **Movimientos de Inventario** con el flag `OUT (Receta)`.
+- **Alertas de Stock:** Si un ingrediente baja del mínimo, el sistema notifica proactivamente al Administrador.
+
+#### 📄 3.4.4. Generación de Documentos PDF
+- **Pre-cuentas:** En el modal de pre-visualización de mesa, use el botón de **Descargar PDF** (ícono de flecha abajo) para obtener un ticket profesional para el cliente.
+- **Desprendibles de Nómina:** En el Dashboard de Nómina, cada liquidación procesada tiene un botón de **Descarga** para obtener el comprobante legal en PDF.
+
+#### 3.4.1. Gestión de Cobros y Crisis (Rol Mesero vs Cajero)
+
+JAMALI OS separa estrictamente las responsabilidades por seguridad financiera.
+
+*   **Paso 1 (Mesero):** Cuando el cliente pide la cuenta, el mesero presiona **"NOTIFICAR COBRO"**. La mesa en el mapa se pondrá en color **Ámbar Pulsante**. Esto le avisa al cajero proactivamente que tiene un pago pendiente.
+*   **Paso 2 (Cajero):** El cliente se dirige a la caja. El cajero abre el **POS**, selecciona la mesa (que ya tiene los productos cargados) y procesa el pago legal. Al finalizar, la mesa se libera automáticamente en el mapa del mesero.
+
+**¿Cómo manejar problemas comunes?**
+1.  **"Ese plato no lo consumismos":** El mesero debe informar al cajero. El cajero es el único con permiso para editar la comanda en el POS antes de cerrar la venta. Este evento queda grabado en el log de auditoría.
+2.  **"Queremos pagar por separado":** El mesero debe usar la función **"Dividir Cuenta"** en su portal antes de enviar al cliente a la caja. Esto crea sub-cuentas que el cajero verá de forma independiente.
+3.  **Cliente que se va sin pagar (Robo/Error):** El Administrador debe entrar al Guardian o al Maestro de Mesas y usar **"FORZAR LIBERACIÓN"**. Esto libera la mesa pero genera una alerta de seguridad de alta prioridad.
+
+---
 
 ---
 
@@ -183,7 +213,9 @@ Monitor táctil que reemplaza las comandas en papel. Sincronización en tiempo r
 
 ### 🖥️ 3.6. Terminal POS — Venta Directa (`/admin/pos`)
 
-El corazón operativo para cobros rápidos y ventas de mostrador. Optimizada bajo la estética **Pixora Light** para máxima legibilidad y velocidad.
+El corazón operativo para cobros rápidos y ventas de mostrador. Optimizada bajo la estética **Pixora Light** para máxima legibilidad y velocidad. Incluye el **Jamali Security Shield** para el manejo de crisis y fricción.
+
+> 🛡️ **Guía Anti-Fricción (Solución a 30 problemas comunes):** `docs/JAMALI_POS_SECURITY_SHIELD.md`
 
 #### ¿Para qué es este módulo?
 Diseñado para la **barra, counter o caja principal**. Su objetivo es procesar transacciones en segundos, ideal para clientes que pagan al pedir o para liquidar cuentas de salón enviadas por los meseros.

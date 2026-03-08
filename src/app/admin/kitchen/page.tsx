@@ -102,6 +102,17 @@ export default function KitchenPage() {
     }
 
     const updateStatus = async (id: string, newStatus: OrderStatus) => {
+        // Fix 6: Solo permitir transiciones legales desde cocina
+        const allowedTransitions: Record<string, string[]> = {
+            'pending': ['preparing'],
+            'preparing': ['ready'],
+            'ready': [] // Cocina no puede mover de ready, eso lo hace el mesero
+        }
+        const currentOrder = orders.find(o => o.id === id)
+        if (currentOrder && !allowedTransitions[currentOrder.status]?.includes(newStatus)) {
+            toast.error(`TRANSICIÓN NO PERMITIDA: ${currentOrder.status} → ${newStatus}`)
+            return
+        }
         const { error } = await supabase.from('orders').update({ status: newStatus }).eq('id', id)
         if (!error) { fetchData(); toast.success(t.notifications.order_updated); }
     }

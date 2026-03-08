@@ -43,6 +43,9 @@ Este documento es la referencia definitiva para:
 - Alertas de tiempo de servicio (Pulso Rojo).
 - División de cuentas (Split Check) y Unión de Mesas.
 - Transferencia de ítems entre mesas.
+- **Real-time**: Notificación instantánea cuando cocina marca pedidos listos.
+- **Anulaciones con PIN**: Requiere autorización de supervisor para cancelar platos.
+- **Solicitud de Cuenta**: Estado dedicado `payment_requested` visible en cajero.
 
 ### 3. 👨‍🍳 [Cocina KDS PRO](/admin/kitchen)
 - Resumen de producción por ingredientes.
@@ -84,6 +87,13 @@ Este documento es la referencia definitiva para:
 - **Modo Offline (PWA)**: Interfaz resiliente ante caídas de internet en el restaurante.
 - **Testing & CI/CD**: Suite de Jest automatizada conectada a GitHub Actions.
 - **Edge Security**: Rate Limiting y CORS estrictos para repeler ataques automatizados.
+
+### 11. 🛡️ [Blindaje Anti-Fraude Pro](docs/JAMALI_POS_SECURITY_SHIELD.md)
+- **Anulaciones Fantasma**: PIN de supervisor obligatorio + logs forenses en `void_logs`.
+- **Arqueo Ciego**: El cajero cuenta sin ver el saldo teórico del sistema.
+- **Vínculo Atómico**: Imposible liberar mesa sin pago registrado.
+- **Trazabilidad de Insumos**: Deducción automática de ingredientes con movimientos rastreables.
+- **Máquina de Estados Unificada**: `pending → preparing → ready → delivered → payment_requested → paid`.
 
 ---
 ## 🏗️ Documentación del Sistema (Developer & Admin)

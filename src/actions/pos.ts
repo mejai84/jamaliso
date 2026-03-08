@@ -424,10 +424,107 @@ export async function closeCashbox(
         })
         .eq('id', sessionData.shift_id)
 
+    // 4. Auditoría
+    const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
+    const isSupervisor = ['admin', 'owner', 'manager'].includes(profile?.role || '')
+
     revalidatePath('/admin/cashier')
     revalidatePath('/admin')
 
-    return { success: true, systemAmount, difference: closingAmount - systemAmount }
+    return {
+        success: true,
+        systemAmount: isSupervisor ? systemAmount : null,
+        difference: isSupervisor ? closingAmount - systemAmount : null,
+        isBlind: !isSupervisor
+    }
+}
+
+/**
+ * Permite a un supervisor cerrar una sesión de caja de otro usuario.
+ * Soluciona: "Cajero se enferma o abandona el turno".
+ */
+export async function forceCloseSessionBySupervisor(sessionId: string, notes: string) {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) throw new Error("Unauthorized")
+
+    // 1. Validar que el usuario sea supervisor/admin
+    const { data: profile } = await supabase.from('profiles').select('role, restaurant_id').eq('id', user.id).single()
+    if (!['admin', 'owner', 'manager'].includes(profile?.role || '')) {
+        return { success: false, error: "No tienes permisos de supervisor para realizar esta acción." }
+    }
+
+    // 2. Cerrar la sesión
+    const { data: session, error: sessionErr } = await supabase
+        .from('cashbox_sessions')
+        .update({
+            status: 'CLOSED',
+            closing_notes: `CIERRE FORZADO POR SUPERVISOR: ${notes}`,
+            closing_time: new Date().toISOString()
+        })
+        .eq('id', sessionId)
+        .select('shift_id')
+        .single()
+
+    if (sessionErr) return { success: false, error: "Error al cerrar sesión: " + sessionErr.message }
+
+    // 3. Cerrar el turno asociado
+    await supabase.from('shifts').update({
+        status: 'CLOSED',
+        ended_at: new Date().toISOString()
+    }).eq('id', session.shift_id)
+
+    // 4. Auditoría
+    await supabase.from('security_audit').insert({
+        restaurant_id: profile?.restaurant_id,
+        user_id: user.id,
+        event_type: 'CASHIER_FORCE_CLOSE',
+        severity: 'CRITICAL',
+        description: `Cierre forzado de sesión ${sessionId} por supervisor`,
+        metadata: { supervisor_id: user.id, notes }
+    })
+
+    revalidatePath('/admin/cashier')
+    return { success: true }
+}
+
+/**
+ * Transfiere la responsabilidad de una sesión de caja a otro operador sin cerrarla.
+ */
+export async function transferSessionOperator(sessionId: string, targetUserId: string, notes: string) {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) throw new Error("Unauthorized")
+
+    // 1. Validar permisos
+    const { data: profile } = await supabase.from('profiles').select('role, restaurant_id').eq('id', user.id).single()
+    if (!['admin', 'owner', 'manager'].includes(profile?.role || '')) {
+        return { success: false, error: "Solo supervisores pueden transferir sesiones de caja." }
+    }
+
+    // 2. Actualizar el usuario responsable en la sesión
+    const { error } = await supabase
+        .from('cashbox_sessions')
+        .update({
+            user_id: targetUserId,
+            opening_notes: `OPERADOR CAMBIADO POR SUPERVISOR. Notas: ${notes}`
+        })
+        .eq('id', sessionId)
+
+    if (error) return { success: false, error: "Error al transferir: " + error.message }
+
+    // 3. Auditoría
+    await supabase.from('security_audit').insert({
+        restaurant_id: profile?.restaurant_id,
+        user_id: user.id,
+        event_type: 'CASHIER_TRANSFER',
+        severity: 'WARNING',
+        description: `Sesión ${sessionId} transferida al usuario ${targetUserId}`,
+        metadata: { supervisor_id: user.id, target_user_id: targetUserId, notes }
+    })
+
+    revalidatePath('/admin/cashier')
+    return { success: true }
 }
 
 /**
@@ -475,7 +572,16 @@ export async function performPartialAudit(
 
     if (error) throw new Error("Error al registrar arqueo: " + error.message)
 
-    return { ...data, difference: countedAmount - systemAmount }
+    // Arqueo Ciego: Solo supervisores ven el resultado del cálculo
+    const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
+    const isSupervisor = ['admin', 'owner', 'manager'].includes(profile?.role || '')
+
+    return {
+        ...data,
+        difference: isSupervisor ? (countedAmount - systemAmount) : null,
+        system_amount: isSupervisor ? systemAmount : null,
+        isBlind: !isSupervisor
+    }
 }
 
 import { deductInventoryFromOrder } from './inventory-actions'

@@ -1,6 +1,6 @@
 "use client"
 
-import { X, Cpu, Layers, Signal, Star, Heart, CheckCircle2, ChefHat } from "lucide-react"
+import { X, Cpu, Layers, Signal, Star, Heart, CheckCircle2, ChefHat, ShieldAlert, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { Order } from "@/app/admin/orders/types"
@@ -17,6 +17,8 @@ interface OrderDetailModalProps {
     setIncludeTip: (val: boolean) => void
     onUpdateStatus: (id: string, status: string) => void
     onHandlePayment: (method: string, order: Order) => void
+    onVoidItem: (itemId: string) => void
+    onVoidOrder: (orderId: string) => void
 }
 
 export function OrderDetailModal({
@@ -30,7 +32,9 @@ export function OrderDetailModal({
     includeTip,
     setIncludeTip,
     onUpdateStatus,
-    onHandlePayment
+    onHandlePayment,
+    onVoidItem,
+    onVoidOrder
 }: OrderDetailModalProps) {
     if (!order) return null
 
@@ -103,7 +107,18 @@ export function OrderDetailModal({
                                                 </div>
                                                 <span className="font-black italic uppercase text-lg text-foreground group-hover/item:text-primary transition-colors">{item.products?.name}</span>
                                             </div>
-                                            <span className="font-black italic text-muted-foreground/60 text-xl">${(item.unit_price * item.quantity).toLocaleString()}</span>
+                                            <div className="flex items-center gap-6">
+                                                <span className="font-black italic text-muted-foreground/60 text-xl">${(item.unit_price * item.quantity).toLocaleString()}</span>
+                                                {!['delivered', 'cancelled', 'payment_pending'].includes(order.status) && (
+                                                    <Button
+                                                        variant="ghost"
+                                                        className="w-12 h-12 rounded-xl bg-rose-50 text-rose-500 border-2 border-rose-100 hover:bg-rose-500 hover:text-white transition-all opacity-0 group-hover/item:opacity-100"
+                                                        onClick={(e) => { e.stopPropagation(); onVoidItem(item.id); }}
+                                                    >
+                                                        <ShieldAlert className="w-6 h-6" />
+                                                    </Button>
+                                                )}
+                                            </div>
                                         </div>
                                     )
                                 })}
@@ -183,6 +198,14 @@ export function OrderDetailModal({
                                     icon={<CheckCircle2 className="w-8 h-8" />}
                                     color="bg-purple-600"
                                     onClick={() => onUpdateStatus(order.id, 'ready')}
+                                />
+                            )}
+                            {['pending', 'preparing', 'ready'].includes(order.status) && (
+                                <ActionBtn
+                                    label="ANULAR_ORDEN"
+                                    icon={<ShieldAlert className="w-8 h-8" />}
+                                    color="bg-rose-500"
+                                    onClick={() => onVoidOrder(order.id)}
                                 />
                             )}
                         </div>

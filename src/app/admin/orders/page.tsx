@@ -28,6 +28,7 @@ import { cn } from "@/lib/utils"
 import { useRestaurant } from "@/providers/RestaurantProvider"
 import { toast } from "sonner"
 import { Order, Product } from "./types"
+import { voidFullOrder, voidOrderItem } from "@/actions/orders-fixed"
 
 // Components
 import { OrderKPI } from "@/components/admin/orders/OrderKPI"
@@ -35,6 +36,7 @@ import { OrderCard } from "@/components/admin/orders/OrderCard"
 import { EmptyState } from "@/components/admin/orders/EmptyState"
 import { CreateOrderModal } from "@/components/admin/orders/CreateOrderModal"
 import { OrderDetailModal } from "@/components/admin/orders/OrderDetailModal"
+import { VoidAuthModal } from "@/components/admin/orders/VoidAuthModal"
 
 function OrdersContent() {
     const { restaurant } = useRestaurant()
@@ -65,6 +67,7 @@ function OrdersContent() {
     // Customer Search State
     const [allCustomers, setAllCustomers] = useState<any[]>([])
     const [customerSearch, setCustomerSearch] = useState("")
+    const [voidAuth, setVoidAuth] = useState<{ active: boolean, type: 'order' | 'item', id: string } | null>(null)
 
     const fetchOrders = async () => {
         setLoading(true)
@@ -190,8 +193,28 @@ function OrdersContent() {
     }
 
     const activeProcessing = orders.filter(o => ['pending', 'preparing'].includes(o.status))
-    const paymentPending = orders.filter(o => ['ready', 'payment_pending', 'out_for_delivery'].includes(o.status))
-    const completedOrders = orders.filter(o => ['delivered', 'cancelled'].includes(o.status))
+    const paymentPending = orders.filter(o => ['ready', 'payment_requested', 'payment_pending', 'out_for_delivery'].includes(o.status))
+    const completedOrders = orders.filter(o => ['delivered', 'paid', 'cancelled'].includes(o.status))
+
+    const handleConfirmVoid = async (pin: string, reason: string) => {
+        if (!voidAuth) return
+        try {
+            let result;
+            if (voidAuth.type === 'order') {
+                result = await voidFullOrder(voidAuth.id, pin, reason)
+            } else {
+                result = await voidOrderItem(voidAuth.id, pin, reason)
+            }
+            if (result?.success) {
+                toast.success("ANULACIÓN AUTORIZADA Y REGISTRADA")
+                setVoidAuth(null)
+                setSelectedOrder(null)
+                fetchOrders()
+            } else {
+                toast.error(result?.error || "Error en la operación")
+            }
+        } catch (e: any) { toast.error(e.message) }
+    }
 
     return (
         <div className="min-h-screen bg-[#F8FAFC] text-slate-900 font-sans selection:bg-orange-500 overflow-hidden flex flex-col h-screen relative">
@@ -324,7 +347,18 @@ function OrdersContent() {
                 selectedItemsForSplit={selectedItemsForSplit} setSelectedItemsForSplit={setSelectedItemsForSplit}
                 restaurant={restaurant} includeTip={includeTip} setIncludeTip={setIncludeTip}
                 onUpdateStatus={updateStatus} onHandlePayment={handlePayment}
+                onVoidItem={(itemId: string) => setVoidAuth({ active: true, type: 'item', id: itemId })}
+                onVoidOrder={(orderId: string) => setVoidAuth({ active: true, type: 'order', id: orderId })}
             />
+
+            {voidAuth?.active && (
+                <VoidAuthModal
+                    title="AUTORIZAR ANULACIÓN"
+                    description="Esta acción requiere PIN de supervisor y quedará registrada en la auditoría."
+                    onConfirm={handleConfirmVoid}
+                    onCancel={() => setVoidAuth(null)}
+                />
+            )}
 
             <style jsx global>{`
                 .custom-scrollbar::-webkit-scrollbar { width: 8px; height: 8px; }

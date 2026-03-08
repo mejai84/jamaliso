@@ -1,9 +1,10 @@
 "use client"
 
-import { Receipt, X, Briefcase } from "lucide-react"
+import { Receipt, X, FileDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { formatPrice } from "@/lib/utils"
 import { Table } from "@/app/admin/waiter/types"
+import { generatePreBillPDF } from "@/lib/pdf-generator"
 
 interface BillPreviewModalProps {
     isOpen: boolean
@@ -53,10 +54,11 @@ export function BillPreviewModal({
                 <div className="p-8 bg-slate-50 border-t border-slate-100 flex gap-3">
                     <Button onClick={onClose} className="flex-1 h-14 bg-white border border-slate-200 text-slate-900 font-bold rounded-2xl">CERRAR</Button>
                     <button
-                        onClick={() => typeof window !== 'undefined' && window.print()}
-                        className="w-14 h-14 bg-slate-900 text-white rounded-2xl flex items-center justify-center hover:bg-slate-800 transition-colors"
+                        onClick={() => generatePreBillPDF(restaurant, table)}
+                        className="w-14 h-14 bg-slate-900 text-white rounded-2xl flex items-center justify-center hover:bg-indigo-600 transition-colors shadow-lg"
+                        title="Descargar PDF"
                     >
-                        <Briefcase className="w-5 h-5" />
+                        <FileDown className="w-5 h-5" />
                     </button>
                 </div>
             </div>

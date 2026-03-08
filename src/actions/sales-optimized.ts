@@ -23,18 +23,31 @@ export interface SaleItem {
     subtotal: number;
 }
 
+export interface PaymentMethodDetail {
+    method: 'cash' | 'card' | 'transfer' | 'qr';
+    amount: number;
+}
+
 export interface CompleteSaleData {
     restaurant_id: string;
     user_id: string;
     cashbox_session_id: string;
     items: SaleItem[];
-    payment_method: 'cash' | 'card' | 'transfer' | 'mixed';
+    payments: PaymentMethodDetail[]; // Soportar pagos mixtos
     subtotal: number;
     tax?: number;
+    tip?: number;
+    service_charge?: number;
+    discount_amount?: number;
     total: number;
     customer_id?: string;
     table_id?: string;
     notes?: string;
+    is_incident?: boolean; // Para 'Dine and Dash'
+    incident_reason?: string;
+    is_courtesy?: boolean;
+    courtesy_reason?: string;
+    authorized_by?: string;
 }
 
 export interface CancelSaleData {
@@ -165,13 +178,24 @@ export async function completeSaleAtomic(saleData: CompleteSaleData) {
                 p_user_id: userId,
                 p_cashbox_session_id: saleData.cashbox_session_id,
                 p_items: JSON.stringify(saleData.items),
-                p_payment_method: saleData.payment_method,
+                p_payment_method: saleData.payments.length > 1 ? 'mixed' : (saleData.payments[0]?.method || 'cash'),
                 p_subtotal: saleData.subtotal,
                 p_tax: saleData.tax || 0,
                 p_total: saleData.total,
                 p_customer_id: saleData.customer_id || null,
                 p_table_id: saleData.table_id || null,
-                p_notes: saleData.notes || null
+                p_notes: JSON.stringify({
+                    notes: saleData.notes,
+                    tip: saleData.tip,
+                    service_charge: saleData.service_charge,
+                    discount_amount: saleData.discount_amount,
+                    is_incident: saleData.is_incident,
+                    incident_reason: saleData.incident_reason,
+                    payments_detail: saleData.payments
+                }),
+                p_is_courtesy: saleData.is_courtesy || false,
+                p_courtesy_reason: saleData.courtesy_reason || null,
+                p_authorized_by: saleData.authorized_by || null
             })
 
         if (error) {
