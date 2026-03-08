@@ -17,6 +17,7 @@ import {
     Zap,
     ShieldCheck,
     ShieldAlert,
+    Shield,
     Settings,
     Printer,
     Server,
@@ -85,9 +86,10 @@ export const sidebarSections = [
     {
         title: "ESTRATEGIA & SAAS",
         items: [
-            { icon: Zap, label: "JAMALI Hub Live", href: "/admin/hub", roles: ['admin'] },
-            { icon: ShieldCheck, label: "Auditoría / Roles", href: "/admin/employees", roles: ['admin'] },
-            { icon: ShieldAlert, label: "Trazabilidad SaaS", href: "/admin/audit", roles: ['admin'] },
+            { icon: Zap, label: "JAMALI Hub Live", href: "/admin/hub", roles: ['admin', 'owner', 'developer'] },
+            { icon: Shield, label: "JAMALI Guardian", href: "/admin/guardian", roles: ['owner', 'developer'] },
+            { icon: ShieldCheck, label: "Auditoría / Roles", href: "/admin/employees", roles: ['admin', 'owner', 'developer'] },
+            { icon: ShieldAlert, label: "Trazabilidad SaaS", href: "/admin/audit", roles: ['admin', 'owner', 'developer'] },
         ]
     },
     {

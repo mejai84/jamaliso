@@ -14,12 +14,18 @@ import { Customer } from "@/components/admin/customers/types"
 import { CustomersHeader } from "@/components/admin/customers/CustomersHeader"
 import { CustomersMetrics } from "@/components/admin/customers/CustomersMetrics"
 import { CustomersTable } from "@/components/admin/customers/CustomersTable"
+import { DataFlow, CSVColumn } from "@/lib/data-flow"
+import { DataImportWizard } from "@/components/admin/shared/DataImportWizard"
+import { DataFlowActions } from "@/components/admin/shared/DataFlowActions"
+import { useRestaurant } from "@/providers/RestaurantProvider"
 
 export default function CustomersPagePremium() {
+    const { restaurant } = useRestaurant()
     const [view, setView] = useState<'database' | 'loyalty' | 'notifications'>('database')
     const [customers, setCustomers] = useState<Customer[]>([])
     const [loading, setLoading] = useState(true)
     const [searchTerm, setSearchTerm] = useState("")
+    const [isImportModalOpen, setIsImportModalOpen] = useState(false)
 
     useEffect(() => {
         fetchInitialData()
@@ -62,6 +68,33 @@ export default function CustomersPagePremium() {
         setLoading(false)
     }
 
+    const handleExport = () => {
+        const columns: CSVColumn<Customer>[] = [
+            { header: 'ID', key: 'id' },
+            { header: 'Nombre', key: 'name' },
+            { header: 'Email', key: 'email' },
+            { header: 'Teléfono', key: 'phone' },
+            { header: 'Puntos', key: 'points' }
+        ];
+        DataFlow.exportToCSV(customers, columns, 'clientes-jamaliso');
+        toast.info("Descargando base de datos de élite...");
+    }
+
+    const handleImport = async (data: any[]) => {
+        if (!restaurant) return;
+        const toInsert = data.map(row => ({
+            restaurant_id: restaurant.id,
+            full_name: row.name,
+            email: row.email,
+            phone: row.phone,
+            loyalty_points: parseInt(row.points) || 0,
+            role: 'customer'
+        }));
+        const { error } = await supabase.from('profiles').insert(toInsert);
+        if (error) throw error;
+        fetchInitialData();
+    }
+
     const filtered = customers.filter(c =>
         c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         c.phone.includes(searchTerm)
@@ -99,9 +132,15 @@ export default function CustomersPagePremium() {
                             />
                         </div>
                         <div className="flex gap-6">
+                            <DataFlowActions
+                                onExport={handleExport}
+                                onImport={() => setIsImportModalOpen(true)}
+                                importLabel="Importar"
+                                exportLabel="Exportar"
+                            />
                             <Button
                                 onClick={() => toast.info("HERRAMIENTA DE SEGMENTACIÓN: Próximamente")}
-                                variant="ghost" className="h-16 px-10 rounded-2xl bg-slate-50 border-2 border-slate-100 text-slate-400 font-black uppercase italic text-[10px] tracking-[0.3em] transition-all hover:bg-slate-900 hover:text-white"
+                                variant="ghost" className="h-16 px-10 rounded-2xl bg-slate-50 border-2 border-slate-100 text-slate-400 font-black uppercase italic text-[10px] tracking-[0.3em] transition-all hover:bg-900 hover:text-white"
                             >
                                 <Filter className="w-5 h-5 mr-4" /> Segmentar
                             </Button>
@@ -113,6 +152,19 @@ export default function CustomersPagePremium() {
                             </Button>
                         </div>
                     </div>
+
+                    <DataImportWizard
+                        isOpen={isImportModalOpen}
+                        onClose={() => setIsImportModalOpen(false)}
+                        onConfirm={handleImport}
+                        moduleName="Base de Datos de Clientes"
+                        requiredFields={[
+                            { key: 'name', label: 'Nombre Completo' },
+                            { key: 'email', label: 'Correo Electrónico' },
+                            { key: 'phone', label: 'Teléfono' },
+                            { key: 'points', label: 'Puntos de Lealtad' }
+                        ]}
+                    />
 
                     {/* Table Style Database */}
                     <div className="flex-1 overflow-y-auto custom-scrollbar">

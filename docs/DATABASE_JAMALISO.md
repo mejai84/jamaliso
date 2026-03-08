@@ -60,7 +60,14 @@ Administración del personal, entregas a domicilio y liquidación automática de
 | `payroll_runs` | Liquidaciones | Ejecución en bóveda (Transacción). Guarda totales por periodo. |
 | `payroll_items` | Desprendibles | Detalles cruzados (Empleado -> Concepto -> Valor $). |
 | `delivery_tracking` | Logística | Manejo de despachos y tiempos de entrega de Domicilios, KPIs de repartidores. |
-| `security_events` | Auditoría Forense | Log de eventos de seguridad (cambios de precios, intentos de edición de órdenes cerradas, violaciones de política RLS). |
+| `security_audit` | Auditoría Forense | Log de eventos de seguridad, autorizaciones remotas, alertas push de inventario e IA. |
+
+## 6. Subsistema de Inteligencia Predictiva (IA Guardian)
+| Recurso | Tipo | Función |
+| :--- | :--- | :--- |
+| `guardian_employee_risk` | **Vista** | Motor IA que cruza anulaciones, descuentos y auditoría previa para generar un Score de Riesgo (0-100%). |
+| `pattern_anomaly_watchdog` | **Trigger** | Disparador reactivo que detecta ráfagas de fraude en ventanas de < 2 horas y scores críticos. |
+| `inventory_watchdog` | **Trigger** | Alerta automática al Guardián cuando un insumo rompe el stock mínimo configurado. |
 
 ---
 

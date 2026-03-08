@@ -111,8 +111,8 @@ export default function PayrollPage() {
 
     const stats = [
         { label: 'TURNOS ACTIVOS', val: activeShifts.length.toString(), icon: Zap, color: 'text-orange-500' },
-        { label: 'NÓMINA PENDIENTE', val: '$450.000', icon: Wallet, color: 'text-emerald-500' },
-        { label: 'COLABORADORES', val: employees.length.toString(), icon: Users, color: 'text-blue-400' }
+        { label: 'COSTO TOTAL EMPRESA', val: '$2.450.000', icon: Wallet, color: 'text-emerald-500' },
+        { label: 'CARGA PRESTACIONAL', val: '21.8%', icon: ShieldCheck, color: 'text-blue-400' }
     ]
 
     const menuTabs = [

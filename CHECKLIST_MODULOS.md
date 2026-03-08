@@ -35,7 +35,7 @@
 - [✅] Plano de salón visual drag & drop (Architecture Engine v2. ✅)
 - [✅] Notificación al mesero cuando pedido está listo (Bell & Zap Indicators. ✅)
 - [✅] WAITER PRO: Favoritos, Reloj de Servicio, Split Check, Transferencia y Unión de Mesas (✅)
-- [ ] App móvil para el dueño (PWA) (1 semana. ⏳)
+- [✅] JAMALI Guardian: App móvil para el dueño (Remote Approval & Security Watchdog) (✅)
 
 ## 🔌 Integraciones y Ecosistema
 *Conectar Jamali OS con el mundo exterior*

@@ -5,15 +5,20 @@ export type Employee = {
     is_active: boolean
     email?: string
     contract_type?: string
-    base_salary?: number
+    monthly_salary?: number
+    hourly_rate?: number
     commission_percentage?: number
     last_shift?: string
+    document_id?: string
+    arl_risk_level?: number
+    transport_allowance_eligible?: boolean
+    is_integral_salary?: boolean
 }
 
 export type Concept = {
     id: string
     name: string
-    type: string
+    type: 'EARNING' | 'DEDUCTION'
     category: string
     percentage?: number
     is_legal: boolean

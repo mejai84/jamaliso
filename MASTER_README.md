@@ -39,17 +39,25 @@ Este documento es la referencia definitiva para:
 - Integración nativa con **Mercado Pago** para planes Starter, Pro y Enterprise.
 - Webhooks de validación y control de suscripciones.
 
-### 6. 💼 [Motor de Nómina (Payroll)](/admin/payroll)
-- Dashboard Financiero de sueldos y contratos.
-- Cálculo automático de periodos (Horas Extras y Comisiones POS).
-- Transacciones ACID para la dispersión segura de pagos.
+### 6. 💼 [JAMALI PAYROLL PRO](/admin/payroll)
+- **Cumplimiento Legal**: Motor de liquidación para Colombia (SMLV, Salud, Pensión, ARL, Auxilio Transporte).
+- **Provisiones IFRS**: Acumulación automática de Prima, Cesantías y Vacaciones.
+- **Transacciones ACID**: Dispersión segura de pagos y control de costo real de empresa (Employer Cost).
 
 ### 7. 🌐 [Ventas Online Central](/admin/online-sales)
 - Activación de Web Pública y Menú Digital.
 - Configuración de SEO, Instagram y Facebook.
 - Switch dinámico entre Menú y E-commerce.
 
-### 7. 🛡️ Arquitectura Enterprise & Seguridad
+### 8. 🛡️ [JAMALI Guardian (Owner App)](/admin/guardian)
+- **Detección de Fraude**: Triggers automáticos para anulación de tickets y descuentos atípicos.
+- **Autorización Remota**: El dueño aprueba o rechaza acciones críticas desde su móvil.
+- **Watchdog de Inventario**: Alerta push por bajo stock de insumos clave.
+- **KPIs en Vivo**: Ingreso neto, margen real y labor cost en tiempo real.
+- **Inteligencia Predictiva**: Scoring IA de sospecha (0-100%) y detección de ráfagas (Burst Detection).
+- **Multi-Sede Central**: Gestión unificada de todas las sucursales desde la misma interfaz.
+
+### 9. 🛡️ Arquitectura Enterprise & Seguridad
 - **Modo Offline (PWA)**: Interfaz resiliente ante caídas de internet en el restaurante.
 - **Testing & CI/CD**: Suite de Jest automatizada conectada a GitHub Actions.
 - **Edge Security**: Rate Limiting y CORS estrictos para repeler ataques automatizados.

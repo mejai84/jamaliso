@@ -37,9 +37,16 @@ export function ConceptsTab({ concepts }: ConceptsTabProps) {
                                     <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{c.category}</p>
                                 </div>
                             </div>
-                            <div className="text-right">
-                                <p className="text-xs font-black italic">{c.percentage ? `${c.percentage}%` : 'VALOR FIJO'}</p>
-                                <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">{c.is_legal ? 'REGLA DE LEY' : 'BENEFICIO EXTRA'}</p>
+                            <div className="flex items-center gap-6">
+                                <div className="text-right">
+                                    <p className="text-xs font-black italic">{c.percentage ? `${c.percentage}%` : 'VALOR FIJO'}</p>
+                                    <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">{c.is_legal ? 'BASE_DIAN' : 'OPCIONAL'}</p>
+                                </div>
+                                {c.is_legal && (
+                                    <div className="bg-orange-600/10 border border-orange-600/20 p-2 rounded-md">
+                                        <ShieldCheck className="w-4 h-4 text-orange-600" />
+                                    </div>
+                                )}
                             </div>
                         </div>
                     )) : (

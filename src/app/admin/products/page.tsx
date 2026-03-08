@@ -41,6 +41,10 @@ import { categories } from "@/lib/data"
 import { cn, formatPrice } from "@/lib/utils"
 import Link from "next/link"
 import { toast } from "sonner"
+import { DataFlow, CSVColumn } from "@/lib/data-flow"
+import { DataImportWizard } from "@/components/admin/shared/DataImportWizard"
+import { DataFlowActions } from "@/components/admin/shared/DataFlowActions"
+import { useRestaurant } from "@/providers/RestaurantProvider"
 
 type Product = {
     id: string
@@ -56,9 +60,11 @@ type Product = {
 }
 
 export default function AdminProductsPremium() {
+    const { restaurant } = useRestaurant()
     const [products, setProducts] = useState<Product[]>([])
     const [loading, setLoading] = useState(true)
     const [searchTerm, setSearchTerm] = useState("")
+    const [isImportModalOpen, setIsImportModalOpen] = useState(false)
 
     useEffect(() => {
         fetchProducts()
@@ -69,6 +75,32 @@ export default function AdminProductsPremium() {
         const { data } = await supabase.from('products').select('*').order('created_at', { ascending: false })
         if (data) setProducts(data as Product[])
         setLoading(false)
+    }
+
+    const handleExport = () => {
+        const columns: CSVColumn<Product>[] = [
+            { header: 'ID', key: 'id' },
+            { header: 'Nombre', key: 'name' },
+            { header: 'Precio', key: 'price' },
+            { header: 'Descripción', key: 'description' },
+            { header: 'Disponible', key: 'is_available', transform: (v) => v ? 'SI' : 'NO' }
+        ];
+        DataFlow.exportToCSV(products, columns, 'catalogo-jamaliso');
+        toast.info("Exportando catálogo digital...");
+    }
+
+    const handleImport = async (data: any[]) => {
+        if (!restaurant) return;
+        const toInsert = data.map(row => ({
+            restaurant_id: restaurant.id,
+            name: row.name,
+            price: parseFloat(row.price) || 0,
+            description: row.description,
+            is_available: row.is_available?.toUpperCase() === 'SI'
+        }));
+        const { error } = await supabase.from('products').insert(toInsert);
+        if (error) throw error;
+        fetchProducts();
     }
 
     const filtered = products.filter(p => p.name.toLowerCase().includes(searchTerm.toLowerCase()))
@@ -106,11 +138,32 @@ export default function AdminProductsPremium() {
                             onChange={e => setSearchTerm(e.target.value)}
                         />
                     </div>
+
+                    <DataFlowActions
+                        onExport={handleExport}
+                        onImport={() => setIsImportModalOpen(true)}
+                        importLabel="Importar CSV"
+                        exportLabel="Exportar CSV"
+                    />
+
                     <Button className="h-16 px-12 bg-slate-900 hover:bg-slate-800 text-white font-black uppercase text-xs italic tracking-widest rounded-2xl shadow-xl shadow-slate-900/10 active:scale-95 transition-all gap-4">
                         <Plus className="w-6 h-6" /> CREAR PROTOCOLO
                     </Button>
                 </div>
             </div>
+
+            <DataImportWizard
+                isOpen={isImportModalOpen}
+                onClose={() => setIsImportModalOpen(false)}
+                onConfirm={handleImport}
+                moduleName="Catálogo de Productos"
+                requiredFields={[
+                    { key: 'name', label: 'Nombre' },
+                    { key: 'price', label: 'Precio' },
+                    { key: 'description', label: 'Descripción' },
+                    { key: 'is_available', label: 'Disponible (SI/NO)' }
+                ]}
+            />
 
             <div className="relative z-10 p-8 flex-1 overflow-hidden flex flex-col gap-8 max-w-[1800px] mx-auto w-full animate-in fade-in slide-in-from-bottom-5 duration-1000">
 

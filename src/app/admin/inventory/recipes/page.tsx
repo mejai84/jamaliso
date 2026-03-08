@@ -24,6 +24,9 @@ import { cn } from "@/lib/utils"
 import { useRestaurant } from "@/providers/RestaurantProvider"
 import { getRecipes, getIngredients, saveRecipe } from "./actions"
 import { toast } from "sonner"
+import { DataFlow, CSVColumn } from "@/lib/data-flow"
+import { DataImportWizard } from "@/components/admin/shared/DataImportWizard"
+import { DataFlowActions } from "@/components/admin/shared/DataFlowActions"
 
 type Recipe = {
     id: string
@@ -40,6 +43,7 @@ export default function RecipesPage() {
     const [recipes, setRecipes] = useState<Recipe[]>([])
     const [loading, setLoading] = useState(true)
     const [searchTerm, setSearchTerm] = useState("")
+    const [isImportModalOpen, setIsImportModalOpen] = useState(false)
 
     useEffect(() => {
         if (restaurant?.id) {
@@ -70,6 +74,41 @@ export default function RecipesPage() {
         } finally {
             setLoading(false)
         }
+    }
+
+    const handleExport = () => {
+        const columns: CSVColumn<Recipe>[] = [
+            { header: 'ID', key: 'id' },
+            { header: 'Nombre', key: 'name' },
+            { header: 'Costo Total', key: 'total_cost' },
+            { header: 'Margen (%)', key: 'margin' },
+            { header: 'Componentes', key: 'components_count' }
+        ];
+        DataFlow.exportToCSV(recipes, columns, 'recetario-jamaliso');
+        toast.info("Exportando el Kernel de Recetas...");
+    }
+
+    const handleImport = async (data: any[]) => {
+        toast.promise(
+            new Promise(resolve => setTimeout(resolve, 2000)),
+            {
+                loading: 'Procesando Fichas Técnicas...',
+                success: () => {
+                    const newRecipes = data.map(row => ({
+                        id: Math.random().toString(36).substring(7),
+                        name: row.name,
+                        total_cost: parseFloat(row.total_cost) || 0,
+                        margin: parseFloat(row.margin) || 0,
+                        components_count: parseInt(row.components_count) || 1,
+                        main_ingredients: row.ingredients?.split(',') || [],
+                        status: 'optimal' as const
+                    }));
+                    setRecipes(prev => [...prev, ...newRecipes]);
+                    return 'Recetario actualizado masivamente.';
+                },
+                error: 'Error en la estructura del archivo de recetas.'
+            }
+        );
     }
 
     const filtered = recipes.filter(r => r.name.toLowerCase().includes(searchTerm.toLowerCase()))
@@ -107,6 +146,12 @@ export default function RecipesPage() {
                                 onChange={e => setSearchTerm(e.target.value)}
                             />
                         </div>
+                        <DataFlowActions
+                            onExport={handleExport}
+                            onImport={() => setIsImportModalOpen(true)}
+                            importLabel="Importar Recetario"
+                            exportLabel="Respaldar Recetas"
+                        />
                         <Button className="h-14 px-8 bg-orange-600 hover:bg-orange-700 text-black font-black uppercase text-xs italic tracking-widest rounded-full shadow-2xl shadow-orange-600/30">
                             CREAR FICHA TÉCNICA
                         </Button>
@@ -165,7 +210,40 @@ export default function RecipesPage() {
                             </div>
                         ))}
                     </div>
+
+                    {filtered.length === 0 && !loading && (
+                        <div className="flex flex-col items-center justify-center py-40 animate-in fade-in zoom-in duration-1000">
+                            <div className="w-32 h-32 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-10 group hover:border-orange-500/30 transition-all">
+                                <ChefHat className="w-16 h-16 text-slate-700 group-hover:text-orange-500 transition-all" />
+                            </div>
+                            <h2 className="text-4xl font-black italic tracking-tighter uppercase mb-4">Librería de Recetas Vacía</h2>
+                            <p className="text-slate-500 text-xs font-bold uppercase tracking-[0.4em] mb-12">Empiece cargando sus fichas técnicas de escándalo</p>
+                            <div className="flex gap-6">
+                                <Button className="h-14 px-10 rounded-full bg-white text-black font-black uppercase text-[10px] tracking-widest italic hover:scale-105 transition-all">
+                                    Configurar Primera Receta
+                                </Button>
+                                <Button
+                                    onClick={() => setIsImportModalOpen(true)}
+                                    variant="outline"
+                                    className="h-14 px-10 rounded-full border-white/10 text-white font-black uppercase text-[10px] tracking-widest italic hover:bg-white/5 transition-all"
+                                >
+                                    Importar desde Excel
+                                </Button>
+                            </div>
+                        </div>
+                    )}
                 </div>
+
+                <DataImportWizard
+                    isOpen={isImportModalOpen}
+                    onClose={() => setIsImportModalOpen(false)}
+                    onConfirm={handleImport}
+                    moduleName="Kernel de Recetas"
+                    requiredFields={[
+                        { key: 'name', label: 'Nombre Receta' },
+                        { key: 'total_cost', label: 'Costo Estimado' }
+                    ]}
+                />
 
                 {/* Footer KPIs Rápidos */}
                 <div className="flex gap-10 border-t border-white/5 pt-8 shrink-0">
@@ -198,6 +276,6 @@ export default function RecipesPage() {
                     border-radius: 10px; 
                 }
             `}</style>
-        </div>
+        </div >
     )
 }

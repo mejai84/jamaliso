@@ -46,31 +46,37 @@ export function EmployeesTab({ employees }: EmployeesTabProps) {
                                             </div>
                                             <div>
                                                 <p className="text-xs font-black italic uppercase tracking-tight text-slate-900">{emp.full_name}</p>
-                                                <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">{emp.email}</p>
+                                                <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest">
+                                                    {emp.document_id ? `CC ${emp.document_id}` : emp.email}
+                                                </p>
                                             </div>
                                         </div>
                                     </td>
                                     <td className="px-4 py-3 border-y border-slate-100 hidden md:table-cell">
-                                        <span className="px-2 py-1 bg-blue-50 text-blue-600 text-[8px] font-black uppercase italic rounded-md border border-blue-100">
-                                            {emp.contract_type || 'INDEFINIDO'}
-                                        </span>
+                                        <div className="flex flex-col gap-1">
+                                            <span className="px-2 py-1 bg-blue-50 text-blue-600 text-[8px] font-black uppercase italic rounded-md border border-blue-100 w-fit">
+                                                {emp.contract_type || 'INDEFINIDO'}
+                                            </span>
+                                            <span className="text-[7px] font-bold text-slate-400 uppercase tracking-widest">ARL RIESGO {emp.arl_risk_level || 1}</span>
+                                        </div>
                                     </td>
                                     <td className="px-4 py-3 border-y border-slate-100">
-                                        <p className="text-xs font-black italic text-slate-900">{formatPrice(emp.base_salary || 0)}</p>
-                                        <p className="text-[7px] font-bold text-slate-400 uppercase tracking-widest italic">VALOR MENSUAL</p>
+                                        <p className="text-xs font-black italic text-slate-900">{formatPrice(emp.monthly_salary || 0)}</p>
+                                        <div className="flex items-center gap-1">
+                                            <span className="text-[7px] font-bold text-slate-400 uppercase tracking-widest italic leading-none">BASE LEGAL</span>
+                                            {emp.is_integral_salary && <span className="bg-emerald-500 text-white text-[6px] px-1 rounded-sm font-black">INTEGRAL</span>}
+                                        </div>
                                     </td>
                                     <td className="px-4 py-3 border-y border-slate-100 hidden md:table-cell">
-                                        <div className="flex items-center gap-2">
-                                            <div className="h-1.5 w-8 bg-slate-200 rounded-full overflow-hidden">
-                                                <div className="h-full bg-orange-500" style={{ width: `${emp.commission_percentage || 0}%` }} />
-                                            </div>
-                                            <span className="text-[10px] font-black italic text-orange-600">{emp.commission_percentage || 0}%</span>
-                                        </div>
+                                        <p className="text-[10px] font-black italic text-orange-600">
+                                            {emp.transport_allowance_eligible ? "TIPO: CON SUBSIDIO" : "TIPO: SIN SUBSIDIO"}
+                                        </p>
+                                        <p className="text-[7px] font-bold text-slate-400 uppercase tracking-widest italic">AUX_TRANSPORTE</p>
                                     </td>
                                     <td className="px-4 py-3 border-y border-r border-slate-100 last:rounded-r-xl">
                                         <div className="flex items-center gap-1.5">
                                             <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_5px_rgba(16,185,129,0.3)]" />
-                                            <span className="text-[8px] font-black text-slate-500 uppercase italic">ACTIVO</span>
+                                            <span className="text-[8px] font-black text-slate-500 uppercase italic">OPERACIONAL</span>
                                         </div>
                                     </td>
                                 </tr>

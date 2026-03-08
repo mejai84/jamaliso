@@ -1,6 +1,6 @@
 "use client"
 
-import { Wallet, Loader2 } from "lucide-react"
+import { Wallet, Loader2, ShieldCheck } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Employee } from "@/app/admin/payroll/types"
 
@@ -25,12 +25,12 @@ export function RunsTab({ employees, isCalculating, onCalculatePayroll }: RunsTa
                 <div className="p-8 md:p-10 bg-white/60 border border-slate-200 rounded-[2rem] md:rounded-[3rem] space-y-6 shadow-sm">
                     <div className="flex justify-between text-left">
                         <div>
-                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Empleados a Liquidar</p>
+                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Colaboradores</p>
                             <p className="text-2xl md:text-3xl font-black italic uppercase">{employees.length}</p>
                         </div>
                         <div className="text-right">
-                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Base Estimada</p>
-                            <p className="text-2xl md:text-3xl font-black italic uppercase text-orange-500">$9.240.000</p>
+                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Carga Prestacional (Est.)</p>
+                            <p className="text-2xl md:text-3xl font-black italic uppercase text-orange-500">21.8%</p>
                         </div>
                     </div>
                     <Button
@@ -41,10 +41,19 @@ export function RunsTab({ employees, isCalculating, onCalculatePayroll }: RunsTa
                         {isCalculating ? (
                             <><Loader2 className="w-5 h-5 md:w-6 md:h-6 mr-3 animate-spin" /> PROCESANDO NÓMINA...</>
                         ) : (
-                            "EJECUTAR CÁLCULO"
+                            "EJECUTAR CÁLCULO PRO"
                         )}
                     </Button>
-                    <p className="text-center text-[9px] font-black text-slate-400 uppercase tracking-widest italic mt-4">INICIAR DISPERSIÓN DE PAGOS</p>
+                    <div className="flex items-center justify-center gap-6 mt-4">
+                        <div className="flex items-center gap-2">
+                            <ShieldCheck className="w-4 h-4 text-emerald-500" />
+                            <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest italic">SYNC_DIAN_READY</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <div className="w-1.5 h-1.5 bg-blue-500 rounded-full" />
+                            <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest italic">IFRS_COMPLIANT</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

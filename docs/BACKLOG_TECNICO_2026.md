@@ -216,6 +216,7 @@
 | Auditoría real (audit_logs) | ✅ Tabla completa con old/new values + IP |
 | Índices SQL | ⚠️ Migración creada, pendiente de ejecutar |
 | Domain Layer separation | ❌ No existe (prioridad baja por ahora) |
+| Data Flow (Import/Export) | Motores CSV/Excel + Wizard de Mapeo Inteligente (Pixora Design) | Implementado (Inventario, Productos, Clientes, Empleados, Factura, Reservas, Recetas) | 100% |
 
 ---
 *Documento generado el 7 de marzo de 2026. Verificado contra el repositorio real (mejai84/jamaliso).*

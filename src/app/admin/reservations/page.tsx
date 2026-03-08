@@ -41,6 +41,9 @@ import {
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { toast } from "sonner"
+import { DataFlow, CSVColumn } from "@/lib/data-flow"
+import { DataImportWizard } from "@/components/admin/shared/DataImportWizard"
+import { DataFlowActions } from "@/components/admin/shared/DataFlowActions"
 
 type Reservation = {
     id: string
@@ -60,6 +63,7 @@ export default function AdminReservationsPremium() {
     const [filter, setFilter] = useState('upcoming')
     const [searchTerm, setSearchTerm] = useState("")
     const [currentTime, setCurrentTime] = useState(new Date())
+    const [isImportModalOpen, setIsImportModalOpen] = useState(false)
 
     useEffect(() => {
         const timer = setInterval(() => setCurrentTime(new Date()), 1000)
@@ -77,6 +81,46 @@ export default function AdminReservationsPremium() {
         ]
         setReservations(mockRes)
         setLoading(false)
+    }
+
+    const handleExport = () => {
+        const columns: CSVColumn<Reservation>[] = [
+            { header: 'ID', key: 'id' },
+            { header: 'Cliente', key: 'customer_name' },
+            { header: 'Teléfono', key: 'customer_phone' },
+            { header: 'Email', key: 'customer_email' },
+            { header: 'Fecha', key: 'reservation_date' },
+            { header: 'Hora', key: 'reservation_time' },
+            { header: 'Personas', key: 'num_people' },
+            { header: 'Estado', key: 'status' }
+        ];
+        DataFlow.exportToCSV(reservations, columns, 'reservas-jamaliso');
+        toast.info("Exportando el Libro Maestro de Reservas...");
+    }
+
+    const handleImport = async (data: any[]) => {
+        toast.promise(
+            new Promise(resolve => setTimeout(resolve, 2000)),
+            {
+                loading: 'Sincronizando agenda externa...',
+                success: () => {
+                    const newRes = data.map(row => ({
+                        id: Math.random().toString(36).substring(7),
+                        customer_name: row.customer_name,
+                        customer_phone: row.customer_phone,
+                        customer_email: row.customer_email,
+                        reservation_date: row.reservation_date,
+                        reservation_time: row.reservation_time,
+                        num_people: parseInt(row.num_people) || 2,
+                        notes: row.notes || '',
+                        status: 'pending' as const
+                    }));
+                    setReservations(prev => [...prev, ...newRes]);
+                    return 'Agenda sincronizada exitosamente.';
+                },
+                error: 'Error en la estructura de la agenda.'
+            }
+        );
     }
 
     const filtered = reservations.filter(res =>
@@ -108,23 +152,43 @@ export default function AdminReservationsPremium() {
                         </div>
                     </div>
 
-                    <div className="flex bg-slate-900/40 p-1.5 rounded-2xl border border-white/5">
-                        {[
-                            { id: 'upcoming', label: 'PRÓXIMAS' },
-                            { id: 'pending', label: 'PENDIENTES' },
-                            { id: 'all', label: 'HISTORIAL' }
-                        ].map(t => (
-                            <button
-                                key={t.id}
-                                onClick={() => setFilter(t.id)}
-                                className={cn(
-                                    "px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
-                                    filter === t.id ? "bg-orange-500 text-black shadow-xl shadow-orange-500/20" : "text-slate-500 hover:text-white"
-                                )}
-                            >
-                                {t.label}
-                            </button>
-                        ))}
+                    <div className="flex items-center gap-8">
+                        <DataFlowActions
+                            onExport={handleExport}
+                            onImport={() => setIsImportModalOpen(true)}
+                            importLabel="Importar Agenda"
+                            exportLabel="Respaldo Libro Maestro"
+                        />
+                        <div className="flex flex-col md:flex-row items-center gap-8 w-full md:w-auto">
+                            <div className="relative w-80 group">
+                                <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 group-focus-within:text-orange-500 transition-all font-black" />
+                                <input
+                                    placeholder="ESCUDRIÑAR AGENDA..."
+                                    className="w-full bg-slate-900/50 border border-white/5 rounded-2xl py-4 pl-14 pr-6 text-[10px] font-black uppercase tracking-[0.2em] italic focus:outline-none focus:border-orange-500/30 transition-all placeholder:text-slate-600 text-slate-200"
+                                    value={searchTerm}
+                                    onChange={e => setSearchTerm(e.target.value)}
+                                />
+                            </div>
+
+                            <div className="flex bg-slate-900/40 p-1.5 rounded-2xl border border-white/5">
+                                {[
+                                    { id: 'upcoming', label: 'PRÓXIMAS' },
+                                    { id: 'pending', label: 'PENDIENTES' },
+                                    { id: 'all', label: 'HISTORIAL' }
+                                ].map(t => (
+                                    <button
+                                        key={t.id}
+                                        onClick={() => setFilter(t.id)}
+                                        className={cn(
+                                            "px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
+                                            filter === t.id ? "bg-orange-500 text-black shadow-xl shadow-orange-500/20" : "text-slate-500 hover:text-white"
+                                        )}
+                                    >
+                                        {t.label}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -162,8 +226,24 @@ export default function AdminReservationsPremium() {
                                                 "w-2 h-2 rounded-full animate-pulse",
                                                 res.status === 'confirmed' ? "bg-emerald-500" : "bg-orange-500"
                                             )} />
+                                            {res.num_people >= 6 && (
+                                                <div className="flex items-center gap-1.5 px-3 py-1 bg-orange-500/10 border border-orange-500/20 rounded-full">
+                                                    <Flame className="w-3 h-3 text-orange-500 animate-bounce" />
+                                                    <span className="text-[8px] font-black text-orange-500 italic uppercase tracking-widest">High Impact</span>
+                                                </div>
+                                            )}
+                                            {i === 0 && (
+                                                <div className="flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
+                                                    <Zap className="w-3 h-3 text-emerald-500" />
+                                                    <span className="text-[8px] font-black text-emerald-500 italic uppercase tracking-widest">Mesa Prime</span>
+                                                </div>
+                                            )}
                                         </div>
-                                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{res.customer_phone}</p>
+                                        <div className="flex items-center gap-4">
+                                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{res.customer_phone}</p>
+                                            <div className="w-1 h-1 rounded-full bg-slate-700" />
+                                            <p className="text-[8px] font-black text-slate-400 uppercase tracking-[0.2em] italic">Visitante Recurrente</p>
+                                        </div>
                                     </div>
                                     <div className="text-right">
                                         <p className="text-3xl font-black italic tracking-tighter font-mono leading-none">{res.reservation_time}</p>
@@ -240,8 +320,20 @@ export default function AdminReservationsPremium() {
                         </Button>
                     </div>
 
+                    <DataImportWizard
+                        isOpen={isImportModalOpen}
+                        onClose={() => setIsImportModalOpen(false)}
+                        onConfirm={handleImport}
+                        moduleName="Agenda de Reservaciones"
+                        requiredFields={[
+                            { key: 'customer_name', label: 'Nombre Cliente' },
+                            { key: 'customer_phone', label: 'Teléfono' },
+                            { key: 'reservation_date', label: 'Fecha' },
+                            { key: 'reservation_time', label: 'Hora' }
+                        ]}
+                    />
                 </div>
-            </div>
+            </div >
 
             <style jsx global>{`
                 .custom-scrollbar::-webkit-scrollbar { width: 4px; }
@@ -251,6 +343,6 @@ export default function AdminReservationsPremium() {
                     border-radius: 10px; 
                 }
             `}</style>
-        </div>
+        </div >
     )
 }

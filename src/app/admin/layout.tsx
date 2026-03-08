@@ -48,7 +48,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
                 if (profileError) throw profileError
 
-                const allowedRoles = ['admin', 'staff', 'manager', 'cashier', 'waiter', 'cook', 'chef', 'cleaner', 'host', 'driver']
+                const allowedRoles = ['admin', 'staff', 'manager', 'cashier', 'waiter', 'cook', 'chef', 'cleaner', 'host', 'driver', 'owner', 'developer']
 
                 if (!data || !allowedRoles.includes(data.role)) {
                     router.push("/")

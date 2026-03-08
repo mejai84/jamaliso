@@ -6,12 +6,13 @@ import Link from "next/link"
 
 interface BillingHeaderProps {
     onSync: () => void;
+    onConfig: () => void;
     isSyncing: boolean;
 }
 
-export function BillingHeader({ onSync, isSyncing }: BillingHeaderProps) {
+export function BillingHeader({ onSync, onConfig, isSyncing }: BillingHeaderProps) {
     return (
-        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-10 border-b border-border/50 pb-10">
+        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-10">
             <div className="space-y-4">
                 <div className="flex items-center gap-4">
                     <div className="p-3 bg-primary/10 rounded-2xl border border-primary/20">
@@ -38,6 +39,7 @@ export function BillingHeader({ onSync, isSyncing }: BillingHeaderProps) {
                 <Button
                     variant="outline"
                     className="h-14 px-8 rounded-2xl border-border bg-card font-black uppercase italic tracking-widest text-xs hover:bg-muted transition-all"
+                    onClick={onConfig}
                 >
                     Configurar Proveedor
                 </Button>

@@ -1,95 +1,72 @@
--- =================================================================================
--- PROTECCIÓN ANTI-FRAUDE EN PUNTO DE VENTA (POS) Y AUDITORÍA
--- =================================================================================
+-- 🛡️ JAMALI GUARDIAN: INFRAESTRUCTURA DE AUDITORÍA Y SEGURIDAD
 
 -- 1. Crear tabla de auditoría de seguridad
-CREATE TABLE IF NOT EXISTS security_events (
+CREATE TABLE IF NOT EXISTS security_audit (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    restaurant_id UUID REFERENCES restaurants(id) ON DELETE CASCADE,
-    user_id UUID,
-    event_type VARCHAR(100) NOT NULL,
-    table_name VARCHAR(100),
-    record_id UUID,
-    old_data JSONB,
-    new_data JSONB,
-    ip_address VARCHAR(50),
-    user_agent TEXT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    event_type TEXT NOT NULL, -- 'VOID_ORDER', 'LARGE_DISCOUNT', 'CASH_DRAWER_OPEN'
+    severity TEXT CHECK (severity IN ('LOW', 'MEDIUM', 'HIGH', 'CRITICAL')),
+    description TEXT,
+    order_id UUID REFERENCES orders(id),
+    performed_by UUID REFERENCES profiles(id),
+    metadata JSONB,
+    status TEXT DEFAULT 'PENDING' CHECK (status IN ('PENDING', 'APPROVED', 'REJECTED')),
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    restaurant_id UUID REFERENCES restaurants(id)
 );
 
--- Políticas RLS para Security Events
-ALTER TABLE security_events ENABLE ROW LEVEL SECURITY;
+-- 2. Habilitar RLS estricto (Guardian Only)
+ALTER TABLE security_audit ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Los admins pueden ver la auditoría de su restaurante" 
-ON security_events FOR SELECT 
-USING (restaurant_id = (SELECT restaurant_id FROM profiles WHERE id = auth.uid()));
+-- 3. Políticas: Solo Owner y Developer pueden leerla
+CREATE POLICY "Guardian Access" ON security_audit
+    FOR SELECT
+    USING (
+        EXISTS (
+            SELECT 1 FROM profiles 
+            WHERE profiles.id = auth.uid() 
+            AND profiles.role IN ('owner', 'developer', 'admin')
+        )
+    );
 
-CREATE POLICY "Solo el sistema puede insertar eventos de auditoría" 
-ON security_events FOR INSERT 
-WITH CHECK (true); -- Permitimos insert desde triggers con SECURITY DEFINER
-
--- 2. Trigger para registrar cambios de precios en Productos
-CREATE OR REPLACE FUNCTION log_product_price_change()
+-- 4. Funci n para disparar alertas autom ticas
+CREATE OR REPLACE FUNCTION trigger_security_alert()
 RETURNS TRIGGER AS $$
 BEGIN
-    IF OLD.price IS DISTINCT FROM NEW.price THEN
-        INSERT INTO security_events (restaurant_id, user_id, event_type, table_name, record_id, old_data, new_data)
+    -- Ejemplo: Alerta por descuento mayor al 30%
+    IF (NEW.total < OLD.total * 0.7 AND NEW.status != 'cancelled') THEN
+        INSERT INTO security_audit (event_type, severity, description, order_id, restaurant_id, metadata)
         VALUES (
-            OLD.restaurant_id,
-            auth.uid(),
-            'PRICE_CHANGE',
-            'products',
-            OLD.id,
-            jsonb_build_object('price', OLD.price, 'name', OLD.name),
-            jsonb_build_object('price', NEW.price, 'name', NEW.name)
+            'LARGE_DISCOUNT', 
+            'MEDIUM', 
+            'Descuento superior al 30% detectado en orden #' || NEW.id, 
+            NEW.id, 
+            NEW.restaurant_id, 
+            jsonb_build_object('old_total', OLD.total, 'new_total', NEW.total)
         );
     END IF;
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
 
-DROP TRIGGER IF EXISTS tr_log_product_price_change ON products;
-CREATE TRIGGER tr_log_product_price_change
-AFTER UPDATE OF price ON products
-FOR EACH ROW
-EXECUTE FUNCTION log_product_price_change();
-
--- 3. Trigger para bloquear edición de Ventas Cerradas (Protección contra Fraude en Caja)
--- Evita que una orden con status COMPLETED sea alterada maliciosamente
-CREATE OR REPLACE FUNCTION prevent_closed_order_tampering()
-RETURNS TRIGGER AS $$
-BEGIN
-    -- Permitimos cambios desde el sistema admin si tiene un flag especial (podría manejarse por rol),
-    -- pero por defecto, bloqueamos.
-    IF OLD.status = 'COMPLETED' THEN
-        -- Si intentan cambiar el 'total', 'subtotal', o regresarla a 'PENDING'
-        IF OLD.total IS DISTINCT FROM NEW.total OR OLD.status IS DISTINCT FROM NEW.status THEN
-            -- Registramos el intento de manipulación en auditoría como alerta
-            INSERT INTO security_events (restaurant_id, user_id, event_type, table_name, record_id, old_data, new_data)
-            VALUES (
-                OLD.restaurant_id,
-                auth.uid(),
-                'FRAUD_ATTEMPT_CLOSED_TICKET',
-                'orders',
-                OLD.id,
-                jsonb_build_object('status', OLD.status, 'total', OLD.total),
-                jsonb_build_object('status', NEW.status, 'total', NEW.total)
-            );
-            
-            -- Lanzamos excepción para detener el UPDATE
-            RAISE EXCEPTION 'Operación de fraude detectada: No se puede modificar financieramente una orden que ya fue cerrada (COMPLETED).';
-        END IF;
+    -- Ejemplo: Alerta por anulaci n de orden preparada/entregada
+    IF (NEW.status = 'cancelled' AND OLD.status IN ('prepared', 'delivered')) THEN
+        INSERT INTO security_audit (event_type, severity, description, order_id, restaurant_id, metadata)
+        VALUES (
+            'VOID_ORDER', 
+            'HIGH', 
+            'Orden cr tica anulada despu s de preparaci n/entrega', 
+            NEW.id, 
+            NEW.restaurant_id, 
+            jsonb_build_object('former_status', OLD.status)
+        );
     END IF;
-    
+
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql;
 
-DROP TRIGGER IF EXISTS tr_prevent_closed_order_tampering ON orders;
-CREATE TRIGGER tr_prevent_closed_order_tampering
-BEFORE UPDATE ON orders
-FOR EACH ROW
-EXECUTE FUNCTION prevent_closed_order_tampering();
+-- 5. Trigger en la tabla orders
+CREATE TRIGGER orders_security_watchdog
+    AFTER UPDATE ON orders
+    FOR EACH ROW
+    EXECUTE FUNCTION trigger_security_alert();
 
--- Index para optimizar consultas de auditoría por restaurante
-CREATE INDEX IF NOT EXISTS idx_security_events_restaurant ON security_events(restaurant_id, created_at DESC);
+-- 6. Comentarios para documentaci n
+COMMENT ON TABLE security_audit IS 'Log centralizado para JAMALI GUARDIAN. Registra eventos de riesgo y fraudes potenciales.';

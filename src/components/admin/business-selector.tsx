@@ -24,19 +24,12 @@ export function BusinessSelector() {
 
     const handleSwitch = (slugOrSub: string) => {
         const hostname = window.location.hostname
-        const currentPath = window.location.pathname
 
         const isPathBased = hostname === 'localhost' || hostname.includes('127.0.0.1') || hostname.includes('.vercel.app')
 
         if (isPathBased) {
-            // Reemplaza el primer segmento del path (slug) y mantiene el resto (/admin/online-sales, etc)
-            const segments = currentPath.split('/').filter(Boolean)
-            if (segments.length > 0) {
-                segments[0] = slugOrSub
-                window.location.href = `/${segments.join('/')}`
-            } else {
-                window.location.href = `/${slugOrSub}/admin`
-            }
+            // Siempre redirigir al /admin del nuevo restaurante para evitar errores de contexto
+            window.location.href = `/${slugOrSub}/admin`
             return
         }
 

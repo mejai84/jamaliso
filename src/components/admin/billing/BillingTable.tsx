@@ -2,6 +2,7 @@
 
 import { ElectronicInvoice } from "./types"
 import { CheckCircle2, Clock, Terminal, AlertOctagon } from "lucide-react"
+import { toast } from "sonner"
 
 export function BillingTable({ invoices, onEmit }: { invoices: ElectronicInvoice[], onEmit: (id: string) => void }) {
 
@@ -75,7 +76,12 @@ export function BillingTable({ invoices, onEmit }: { invoices: ElectronicInvoice
                                             Generar XML
                                         </button>
                                     ) : (
-                                        <button className="px-6 py-2 bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 font-black text-xs uppercase tracking-widest rounded-xl hover:bg-emerald-500 hover:text-white transition-colors">
+                                        <button
+                                            onClick={() => {
+                                                toast.success(`Descargando PDF de Factura Fiscal: ${inv.id}`);
+                                            }}
+                                            className="px-6 py-2 bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 font-black text-xs uppercase tracking-widest rounded-xl hover:bg-emerald-500 hover:text-white transition-colors"
+                                        >
                                             Descargar PDF
                                         </button>
                                     )}

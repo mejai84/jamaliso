@@ -32,6 +32,7 @@ graph TD
     KIT[Kitchen Display System]
     REP[Reportes & BI]
     USR[Empleados & Caja]
+    GRD[JAMALI GUARDIAN]
     end
     
     Client --> POS
@@ -39,6 +40,12 @@ graph TD
     Client --> KIT
     Client --> REP
     Client --> USR
+    Client --> GRD
+
+    %% Intelligence Layer
+    Postgres -->|Triggers| Audit[(Security Audit Table)]
+    Audit -->|Realtime| GRD
+    GRD -->|Remote Auth| Nextjs
 ```
 
 ---
@@ -92,6 +99,7 @@ La aplicación se divide en áreas funcionales cohesionadas.
 | **Identidad Visual** | Configuración dinámica de marca blanca (logos, colores). | `/src/app/admin/settings` |
 | **Nómina (Payroll)** | Gestión de sueldos, contratos, comisiones e impuestos. | `/src/app/admin/payroll` |
 | **Ventas Online Central** | Activación web, modo e-commerce/menú, SEO y redes. | `/src/app/admin/online-sales` |
+| **Data Flow Engine** | Importación y exportación masiva de datos (CSV) con Wizard de mapeo. | `/src/lib/data-flow.ts` |
 
 ---
 
@@ -171,15 +179,17 @@ graph TD
 *   **Edge Caching (Next.js Native):** Implementación de `unstable_cache` en `src/actions/cache.ts` para catálogos y perfiles de restaurantes, reduciendo carga en Supabase.
 *   **PWA Resiliencia:** Utiliza `@ducanh2912/next-pwa` para registrar un **Service Worker** (`sw.js`).
 *   **Offline Logic:** Motor offline (`src/lib/offline-engine.ts`) para guardado local en emergencias de red.
+*   **Data Flow Engine (Pixora Import/Export):** Motor de sincronización masiva para Inventario, Productos, Clientes, Empleados, Facturación, Reservas y Recetas. Incluye un **Wizard de Mapeo Inteligente** para procesar archivos CSV externos y reconciliarlos con el esquema de JAMALI OS.
 
 ---
 
-## 12. Observabilidad e Infraestructura
+## 12. Observabilidad e Inteligencia Forense (IA Guardian)
 *   **Sentry Integration:** Captura de excepciones en Server Actions críticos (`processOrderPayment`) y monitoreo de performance en el Edge.
-*   **Anti-Fraude SQL:** Triggers de nivel de DB (`prevent_closed_order_tampering`) que bloquean ediciones de tickets cerrados y registran cambios de precios en `security_events`.
-*   **Mesero anula pedido cobrado:** Solo Manager puede anular (`void`). Se guarda registro en `audit_logs` con motivo.
-*   **Cajero abre caja sin registrar venta:** Auditoría de sesiones y movimientos no cuadra.
-*   **Descuentos excesivos:** Permiso `discount` requerido, registrado en `audit_logs` con `old_values`/`new_values`.
+*   **Predictive Anti-Fraude SQL:**
+    *   **Triggers IA:** `pattern_anomaly_watchdog` detecta ráfagas (Burst) de anulaciones y comportamientos de alto riesgo.
+    *   **Scoring Engine**: Vista `guardian_employee_risk` que pondera Anulaciones, Descuentos e Historial.
+    *   **Autorización Remota**: Handshake bidireccional entre la app del dueño y el POS para desbloquear eventos fiscales.
+*   **Watchdogs Pasivos:** Registro de cambios de precios y anulación de tickets cerrados en `security_audit`.
 
 ---
 
@@ -207,4 +217,4 @@ Desde marzo de 2026, JAMALI OS implementa el estándar **Pixora Light**:
 
 ---
 
-*Última actualización: 08 Marzo 2026 — Se añade Observabilidad (Sentry), Caching Nativo y Protección SQL Anti-Fraude.*
+*Última actualización: 08 Marzo 2026 — Se añade Inteligencia Predictiva (IA Guardian), Remote Auth y Multi-Sede Elite.*

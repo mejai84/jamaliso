@@ -1,5 +1,5 @@
 # 📘 Manual de Usuario Vivo — JAMALISO
-> **Versión:** 2.2 Enterprise | **Estado:** Documento Vivo | **Última revisión:** 08 Marzo 2026
+> **Versión:** 3.0 ELITE | **Estado:** Documento Vivo | **Última revisión:** 08 Marzo 2026 (Refuerzo Guardian & Ventas Online)
 
 Este manual es la referencia oficial para todos los roles del sistema. Está divido en dos tipos de secciones:
 - 🟢 **Guías Operativas**: Cómo usar cada módulo paso a paso.
@@ -208,14 +208,57 @@ Este módulo es tu centro de control para internet. Aquí decides qué ve el mun
    - **SOLO MENÚ (MESA):** Los clientes ven tu carta, pero no pueden pedir. Ideal para QR en mesa informativos.
    - **VENTA TOTAL (HÍBRIDO):** Permite recibir pedidos para Domicilio y Recogida en local.
 
-#### 🎨 Identidad Visual (Slot System):
-- **Hero Section:** Configura el video o imagen de fondo de tu página.
-- **Eslogan:** Define la frase de impacto que verán tus clientes al entrar.
-- **Redes Sociales:** Vincula Instagram, WhatsApp y Facebook para que aparezcan botones de contacto directo.
+#### 🎨 Identidad Visual (Slot Identity System):
+JAMALISO usa un sistema de "Slots" que permite que cada restaurante tenga una identidad única sin romper la estructura técnica.
+- **Hero Master:** Configura el video o imagen de alto impacto que ocupa la pantalla inicial.
+- **Eslogan Dinámico:** Define la frase de marca que aparece sobre el Hero.
+- **Paleta de Colores (Slot UI):** Define el color primario y secundario que se aplicará a botones, enlaces y acentos en toda la web.
+- **Tipografía Slot:** Elige el estilo de fuente que mejor represente tu marca (Elegante, Moderna, Rústica).
+- **Logotipo Local:** Carga tu logo en alta resolución para el encabezado y el favicon.
+
+#### 🔗 Integración Social y SEO:
+- **Redes Sociales:** Vincula Instagram, WhatsApp y Facebook. El sistema generará botones de "Flotantes" en la web para contacto directo.
+- **Optimización Meta:** El sistema genera automáticamente los tags para que, al compartir tu link en WhatsApp, aparezca la imagen de tu restaurante y el eslogan correctamente.
+
+#### 💳 Central de Pagos (Mercado Pago):
+- Vincula tu cuenta de **Mercado Pago** para recibir pagos con tarjeta de crédito, débito y transferencias locales (PSE/Pix/etc) directamente a tu billetera.
+- El sistema valida el pago mediante **Webhooks** (notificaciones automáticas de MP) antes de enviar la orden a producción.
 
 ---
 
-### ⚙️ 3.7. Configuración Regional (`/admin/settings`)
+### 🛡️ 3.10. JAMALI GUARDIAN — App del Propietario (`/admin/guardian`)
+
+Este es el módulo más sensible y potente del ecosistema. Está diseñado exclusivamente para **Propietarios y Desarrolladores** (No accesible para Managers o Cajeros). Es "El Ojo del Dueño" en su bolsillo.
+
+#### 🧠 ¿Qué es JAMALI GUARDIAN?
+Es una interfaz móvil de alta seguridad que utiliza **Inteligencia Predictiva** y **Control Remoto** para blindar la operación contra fraudes, errores humanos y desabastecimiento.
+
+#### ⚡ Centro de Autorización Remota:
+Cuando un mesero o cajero intenta una acción que compromete el dinero (como anular un ticket ya cerrado o aplicar un descuento mayor al 30%):
+1. El sistema bloquea la acción en la sucursal.
+2. Una **Alerta Roja** vuela instantáneamente a tu JAMALI GUARDIAN.
+3. Desde tu teléfono, verás la descripción del evento y dos botones: **[AUTORIZAR]** o **[RECHAZAR]**.
+4. Al presionar, la sucursal recibe tu decisión en tiempo real. **Tú tienes la llave final del dinero.**
+
+#### 🧠 Inteligencia Predictiva (IA Risk Score):
+El sistema analiza los últimos 30 días de comportamiento de cada empleado y genera un **Score de Sospecha (0-100%)**:
+- **Ratio de Anulación (50 pts)**: ¿Este mesero anula más pedidos que sus compañeros?
+- **Abuso de Descuentos (30 pts)**: ¿Usa los descuentos para "regalar" productos a conocidos?
+- **Historial Forense (20 pts)**: ¿Ha tenido alertas previas en el log de auditoría?
+- **Alerta de Ráfaga (Burst Detection)**: Si alguien hace 3 anulaciones en menos de 2 horas, el sistema te notificará de inmediato por posible "fuga de efectivo" activa.
+
+#### 🏢 Control Multi-Sede Global:
+Si tienes varios restaurantes, usa el **Selector de Sede** en la parte superior. Al tocar una sede:
+- Verás los **KPIs Reales** (Ingreso Neto, Margen Real, Labor Cost y Mermas) de esa sucursal específica.
+- Podrás ver quién es el empleado de mayor riesgo en esa sucursal hoy.
+- Recibirás las alertas de esa sede en tu feed de auditoría.
+
+#### 📦 Watchdog de Inventario:
+El Guardian vigila tu bodega 24/7. Si un insumo crítico (ej: Carne, Cerveza, Salmón) cae por debajo del stock mínimo, recibirás una notificación de **STOCK CRÍTICO** para que puedas gestionar la compra antes de perder ventas.
+
+#### 📊 Dashboards en Vivo:
+- **Margen Real**: Ingreso Neto (-) Costo de Insumos (-) Costo Laboral. Es tu utilidad pura en ese momento del día.
+- **Labor Cost**: El sistema calcula cuánto te cuesta el personal que está marcado con "Entrada" en ese momento comparado con las ventas.
 
 Ajustes estructurales del restaurante. **Crucial para la legalidad y moneda.**
 
@@ -229,20 +272,34 @@ Ajustes estructurales del restaurante. **Crucial para la legalidad y moneda.**
 
 ---
 
-### 💼 3.8. Motor de Nómina — Payroll (`/admin/payroll`)
+### 💼 3.8. JAMALI PAYROLL PRO (`/admin/payroll`)
 
-Liquidación automática de sueldos, horas extras y comisiones de ventas.
+El sistema ha evolucionado a un motor legal de grado enterprise, diseñado para cumplir con la normativa **Colombiana (DIAN/UGPP)** y estándares internacionales **(IFRS/NIIF)**.
 
-#### Para Ejecutar el Cálculo de Nómina:
-1. Vaya a **Admin → Nómina** → pestaña **"Ejecutar Nómina"**.
-2. Revise el número de empleados a liquidar.
-3. Presione **"INICIAR DISPERSIÓN DE PAGOS / EJECUTAR CÁLCULO"**.
-4. El sistema automáticamente:
-   - Busca o crea el **Periodo del mes actual**.
-   - Suma las horas regulares y extras de la tabla de turnos (`shifts`).
-   - Aplica el **50% de recargo** a las horas extras.
-   - Calcula **comisiones automáticas** (1%) sobre todas las ventas POS del empleado en el periodo.
-5. Al terminar, aparece un toast de confirmación con el **Total Neto de la Nómina**.
+#### 1. Gestión de Contratos y Hoja de Vida:
+En la pestaña **"Sueldos & Contratos"**, puede configurar el perfil legal de cada colaborador:
+- **Tipo de Contrato**: Término Fijo, Indefinido, Obra o Labor, Aprendizaje.
+- **Sueldo Base Mensual**: Define la base de cálculo (SMLV 2026 pre-cargado).
+- **Seguridad Social**: Define fondos de Salud, Pensión, ARL (Riesgo 1 a 5) y Caja de Compensación.
+- **Auxilio de Transporte**: El sistema detecta automáticamente si el empleado devenga menos de 2 SMLV para inyectar el subsidio legal.
+
+#### 2. Ejecución de Nómina Legal:
+1. Vaya a la pestaña **"Ejecutar Nómina"**.
+2. Presione **"EJECUTAR CÁLCULO PRO"**.
+3. El motor ACID realizará miles de cálculos secundarios:
+   - **Deducciones de Ley**: Descuento automático del 4% para Salud y 4% para Pensión.
+   - **Recargos Prestacionales**: Cálculo exacto de Horas Extra (Diurnas/Nocturnas) y Recargos Dominicales basados en la tabla de turnos.
+   - **Costo Real de Empresa**: El sistema calcula los aportes patronales (Pensión, ARL, CCF) y Parafiscales (SENA, ICBF) si aplica.
+
+#### 3. Provisiones IFRS (Salud Financiera):
+JAMALI PAYROLL PRO no solo le dice cuánto debe pagar hoy, sino cuánto está acumulando de deuda por:
+- **Prima de Servicios** (8.33%)
+- **Cesantías** (8.33%) e **Intereses de Cesantías** (1% mensual)
+- **Vacaciones** (4.17%)
+Esto le permite al dueño conocer la **Rentabilidad Real** de su negocio después de todas las cargas prestacionales ocultas.
+
+#### 4. Sincronización DIAN:
+El sistema está optimizado para generar el soporte de **Nómina Electrónica**, marcando cada registro con los estándares requeridos por la autoridad tributaria.
 
 ---
 
@@ -267,8 +324,30 @@ Inteligencia del negocio para el Administrador o Dueño.
 | **Food Cost** | % del costo de ingredientes sobre el precio de venta por plato |
 | **Análisis de Mermas** | Gráfico de pérdidas financieras por categoría y semana |
 | **Pareto de Productos** | El 20% de platos que generan el 80% de ingresos |
-| **Vendedores Top** | Ranking de eficiencia del personal de servicio |
 | **Conciliación de Caja** | Saldo teórico esperado vs saldo declarado por cajero |
+
+---
+
+### 📤 3.9. Data Flow: Importación y Exportación (`/admin/...`)
+
+JAMALI OS permite la gestión masiva de datos para acelerar la puesta en marcha y auditoría externa. Esta función está disponible en los módulos de **Inventario**, **Productos**, **Clientes** y **Empleados**.
+
+#### 🔗 Exportación de Datos (Respaldo):
+1. En el encabezado de cualquier módulo compatible, presione **EXPORTAR (CSV)**.
+2. El sistema generará un archivo compatible con Excel con todos los registros actuales.
+3. Use este archivo para auditorías contables o cambios masivos fuera del sistema.
+
+#### 📥 Importación Masiva (Wizard de Mapeo):
+Si tiene una lista de 500 productos o ingredientes en Excel, no los cree uno a uno. Use el **Protocolo de Importación**:
+1. Guarde su archivo Excel como **CSV (separado por comas)**.
+2. En JAMALI OS, presione **IMPORTAR (CSV)**. Se abrirá el **Asistente de Importación Pixora**.
+3. **Paso 1: Carga**: Arrastre su archivo al área designada.
+4. **Paso 2: Mapeo**: El sistema le mostrará los campos que necesita (ej: Nombre, Precio). Seleccione qué columna de su archivo corresponde a cada campo.
+5. **Paso 3: Previsualización**: Revise las primeras filas para asegurar que los datos coinciden.
+6. **Paso 4: Ejecutar**: Presione "Ejecutar Importación". El sistema sincronizará los datos con el Kernel en segundos.
+
+> [!TIP]
+> Use la importación masiva durante la **Inauguración** del restaurante para cargar todo su menú e inventario inicial en menos de 5 minutos.
 
 ---
 

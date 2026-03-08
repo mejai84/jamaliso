@@ -13,11 +13,17 @@ import { EmployeesHeader } from "@/components/admin/employees/EmployeesHeader"
 import { EmployeeCard } from "@/components/admin/employees/EmployeeCard"
 import { SystemStats } from "@/components/admin/employees/SystemStats"
 import { EmployeeModal } from "@/components/admin/employees/EmployeeModal"
+import { DataFlow, CSVColumn } from "@/lib/data-flow"
+import { DataImportWizard } from "@/components/admin/shared/DataImportWizard"
+import { DataFlowActions } from "@/components/admin/shared/DataFlowActions"
+import { useRestaurant } from "@/providers/RestaurantProvider"
 
 export default function EmployeesPage() {
+    const { restaurant } = useRestaurant()
     const [employees, setEmployees] = useState<Employee[]>([])
     const [loading, setLoading] = useState(true)
     const [searchQuery, setSearchQuery] = useState("")
+    const [isImportModalOpen, setIsImportModalOpen] = useState(false)
 
     // Modals
     const [isAddModalOpen, setIsAddModalOpen] = useState(false)
@@ -209,6 +215,37 @@ export default function EmployeesPage() {
         } catch (error) { toast.error("Error al eliminar") }
     }
 
+    const handleExport = () => {
+        const columns: CSVColumn<Employee>[] = [
+            { header: 'ID', key: 'id' },
+            { header: 'Nombre', key: 'full_name' },
+            { header: 'Email', key: 'email' },
+            { header: 'Cargo', key: 'role' },
+            { header: 'Teléfono', key: 'phone' }
+        ];
+        DataFlow.exportToCSV(employees, columns, 'nomina-jamaliso');
+        toast.info("Descargando registro de personal...");
+    }
+
+    const handleImport = async (data: any[]) => {
+        if (!restaurant) return;
+        toast.info("Iniciando creación de perfiles...");
+
+        // Note: Real employee import would need passwords or invitation emails.
+        // For now, we'll insert them into profiles.
+        const toInsert = data.map(row => ({
+            restaurant_id: restaurant.id,
+            full_name: row.full_name,
+            email: row.email,
+            role: row.role || 'staff',
+            phone: row.phone
+        }));
+
+        const { error } = await supabase.from('profiles').insert(toInsert);
+        if (error) throw error;
+        fetchEmployees();
+    }
+
     const filteredEmployees = employees.filter(emp =>
         emp.full_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         emp.email.toLowerCase().includes(searchQuery.toLowerCase())
@@ -222,6 +259,28 @@ export default function EmployeesPage() {
             </div>
 
             <EmployeesHeader onAddOpen={handleAddOpen} />
+
+            <div className="absolute top-10 right-40 z-50 flex items-center gap-4">
+                <DataFlowActions
+                    onExport={handleExport}
+                    onImport={() => setIsImportModalOpen(true)}
+                    importLabel="Importar CSV"
+                    exportLabel="Exportar CSV"
+                />
+            </div>
+
+            <DataImportWizard
+                isOpen={isImportModalOpen}
+                onClose={() => setIsImportModalOpen(false)}
+                onConfirm={handleImport}
+                moduleName="Registro de Personal (Nómina)"
+                requiredFields={[
+                    { key: 'full_name', label: 'Nombre Completo' },
+                    { key: 'email', label: 'Correo Electrónico' },
+                    { key: 'role', label: 'Cargo (admin/staff/waiter)' },
+                    { key: 'phone', label: 'Teléfono' }
+                ]}
+            />
 
             <div className="relative z-10 p-4 md:p-10 lg:p-12 flex-1 flex flex-col gap-6 md:gap-10 max-w-[1800px] mx-auto w-full overflow-y-auto custom-scrollbar">
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 md:gap-10">
