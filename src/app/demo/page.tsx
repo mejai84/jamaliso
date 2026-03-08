@@ -110,24 +110,26 @@ export default function DemoWizard() {
     return (
         <div className="min-h-screen bg-slate-50 font-sans selection:bg-orange-500/20 selection:text-orange-900 overflow-hidden flex flex-col">
             {/* Minimal Header */}
-            <header className="p-8 flex items-center justify-between relative z-10">
-                <Link href="/landing" className="flex items-center gap-2 group">
-                    <Image
-                        src="/images/jamali-os-transparent.png"
-                        alt="JAMALI OS"
-                        width={180}
-                        height={60}
-                        className="h-10 w-auto object-contain"
-                    />
-                </Link>
-                {currentStep > 0 && !isSimulating && (
-                    <button
-                        onClick={() => setCurrentStep(prev => prev - 1)}
-                        className="flex items-center gap-2 text-sm font-bold text-slate-400 hover:text-slate-900 transition-colors"
-                    >
-                        <ArrowLeft className="w-4 h-4" /> Atrás
-                    </button>
-                )}
+            <header className="fixed top-0 inset-x-0 p-8 flex items-center justify-between z-50">
+                <div className="max-w-7xl mx-auto w-full flex items-center justify-between">
+                    <Link href="/" className="flex items-center gap-2 group">
+                        <Image
+                            src="/images/jamali-os-transparent.png"
+                            alt="JAMALI OS"
+                            width={240}
+                            height={80}
+                            className="h-12 w-auto object-contain"
+                        />
+                    </Link>
+                    {currentStep > 0 && !isSimulating && (
+                        <button
+                            onClick={() => setCurrentStep(prev => prev - 1)}
+                            className="flex items-center gap-2 text-sm font-bold text-slate-400 hover:text-slate-900 transition-colors bg-white/50 backdrop-blur-sm px-4 py-2 rounded-full border border-slate-200"
+                        >
+                            <ArrowLeft className="w-4 h-4" /> Atrás
+                        </button>
+                    )}
+                </div>
             </header>
 
             <main className="flex-1 flex items-center justify-center p-6 relative z-10">
