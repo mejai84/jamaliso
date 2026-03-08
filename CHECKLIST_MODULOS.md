@@ -122,3 +122,19 @@
 - [ ] **Yield Management (Hot Deals)**: Ofertas dinámicas automáticas según ocupación de mesas (⏳)
 - [ ] **WhatsApp Upselling Agent**: IA que sugiere complementos y bebidas durante el pedido (⏳)
 - [ ] **Heatmap de Rentabilidad**: Análisis de Food Cost vs Ventas para ingeniería de menú (⏳)
+
+## 📡 Hardware & Operaciones Especiales
+- [ ] **Voice-to-KDS**: Comandos de voz en cocina para actualizar estado de pedidos (⏳)
+- [ ] **Self-Service Kiosk**: Interfaz táctil para pedidos autónomos del cliente (⏳)
+- [ ] **Face-ID Entry**: Reconocimiento facial para asistencia y auditoría del Guardian (⏳)
+
+## 💼 ERP Avanzado & Negocio
+- [ ] **Factura OCR Scanner**: Carga de compras mediante foto con extracción de datos automática (⏳)
+- [ ] **Gourmet Subscriptions**: Venta de membresías y recurrencia para clientes (⏳)
+- [ ] **Simulador de Food Cost**: Análisis de impacto ante cambios de precios de insumos (⏳)
+- [ ] **Multilingüismo Pro**: Localización total (idioma, fiscalidad y cultura) por país (⏳)
+
+## 🛡️ Seguridad Forense (Guardian Expansion)
+- [ ] **Guardian Vision**: Vinculación de eventos de seguridad con marcas de tiempo en video NVR (⏳)
+- [ ] **CRM de Sentimiento**: Análisis de satisfacción y comportamiento recurrente del cliente (⏳)
+- [ ] **App Store de Extensiones**: Ecosistema para activar módulos de terceros sobre JAMALISO (⏳)
