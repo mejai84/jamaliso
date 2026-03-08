@@ -106,6 +106,8 @@ export default function ModernSaaSLanding() {
                 save: "Ahorra 20%",
                 currency: "COP",
                 perMonth: "/ mes",
+                billedYearly: "Facturado anualmente",
+                annualTotalLabel: "Total anual:",
                 popular: "Recomendado",
                 tiers: [
                     {
@@ -197,6 +199,8 @@ export default function ModernSaaSLanding() {
                 save: "Save 20%",
                 currency: "USD",
                 perMonth: "/ mo",
+                billedYearly: "Billed annually",
+                annualTotalLabel: "Annual total:",
                 popular: "Most Popular",
                 tiers: [
                     {
@@ -645,18 +649,35 @@ export default function ModernSaaSLanding() {
                                         <p className={`text-sm font-medium mt-1 ${tier.highlight ? "text-slate-400" : "text-slate-500"}`}>{tier.desc}</p>
                                     </div>
 
-                                    <div className="flex items-baseline gap-1">
-                                        <span className="text-sm font-bold opacity-60">{c.pricing.currency}</span>
-                                        <span className="text-5xl font-black italic tracking-tighter">
-                                            ${isYearly
-                                                ? (lang === 'es'
-                                                    ? (parseFloat(tier.price.replace('.', '')) * 0.8).toLocaleString('es-CO')
-                                                    : (parseFloat(tier.price) * 0.8).toFixed(0)
-                                                )
-                                                : tier.price
-                                            }
-                                        </span>
-                                        <span className="text-sm font-bold opacity-60">{c.pricing.perMonth}</span>
+                                    <div className="space-y-1">
+                                        <div className="flex items-baseline gap-1">
+                                            <span className={`text-sm font-bold opacity-60 ${tier.highlight ? "text-slate-400" : "text-slate-500"}`}>{c.pricing.currency}</span>
+                                            <div className="flex flex-col">
+                                                {isYearly && (
+                                                    <span className={`text-sm font-bold line-through opacity-50 ${tier.highlight ? "text-slate-400" : "text-slate-500"}`}>
+                                                        ${tier.price}
+                                                    </span>
+                                                )}
+                                                <span className="text-5xl font-black italic tracking-tighter">
+                                                    ${isYearly
+                                                        ? (lang === 'es'
+                                                            ? (Math.floor(parseFloat(tier.price.replace('.', '')) * 0.8)).toLocaleString('es-CO')
+                                                            : (parseFloat(tier.price) * 0.8).toFixed(0)
+                                                        )
+                                                        : tier.price
+                                                    }
+                                                </span>
+                                            </div>
+                                            <span className="text-sm font-bold opacity-60">{c.pricing.perMonth}</span>
+                                        </div>
+                                        {isYearly && (
+                                            <p className={`text-[10px] font-bold uppercase tracking-widest ${tier.highlight ? "text-orange-400" : "text-orange-600"}`}>
+                                                {c.pricing.annualTotalLabel} ${lang === 'es'
+                                                    ? (Math.floor(parseFloat(tier.price.replace('.', '')) * 0.8 * 12)).toLocaleString('es-CO')
+                                                    : (parseFloat(tier.price) * 0.8 * 12).toFixed(0)
+                                                } {c.pricing.currency}
+                                            </p>
+                                        )}
                                     </div>
 
                                     <ul className="space-y-4 py-8 border-y border-white/10">
