@@ -28,13 +28,22 @@ export default function CustomersPagePremium() {
     const [isImportModalOpen, setIsImportModalOpen] = useState(false)
 
     useEffect(() => {
-        fetchInitialData()
-    }, [])
+        if (restaurant) fetchInitialData()
+    }, [restaurant])
 
     const fetchInitialData = async () => {
+        if (!restaurant) return
         setLoading(true)
-        const { data: profiles } = await supabase.from('profiles').select('*')
-        const { data: orders } = await supabase.from('orders').select('*').order('created_at', { ascending: false })
+        const { data: profiles } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('restaurant_id', restaurant.id)
+
+        const { data: orders } = await supabase
+            .from('orders')
+            .select('*')
+            .eq('restaurant_id', restaurant.id)
+            .order('created_at', { ascending: false })
 
         if (orders) {
             const customerMap = new Map<string, Customer>()

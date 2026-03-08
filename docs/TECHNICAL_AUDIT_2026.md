@@ -30,10 +30,9 @@ En esta sesión se ha transformado el sistema de un POS robusto a una plataforma
 - **Server Actions**: +7 funciones críticas (Guardian & Reservations) para orquestación segura.
 - **Estética**: Implementación del "Dark Elite Guardian" (Variante premium de Pixora Light).
 
-### 🔒 Capa de Seguridad (Post-Audit)
-- **RLS (Row Level Security)**: Verificado en el 100% de las tablas sensibles.
-- **Handshake de Autorización**: Sistema inmutable de registro en `security_audit` (no se puede borrar ni editar un evento ya autorizado/rechazado).
-- **Role Isolation**: Acceso al Guardian restringido por Middleware y validación de Servidor (`owner` / `developer`).
+- **RLS (Row Level Security)**: Hardened in Session 08 (March 2026). Previously leaky policies like `auth.uid() IS NOT NULL` were replaced with strict `restaurant_id = get_my_restaurant_id()` checks.
+- **Data Isolation**: Verified in `orders`, `shifts`, `cashbox_sessions`, `profiles`, and `reservations`.
+- **Handshake de Autorización**: Sistema inmutable de registro en `security_audit`.
 
 ---
 
