@@ -45,7 +45,7 @@ export default function ModernSaaSLanding() {
     // Diccionario de traducciones
     const t = {
         es: {
-            nav: { product: "Producto", features: "Funciones", pricing: "Precios", gallery: "galería", login: "Entrar", reqDemo: "Solicitar Demo" },
+            nav: { product: "Producto", features: "Funciones", pricing: "Precios", gallery: "Galería", login: "Entrar", reqDemo: "Solicitar Demo" },
             hero: {
                 badge: "🚀 JAMALI OS 2.0 — Disponible Ahora",
                 title: "POS con IA y Sistema",
@@ -168,7 +168,7 @@ export default function ModernSaaSLanding() {
             footer: { desc: "El sistema operativo inteligente diseñado para maximizar la rentabilidad y eficiencia de los restaurantes modernos.", company: "Compañía", features: "Funciones", pricing: "Precios", privacy: "Privacidad", terms: "Términos", integrations: "Integraciones", changelog: "Novedades", about: "Sobre Nosotros", contact: "Contacto" }
         },
         en: {
-            nav: { product: "Product", features: "Features", pricing: "Pricing", gallery: "gallery", login: "Log in", reqDemo: "Request Demo" },
+            nav: { product: "Product", features: "Features", pricing: "Pricing", gallery: "Gallery", login: "Log in", reqDemo: "Request Demo" },
             hero: {
                 badge: "🚀 JAMALI OS 2.0 — Available Now",
                 title: "AI-Powered POS &",
