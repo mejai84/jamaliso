@@ -140,10 +140,9 @@ export default function JamaliHubPage() {
 
     return (
         <div className="min-h-screen bg-[#F8FAFC] text-slate-900 font-sans selection:bg-orange-500 pb-28 overflow-x-hidden relative">
-            {/* 🌌 ATMOSPHERIC AMBIANCE */}
-            <div className="fixed top-0 left-0 w-full h-[600px] bg-gradient-to-b from-orange-500/10 via-orange-500/[0.02] to-transparent pointer-events-none z-0" />
-            <div className="fixed -top-40 -right-40 w-[500px] h-[500px] bg-orange-500/10 rounded-full blur-[120px] pointer-events-none opacity-50 z-0 animate-pulse" />
-            <div className="fixed -bottom-40 -left-40 w-[500px] h-[500px] bg-rose-500/5 rounded-full blur-[120px] pointer-events-none opacity-30 z-0" />
+            {/* 🖼️ FONDO PREMIUM SOFT */}
+            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1551218808-94e220e084d2?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center scale-105 opacity-10 pointer-events-none" />
+            <div className="absolute inset-0 backdrop-blur-[120px] bg-white/40 pointer-events-none" />
 
             <HubHeader
                 businessInfo={businessInfo}

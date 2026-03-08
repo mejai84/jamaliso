@@ -32,9 +32,9 @@ export function PayrollHeader({ stats, menuTabs, activeTab, setActiveTab }: Payr
                         </Button>
                     </Link>
                     <div>
-                        <h1 className="text-2xl md:text-4xl font-black italic tracking-tighter uppercase leading-none text-slate-900">JAMALI <span className="text-orange-500">PAYROLL</span></h1>
-                        <p className="text-[8px] md:text-[9px] font-bold text-slate-500 uppercase tracking-[0.4em] mt-1 md:mt-2 italic shadow-sm flex items-center gap-2">
-                            <ShieldCheck className="w-3 h-3 text-emerald-500" /> Motor de Liquidación de Élite
+                        <h1 className="text-4xl md:text-6xl font-black italic tracking-tighter uppercase leading-none text-slate-900">JAMALI <span className="text-orange-600">PAYROLL_PRO</span></h1>
+                        <p className="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-[0.5em] mt-1 md:mt-3 italic flex items-center gap-2">
+                            <ShieldCheck className="w-4 h-4 text-emerald-500" /> ACTIVE_CORE_SETTLEMENT_CORE v2.0
                         </p>
                     </div>
                 </div>
@@ -75,15 +75,18 @@ export function PayrollHeader({ stats, menuTabs, activeTab, setActiveTab }: Payr
             </div>
 
             {/* KPI ROW */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 shrink-0 font-sans">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 shrink-0 font-sans">
                 {stats.map((s, i) => (
-                    <div key={i} className="bg-white/60 backdrop-blur-xl border border-slate-200 rounded-2xl p-5 flex items-center justify-between group hover:bg-white/80 transition-all border-l-4 border-l-orange-500 shadow-sm">
-                        <div>
-                            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">{s.label}</p>
-                            <p className={cn("text-2xl font-black italic", s.color)}>{s.val}</p>
+                    <div key={i} className="bg-white border-2 border-slate-100 rounded-[2.5rem] p-8 flex items-center justify-between group hover:border-slate-900 hover:shadow-2xl transition-all relative overflow-hidden">
+                        <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:opacity-[0.1] group-hover:scale-125 transition-all pointer-events-none">
+                            <s.icon className="w-24 h-24 text-slate-900" />
                         </div>
-                        <div className="p-3 bg-slate-50 rounded-xl">
-                            <s.icon className={cn("w-5 h-5 opacity-40 group-hover:opacity-80 transition-opacity", s.color)} />
+                        <div className="relative z-10 transition-all group-hover:translate-x-1">
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] mb-2 italic opacity-60 group-hover:text-orange-600 transition-colors">{s.label}</p>
+                            <p className={cn("text-4xl font-black italic tracking-tighter transition-colors group-hover:text-slate-900", s.color)}>{s.val}</p>
+                        </div>
+                        <div className="w-16 h-16 rounded-2xl bg-slate-50 border-2 border-slate-100 flex items-center justify-center group-hover:bg-slate-900 group-hover:border-slate-900 transition-all shadow-sm">
+                            <s.icon className={cn("w-7 h-7 transition-colors group-hover:text-white", s.color)} />
                         </div>
                     </div>
                 ))}

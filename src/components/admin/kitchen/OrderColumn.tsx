@@ -36,13 +36,14 @@ export function OrderColumn({
     const columnOrders = orders.filter(o => o.status === status)
 
     return (
-        <div className="flex flex-col bg-white/40 border border-slate-200 rounded-[2.5rem] overflow-hidden shadow-2xl">
-            <div className="px-8 py-6 border-b border-slate-200/50 flex items-center justify-between bg-white/40">
+        <div className="flex flex-col bg-white border-2 border-slate-100 rounded-[2.5rem] overflow-hidden shadow-xl shadow-slate-900/5">
+            <div className="px-8 py-6 border-b-2 border-slate-50 flex items-center justify-between bg-white relative">
+                <div className="absolute top-0 left-0 w-1 h-full bg-orange-500" />
                 <div>
-                    <h2 className="text-2xl font-black italic uppercase tracking-tighter text-slate-900 underline decoration-orange-500/30 decoration-4 underline-offset-4">{label}</h2>
-                    <p className="text-[10px] font-black text-slate-600 uppercase tracking-widest mt-1">SISTEMA DE MONITOREO ACTIVO</p>
+                    <h2 className="text-2xl font-black italic uppercase tracking-tighter text-slate-900 leading-none">{label}</h2>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2 italic opacity-60">MONITOREO ACTIVO</p>
                 </div>
-                <div className="w-12 h-12 rounded-xl bg-slate-900 border-2 border-slate-800 flex items-center justify-center font-black text-white shadow-lg">
+                <div className="w-12 h-12 rounded-2xl bg-slate-900 border-2 border-slate-800 flex items-center justify-center font-black text-white shadow-lg text-lg italic">
                     {columnOrders.length}
                 </div>
             </div>

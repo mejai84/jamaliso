@@ -432,43 +432,142 @@ function WizardContent() {
                             )}
 
                             {currentStep === 3 && (
-                                <div className="space-y-10">
+                                <div className="space-y-8">
                                     <div className="space-y-2">
                                         <h1 className="text-4xl md:text-5xl font-black italic uppercase tracking-tighter leading-none">PERSONALIZACIÓN <span className="text-orange-500 decoration-4 underline-offset-8">VISUAL</span></h1>
-                                        <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.4em] italic mb-8">El alma cromática de tu marca blanca</p>
+                                        <p className="text-[11px] font-black text-slate-400 uppercase tracking-[0.4em] italic mb-4">El alma cromática de tu marca blanca</p>
                                     </div>
 
-                                    <div className="grid gap-12">
-                                        <div className="flex flex-wrap gap-4">
-                                            {['#ff4d00', '#7c3aed', '#2563eb', '#16a34a', '#db2777', '#000000'].map(color => (
-                                                <div
-                                                    key={color}
-                                                    onClick={() => setFormData({ ...formData, primaryColor: color })}
-                                                    className={cn(
-                                                        "w-20 h-20 rounded-[2rem] cursor-pointer transition-all border-4 flex items-center justify-center",
-                                                        formData.primaryColor === color ? "border-slate-900 scale-110 shadow-2xl" : "border-transparent opacity-40 hover:opacity-100"
-                                                    )}
-                                                    style={{ backgroundColor: color }}
-                                                >
-                                                    {formData.primaryColor === color && <CheckCircle2 className="text-white w-8 h-8 drop-shadow-lg" />}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+                                        {/* COLOR PICKER COLUMN */}
+                                        <div className="space-y-8">
+                                            <div className="space-y-3">
+                                                <label className="text-[9px] font-black uppercase tracking-widest text-slate-400 ml-1">ELIGE TU COLOR DE MARCA</label>
+                                                <div className="flex flex-wrap gap-3">
+                                                    {['#ff4d00', '#7c3aed', '#2563eb', '#16a34a', '#db2777', '#000000', '#0ea5e9', '#b91c1c'].map(color => (
+                                                        <div
+                                                            key={color}
+                                                            onClick={() => setFormData({ ...formData, primaryColor: color })}
+                                                            className={cn(
+                                                                "w-14 h-14 rounded-2xl cursor-pointer transition-all border-4 flex items-center justify-center hover:scale-105",
+                                                                formData.primaryColor === color ? "border-slate-900 scale-110 shadow-2xl ring-4 ring-slate-900/10" : "border-transparent opacity-50 hover:opacity-100"
+                                                            )}
+                                                            style={{ backgroundColor: color }}
+                                                        >
+                                                            {formData.primaryColor === color && <CheckCircle2 className="text-white w-6 h-6 drop-shadow-lg" />}
+                                                        </div>
+                                                    ))}
                                                 </div>
-                                            ))}
+                                            </div>
+
+                                            <div className="space-y-3">
+                                                <label className="text-[9px] font-black uppercase tracking-widest text-slate-400 ml-1">O USA UN COLOR PERSONALIZADO</label>
+                                                <div className="flex items-center gap-3 bg-slate-50 p-3 rounded-2xl border-2 border-slate-100">
+                                                    <input
+                                                        type="color"
+                                                        value={formData.primaryColor}
+                                                        onChange={(e) => setFormData({ ...formData, primaryColor: e.target.value })}
+                                                        className="w-12 h-12 border-none rounded-xl cursor-pointer bg-transparent"
+                                                    />
+                                                    <span className="text-sm font-black font-mono tracking-widest uppercase text-slate-600">{formData.primaryColor}</span>
+                                                </div>
+                                            </div>
+
+                                            <div className="p-6 bg-slate-900 rounded-3xl text-white flex items-center gap-5 relative overflow-hidden group shadow-[0_10px_30px_rgba(0,0,0,0.25)]">
+                                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                                                <div
+                                                    className="w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-xl transition-all duration-500 shrink-0"
+                                                    style={{
+                                                        backgroundColor: formData.primaryColor,
+                                                        boxShadow: `0 0 30px ${formData.primaryColor}55`
+                                                    }}
+                                                >
+                                                    <Layout className="w-7 h-7" />
+                                                </div>
+                                                <div className="space-y-1 min-w-0">
+                                                    <h4 className="text-lg font-black italic uppercase tracking-tighter truncate">{formData.restaurantName || 'TU RESTAURANTE'}</h4>
+                                                    <p className="text-[8px] font-black text-white/30 uppercase tracking-[0.3em] italic leading-tight">MARCA BLANCA ACTIVA</p>
+                                                </div>
+                                            </div>
                                         </div>
 
-                                        <div className="p-10 bg-slate-900 rounded-[3.5rem] text-white flex items-center gap-8 relative overflow-hidden group shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
-                                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-                                            <div
-                                                className="w-20 h-20 rounded-3xl flex items-center justify-center text-white shadow-2xl transition-all duration-500"
-                                                style={{
-                                                    backgroundColor: formData.primaryColor,
-                                                    boxShadow: `0 0 40px ${formData.primaryColor}66`
-                                                }}
-                                            >
-                                                <Layout className="w-10 h-10" />
-                                            </div>
-                                            <div className="space-y-2">
-                                                <h4 className="text-2xl font-black italic uppercase tracking-tighter">PREVISUALIZACIÓN</h4>
-                                                <p className="text-[9px] font-black text-white/30 uppercase tracking-[0.4em] italic leading-tight">SISTEMA DINÁMICO DE MARCA BLANCA V2.2</p>
+                                        {/* LIVE MOCKUP COLUMN */}
+                                        <div className="flex flex-col items-center">
+                                            <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 italic mb-3 text-center">ASÍ SE VERÁ TU MENÚ DIGITAL</p>
+                                            <div className="bg-slate-900 rounded-[3rem] p-3 shadow-2xl aspect-[9/18] w-full max-w-[260px] border-[8px] border-slate-800 relative">
+                                                {/* Notch */}
+                                                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-20 h-5 bg-slate-800 rounded-b-xl z-30" />
+
+                                                {/* Screen */}
+                                                <div className="h-full bg-white rounded-[2rem] overflow-hidden flex flex-col relative no-scrollbar overflow-y-auto">
+                                                    {/* Header */}
+                                                    <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-50 px-3 py-2 flex items-center justify-between shrink-0">
+                                                        <div className="flex items-center gap-1.5">
+                                                            <div
+                                                                className="w-5 h-5 rounded-md flex items-center justify-center text-white text-[6px] font-black"
+                                                                style={{ backgroundColor: formData.primaryColor }}
+                                                            >
+                                                                {(formData.restaurantName || 'R').charAt(0).toUpperCase()}
+                                                            </div>
+                                                            <p className="text-[8px] font-black italic uppercase text-slate-900 truncate max-w-[100px]">{formData.restaurantName || 'RESTAURANTE'}</p>
+                                                        </div>
+                                                        <div className="flex gap-1">
+                                                            <div className="w-3 h-3 rounded-sm bg-slate-100" />
+                                                            <div className="w-3 h-3 rounded-sm bg-slate-100" />
+                                                        </div>
+                                                    </header>
+
+                                                    {/* Hero */}
+                                                    <div className="relative bg-slate-900 flex flex-col items-center justify-center text-center p-6 min-h-[130px] shrink-0">
+                                                        <img
+                                                            src="https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?q=60&w=400"
+                                                            className="absolute inset-0 w-full h-full object-cover opacity-40"
+                                                            alt="hero"
+                                                        />
+                                                        <div className="relative z-10 space-y-1.5">
+                                                            <h5 className="text-lg font-black italic text-white uppercase tracking-tighter leading-none">{formData.restaurantName || 'TU RESTAURANTE'}</h5>
+                                                            <p className="text-[6px] font-black uppercase tracking-[0.3em] italic leading-none" style={{ color: formData.primaryColor }}>{formData.slug ? `${formData.slug}.jamaliso.com` : 'GASTRONOMÍA PREMIUM'}</p>
+                                                            <button
+                                                                className="mt-2 h-6 px-3 rounded-md text-[6px] font-black italic uppercase text-white"
+                                                                style={{ backgroundColor: formData.primaryColor }}
+                                                            >
+                                                                VER CARTA DIGITAL
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* Categories */}
+                                                    <div className="flex gap-1.5 px-3 py-2 overflow-x-auto no-scrollbar border-b border-slate-50 shrink-0">
+                                                        <div className="px-2 py-1 rounded-md text-[6px] font-black italic uppercase shrink-0 text-white" style={{ backgroundColor: formData.primaryColor }}>Todos</div>
+                                                        <div className="px-2 py-1 bg-slate-50 text-slate-300 rounded-md text-[6px] font-black italic uppercase shrink-0">Entradas</div>
+                                                        <div className="px-2 py-1 bg-slate-50 text-slate-300 rounded-md text-[6px] font-black italic uppercase shrink-0">Fuertes</div>
+                                                    </div>
+
+                                                    {/* Product Cards */}
+                                                    <div className="flex-1 p-3 space-y-2">
+                                                        {[1, 2].map(i => (
+                                                            <div key={i} className="bg-white border border-slate-100 rounded-xl overflow-hidden shadow-sm">
+                                                                <div className="h-16 bg-slate-50 flex items-center justify-center text-slate-200">
+                                                                    <UtensilsCrossed className="w-4 h-4" />
+                                                                </div>
+                                                                <div className="p-2 space-y-0.5">
+                                                                    <p className="text-[7px] font-black uppercase italic text-slate-900">Plato Ejemplo {i}</p>
+                                                                    <div className="flex justify-between items-center">
+                                                                        <p className="text-[8px] font-black italic" style={{ color: formData.primaryColor }}>$ 45,000</p>
+                                                                        <div className="w-4 h-4 rounded-md flex items-center justify-center text-white" style={{ backgroundColor: formData.primaryColor }}>
+                                                                            <ChevronRight className="w-2.5 h-2.5" />
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+
+                                                    {/* Footer */}
+                                                    <div className="p-3 bg-slate-50 border-t border-slate-100 text-center shrink-0">
+                                                        <p className="text-[5px] font-black text-slate-300 uppercase tracking-[0.3em]">Powered by JAMALI OS</p>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

@@ -9,24 +9,30 @@ export function QuickBusinessSwitch() {
 
     if (accessibleRestaurants.length <= 1) return null
 
-    const handleSwitch = (subdomain: string) => {
+    const handleSwitch = (slugOrSub: string) => {
         const hostname = window.location.hostname
-        let newUrl = ""
+        const pathname = window.location.pathname
 
-        if (hostname === 'localhost' || hostname.includes('127.0.0.1')) {
-            alert(`Cambiando al subdominio: ${subdomain}.jamalios.com`)
+        const isPathBased = hostname === 'localhost' || hostname.includes('127.0.0.1') || hostname.includes('.vercel.app')
+
+        if (isPathBased) {
+            const segments = pathname.split('/').filter(Boolean)
+            if (segments.length > 0) {
+                segments[0] = slugOrSub
+                window.location.href = `/${segments.join('/')}`
+            } else {
+                window.location.href = `/${slugOrSub}/admin`
+            }
             return
         }
 
         const domainParts = hostname.split('.')
         if (domainParts.length >= 2) {
             const domain = domainParts.slice(-2).join('.')
-            newUrl = `${window.location.protocol}//${subdomain}.${domain}${window.location.port ? ':' + window.location.port : ''}/admin`
+            window.location.href = `${window.location.protocol}//${slugOrSub}.${domain}${window.location.port ? ':' + window.location.port : ''}/admin`
         } else {
-            newUrl = `${window.location.protocol}//${subdomain}.jamalios.com/admin`
+            window.location.href = `${window.location.protocol}//${slugOrSub}.jamalios.com/admin`
         }
-
-        window.location.href = newUrl
     }
 
     return (
@@ -36,7 +42,7 @@ export function QuickBusinessSwitch() {
                 {accessibleRestaurants.map((res) => (
                     <button
                         key={res.id}
-                        onClick={() => handleSwitch(res.subdomain)}
+                        onClick={() => handleSwitch(res.slug || res.subdomain)}
                         title={res.name}
                         className={cn(
                             "w-10 h-10 rounded-2xl border-2 transition-all flex items-center justify-center overflow-hidden hover:scale-110 active:scale-90 shadow-sm",

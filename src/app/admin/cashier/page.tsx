@@ -146,14 +146,16 @@ export default function CashierPage() {
     )
 
     return (
-        <div className="min-h-screen bg-transparent text-foreground p-4 md:p-12 font-sans selection:bg-primary selection:text-primary-foreground relative overflow-hidden">
-            <div className="fixed top-0 left-0 w-full h-[600px] bg-gradient-to-b from-primary/10 via-primary/[0.02] to-transparent pointer-events-none z-0" />
-            <div className="max-w-[1600px] mx-auto space-y-16 animate-in fade-in duration-1000 relative z-10">
+        <div className="min-h-screen text-slate-900 font-sans relative overflow-hidden flex flex-col h-screen">
+            {/* 🖼️ FONDO PREMIUM PIXORA (Standardized Across Modules) */}
+            <div className="fixed inset-0 bg-[url('https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center scale-105 pointer-events-none opacity-20" />
+            <div className="fixed inset-0 backdrop-blur-[100px] bg-white/80 pointer-events-none" />
 
+            <div className="relative z-10 p-6 md:p-10 flex-1 flex flex-col overflow-hidden max-w-[1700px] mx-auto w-full">
                 <CashierHeader currentUser={currentUser} refreshing={refreshing} onRefresh={() => fetchDashboardData(status?.activeCashboxSession?.id!)} />
 
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-                    <div className="lg:col-span-4 space-y-12 animate-in slide-in-from-left-12 duration-1000">
+                <div className="mt-8 grid grid-cols-1 lg:grid-cols-12 gap-8 flex-1 min-h-0">
+                    <div className="lg:col-span-4 space-y-8 flex flex-col lg:overflow-y-auto pr-2 custom-scrollbar">
                         <BalanceSummary balance={balance} cashLimit={CASH_LIMIT} />
                         <QuickCommands
                             onIncome={() => setModalOpen('income')}
@@ -163,20 +165,27 @@ export default function CashierPage() {
                         />
                     </div>
 
-                    <div className="lg:col-span-8 animate-in slide-in-from-right-12 duration-1000">
+                    <div className="lg:col-span-8 flex flex-col min-h-0 bg-white border-2 border-slate-100 rounded-[2.5rem] overflow-hidden shadow-xl shadow-slate-900/5">
                         <MovementLog movements={movements} refreshing={refreshing} />
                     </div>
                 </div>
 
-                <div className="p-10 bg-foreground rounded-[4rem] text-background flex flex-col md:flex-row items-center justify-between shadow-3xl group/metric relative overflow-hidden">
-                    <div className="flex items-center gap-10 relative z-10">
-                        <div className="w-20 h-20 rounded-[2rem] bg-background/10 backdrop-blur-md border border-white/10 flex items-center justify-center shadow-2xl group-hover/metric:rotate-12 transition-transform duration-500">
-                            <Activity className="w-10 h-10 text-primary drop-shadow-[0_0_15px_rgba(255,77,0,0.6)]" />
+                {/* Status Footer */}
+                <div className="mt-8 p-6 bg-slate-900 rounded-[2rem] text-white flex flex-col md:flex-row items-center justify-between shadow-2xl relative overflow-hidden shrink-0">
+                    <div className="absolute top-0 right-0 p-8 opacity-10">
+                        <Activity className="w-24 h-24 text-orange-500" />
+                    </div>
+                    <div className="flex items-center gap-6 relative z-10">
+                        <div className="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-md border border-white/10 flex items-center justify-center shadow-lg">
+                            <Activity className="w-7 h-7 text-orange-500 animate-pulse" />
                         </div>
-                        <div className="space-y-2 text-center md:text-left">
-                            <h4 className="text-2xl font-black italic uppercase tracking-tighter text-primary">Master POS Ledger</h4>
-                            <p className="text-[10px] text-background/40 font-black uppercase tracking-[0.4em] italic leading-none">SYSTEM v8.42 • KERNEL OPTIMIZED FOR CORE FINANCIAL OPERATIONS</p>
+                        <div className="space-y-1">
+                            <h4 className="text-xl font-black italic uppercase tracking-tighter"><span className="text-orange-500">Master</span> POS Ledger</h4>
+                            <p className="text-[8px] text-white/40 font-black uppercase tracking-[0.4em] italic leading-none">CORE FINANCIAL OPERATIONS ACTIVE • SYNC v8.42</p>
                         </div>
+                    </div>
+                    <div className="mt-4 md:mt-0 px-6 py-2 bg-white/5 border border-white/10 rounded-full">
+                        <span className="text-[9px] font-black uppercase tracking-widest text-emerald-500">SISTEMA BLINDADO ✅</span>
                     </div>
                 </div>
             </div>

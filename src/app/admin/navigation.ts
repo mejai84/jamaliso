@@ -23,7 +23,8 @@ import {
     User,
     BadgeDollarSign,
     Utensils,
-    FileText
+    FileText,
+    Globe
 } from "lucide-react"
 
 export const sidebarSections = [
@@ -39,12 +40,18 @@ export const sidebarSections = [
         ]
     },
     {
-        title: "CLIENTES & RESERVAS",
+        title: "PRESENCIA DIGITAL",
+        items: [
+            { icon: Globe, label: "Ventas / Web App", href: "/admin/online-sales", roles: ['admin', 'manager'] },
+            { icon: QrCode, label: "Mesas & QR", href: "/admin/tables", roles: ['admin', 'manager', 'waiter', 'cashier'] },
+            { icon: Truck, label: "Logística Domicilios", href: "/admin/delivery-config", roles: ['admin'] },
+        ]
+    },
+    {
+        title: "CLIENTES & FIDELIDAD",
         items: [
             { icon: Calendar, label: "Reservas / Agenda", href: "/admin/reservations", roles: ['admin', 'manager', 'host', 'cashier'] },
-            { icon: Users, label: "CRM & Fidelización", href: "/admin/customers", roles: ['admin', 'manager', 'cashier'] },
-            { icon: QrCode, label: "Mesas & QR", href: "/admin/tables", roles: ['admin', 'manager', 'waiter', 'cashier'] },
-            { icon: Truck, label: "Delivery App", href: "/admin/delivery-config", roles: ['admin'] },
+            { icon: Users, label: "CRM de Clientes", href: "/admin/customers", roles: ['admin', 'manager', 'cashier'] },
             { icon: Bike, label: "Repartidores", href: "/admin/drivers", roles: ['admin', 'manager'] },
         ]
     },

@@ -90,6 +90,7 @@ La aplicación se divide en áreas funcionales cohesionadas.
 | **Reportes y B.I.** | Inteligencia de negocios, proyecciones IA, márgenes. | `/src/app/admin/reports` |
 | **Identidad Visual** | Configuración dinámica de marca blanca (logos, colores). | `/src/app/admin/settings` |
 | **Nómina (Payroll)** | Gestión de sueldos, contratos, comisiones e impuestos. | `/src/app/admin/payroll` |
+| **Ventas Online Central** | Activación web, modo e-commerce/menú, SEO y redes. | `/src/app/admin/online-sales` |
 
 ---
 
@@ -198,6 +199,7 @@ Desde marzo de 2026, JAMALI OS implementa el estándar **Pixora Light**:
 *   **Color System:** `Slate-900` textos + `Orange-600` (`#EA580C`) acciones principales.
 *   **Escalado Inteligente:** `font-size` dinámico (100% móvil, 85% tablet, 75% laptop, 65% monitores grandes).
 *   **Branding Dinámico:** CSS Variables (`--primary`) inyectadas vía `RestaurantProvider`.
+*   **Glassmorphism Standard:** Homogeneidad visual mediante fondos de imagen HD blurred (`100px`) con overlay blanco al `80%` (`bg-white/80`), creando un efecto de profundidad premium en todos los módulos administrativos.
 
 ---
 

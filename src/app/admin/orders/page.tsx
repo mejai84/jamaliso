@@ -194,11 +194,12 @@ function OrdersContent() {
     const completedOrders = orders.filter(o => ['delivered', 'cancelled'].includes(o.status))
 
     return (
-        <div className="min-h-screen bg-transparent text-foreground p-4 md:p-12 font-sans selection:bg-primary selection:text-primary-foreground relative overflow-hidden">
-            <div className="fixed top-0 left-0 w-full h-[600px] bg-gradient-to-b from-primary/10 via-primary/[0.02] to-transparent pointer-events-none z-0" />
-            <div className="fixed -bottom-40 -right-40 w-[600px] h-[600px] bg-primary/20 rounded-full blur-[120px] pointer-events-none opacity-20 z-0 animate-pulse" />
+        <div className="min-h-screen bg-[#F8FAFC] text-slate-900 font-sans selection:bg-orange-500 overflow-hidden flex flex-col h-screen relative">
+            {/* 🖼️ FONDO PREMIUM SOFT */}
+            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1552566626-52f8b828add9?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center scale-105 opacity-10 pointer-events-none" />
+            <div className="absolute inset-0 backdrop-blur-[120px] bg-white/40 pointer-events-none" />
 
-            <div className="max-w-[1700px] mx-auto space-y-16 animate-in fade-in duration-1000 relative z-10">
+            <div className="max-w-[1700px] mx-auto space-y-12 animate-in fade-in slide-in-from-bottom-5 duration-1000 relative z-10 p-8 flex-1 overflow-y-auto custom-scrollbar">
                 <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-12 border-b border-border/50 pb-12">
                     <div className="flex flex-col md:flex-row items-start md:items-center gap-10">
                         <Link href="/admin">

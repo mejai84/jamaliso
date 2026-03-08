@@ -18,10 +18,15 @@ import { revalidatePath } from 'next/cache'
 import { Pool } from 'pg'
 
 // Configuración de conexión directa a BD (Bypass RLS & Transaction Support)
-const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false } // Necesario para Supabase en producción
-})
+let pool: Pool;
+try {
+    pool = new Pool({
+        connectionString: process.env.DATABASE_URL,
+        ssl: { rejectUnauthorized: false } // Necesario para Supabase en producción
+    })
+} catch (e) {
+    console.error("Critical: Failed to initialize PG Pool. Check DATABASE_URL.", e);
+}
 
 // ============================================================================
 // TIPOS

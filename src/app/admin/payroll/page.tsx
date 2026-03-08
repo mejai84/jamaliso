@@ -123,11 +123,12 @@ export default function PayrollPage() {
     ]
 
     return (
-        <div className="min-h-screen text-slate-900 font-sans relative overflow-hidden flex flex-col bg-[#F8FAFC]">
-            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center scale-105 pointer-events-none opacity-20" />
-            <div className="absolute inset-0 backdrop-blur-[80px] bg-white/80 pointer-events-none" />
+        <div className="min-h-screen text-slate-900 font-sans relative overflow-hidden flex flex-col h-screen">
+            {/* 🖼️ FONDO PREMIUM PIXORA (Standardized Across Modules) */}
+            <div className="fixed inset-0 bg-[url('https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center scale-105 pointer-events-none opacity-20" />
+            <div className="fixed inset-0 backdrop-blur-[100px] bg-white/80 pointer-events-none" />
 
-            <div className="relative z-10 p-4 md:p-8 space-y-6 md:space-y-8 max-w-[1600px] mx-auto flex flex-col min-h-screen w-full">
+            <div className="relative z-30 p-10 md:p-12 space-y-12 max-w-[1800px] mx-auto flex-1 h-full flex flex-col animate-in fade-in slide-in-from-bottom-5 duration-1000">
 
                 <PayrollHeader
                     stats={stats}

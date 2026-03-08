@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { cookies } from 'next/headers'
+import * as Sentry from '@sentry/nextjs'
 
 export type ShiftType = 'MORNING' | 'AFTERNOON' | 'NIGHT' | 'CUSTOM'
 
@@ -426,6 +427,7 @@ export async function processOrderPayment(
         }
     } catch (e: any) {
         console.error("Excepción fatal en processOrderPayment:", e)
+        Sentry.captureException(e, { extra: { orderId, paymentMethod, amount } })
         return {
             success: false,
             error: e.message || "Error interno inesperado al procesar el pago"

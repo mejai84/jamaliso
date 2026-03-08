@@ -48,14 +48,12 @@ export default function InventoryPage() {
     )
 
     return (
-        <div className="min-h-screen bg-[#F8FAFC] text-slate-900 font-sans selection:bg-orange-500 overflow-hidden flex flex-col h-screen relative">
-            {/* 🌌 FONDO ESTRUCTURAL JAMALI */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-orange-500/5 blur-[120px] rounded-full animate-pulse" />
-                <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-500/5 blur-[120px] rounded-full opacity-50" />
-            </div>
+        <div className="min-h-screen text-slate-900 font-sans relative overflow-hidden flex flex-col h-screen">
+            {/* 🖼️ FONDO PREMIUM PIXORA (Standardized Across Modules) */}
+            <div className="fixed inset-0 bg-[url('https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center scale-105 pointer-events-none opacity-[0.15]" />
+            <div className="fixed inset-0 backdrop-blur-[100px] bg-white/80 pointer-events-none" />
 
-            <div className="relative z-30 p-10 md:p-12 space-y-12 max-w-[1800px] mx-auto flex-1 min-h-full flex flex-col">
+            <div className="relative z-30 p-10 md:p-12 space-y-12 max-w-[1800px] mx-auto flex-1 h-full flex flex-col animate-in fade-in slide-in-from-bottom-5 duration-1000">
                 <InventoryHeader />
                 <AccessGrid />
                 <InventoryKPIs ingredients={ingredients} />

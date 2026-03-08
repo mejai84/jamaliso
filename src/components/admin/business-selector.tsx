@@ -22,24 +22,31 @@ export function BusinessSelector() {
 
     if (accessibleRestaurants.length <= 1) return null
 
-    const handleSwitch = (subdomain: string) => {
+    const handleSwitch = (slugOrSub: string) => {
         const hostname = window.location.hostname
-        let newUrl = ""
+        const currentPath = window.location.pathname
 
-        if (hostname === 'localhost' || hostname.includes('127.0.0.1')) {
-            alert(`Cambiando al subdominio: ${subdomain}.jamalios.com`)
+        const isPathBased = hostname === 'localhost' || hostname.includes('127.0.0.1') || hostname.includes('.vercel.app')
+
+        if (isPathBased) {
+            // Reemplaza el primer segmento del path (slug) y mantiene el resto (/admin/online-sales, etc)
+            const segments = currentPath.split('/').filter(Boolean)
+            if (segments.length > 0) {
+                segments[0] = slugOrSub
+                window.location.href = `/${segments.join('/')}`
+            } else {
+                window.location.href = `/${slugOrSub}/admin`
+            }
             return
         }
 
         const domainParts = hostname.split('.')
         if (domainParts.length >= 2) {
             const domain = domainParts.slice(-2).join('.')
-            newUrl = `${window.location.protocol}//${subdomain}.${domain}${window.location.port ? ':' + window.location.port : ''}/admin`
+            window.location.href = `${window.location.protocol}//${slugOrSub}.${domain}${window.location.port ? ':' + window.location.port : ''}/admin`
         } else {
-            newUrl = `${window.location.protocol}//${subdomain}.jamalios.com/admin`
+            window.location.href = `${window.location.protocol}//${slugOrSub}.jamalios.com/admin`
         }
-
-        window.location.href = newUrl
     }
 
     return (
@@ -70,15 +77,19 @@ export function BusinessSelector() {
             </button>
 
             {isOpen && (
-                <div className="absolute left-0 top-full mt-2 w-full min-w-[260px] bg-white border border-slate-100 rounded-[2rem] shadow-2xl z-[300] p-3 animate-in fade-in slide-in-from-top-2 duration-200">
-                    <div className="px-4 py-2 mb-2 border-b border-slate-50">
-                        <span className="text-[8px] font-black uppercase tracking-[0.4em] text-slate-400 italic">Central de Negocios</span>
+                <div
+                    className="absolute left-0 top-[calc(100%+8px)] w-[280px] bg-white border border-slate-200 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.15)] z-[9999] p-3 animate-in fade-in slide-in-from-top-4 duration-300 ring-1 ring-black/5"
+                    style={{ background: 'white' }}
+                >
+                    <div className="px-5 py-3 mb-2 border-b border-slate-50 flex items-center justify-between">
+                        <span className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-400 italic">Central Admin</span>
+                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                     </div>
                     <div className="max-h-[300px] overflow-y-auto custom-scrollbar space-y-1">
                         {accessibleRestaurants.map((res) => (
                             <button
                                 key={res.id}
-                                onClick={() => handleSwitch(res.subdomain)}
+                                onClick={() => handleSwitch(res.slug || res.subdomain)}
                                 className={cn(
                                     "w-full flex items-center justify-between p-3 rounded-2xl transition-all text-left group/item",
                                     restaurant?.id === res.id

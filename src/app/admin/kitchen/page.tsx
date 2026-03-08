@@ -148,11 +148,12 @@ export default function KitchenPage() {
     });
 
     return (
-        <div className="min-h-screen bg-slate-100 text-slate-900 font-sans relative overflow-hidden">
-            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center scale-105 opacity-20 pointer-events-none" />
-            <div className="absolute inset-0 backdrop-blur-[120px] bg-slate-100/40 pointer-events-none" />
+        <div className="min-h-screen text-slate-900 font-sans relative overflow-hidden flex flex-col h-screen">
+            {/* 🖼️ FONDO PREMIUM PIXORA (Standardized Across Modules) */}
+            <div className="fixed inset-0 bg-[url('https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center scale-105 pointer-events-none opacity-20" />
+            <div className="fixed inset-0 backdrop-blur-[100px] bg-white/80 pointer-events-none" />
 
-            <div className="relative z-10 p-6 md:p-10 space-y-8 flex flex-col h-screen overflow-hidden">
+            <div className="relative z-10 p-6 md:p-10 flex-1 flex flex-col overflow-hidden max-w-[1800px] mx-auto w-full animate-in fade-in duration-1000">
                 <KitchenHeader
                     stations={stations}
                     activeStationId={activeStationId}

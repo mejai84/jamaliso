@@ -68,34 +68,32 @@ export default function CustomersPagePremium() {
     )
 
     return (
-        <div className="min-h-screen bg-[#020406] text-white font-sans selection:bg-orange-500 overflow-hidden flex flex-col h-screen relative">
-
-            {/* 🌌 FONDO ESTRUCTURAL JAMALI */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-orange-500/5 blur-[120px] rounded-full animate-pulse" />
-                <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-500/5 blur-[120px] rounded-full opacity-50" />
-            </div>
+        <div className="min-h-screen text-slate-900 font-sans relative overflow-hidden flex flex-col h-screen">
+            {/* 🖼️ FONDO PREMIUM PIXORA (Standardized Across Modules) */}
+            <div className="fixed inset-0 bg-[url('https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center scale-105 pointer-events-none opacity-20" />
+            <div className="fixed inset-0 backdrop-blur-[100px] bg-white/80 pointer-events-none" />
 
             {/* HEADER DE ELITE TÁCTICA */}
             <CustomersHeader view={view} setView={setView} />
 
-            <div className="relative z-10 p-8 md:p-12 flex-1 flex flex-col gap-8 max-w-[1800px] mx-auto w-full min-h-full">
+            <div className="relative z-10 p-8 md:p-12 flex-1 flex flex-col gap-8 max-w-[1800px] mx-auto w-full min-h-full animate-in fade-in duration-1000">
 
                 {/* KPI DESCRIPTORS ELITE */}
                 <CustomersMetrics customers={customers} />
 
                 {/* MAIN WORKSPACE ELITE */}
-                <div className="flex-1 bg-slate-900/40 backdrop-blur-3xl border border-white/5 rounded-[4rem] overflow-hidden flex flex-col relative shadow-3xl">
+                <div className="flex-1 bg-white border-2 border-slate-100 rounded-[4rem] overflow-hidden flex flex-col relative shadow-xl shadow-slate-900/5">
 
                     {/* Search & Action Bar */}
-                    <div className="p-10 border-b border-white/5 flex items-center justify-between bg-white/[0.01]">
+                    <div className="p-10 border-b-2 border-slate-50 flex items-center justify-between bg-white relative">
+                        <div className="absolute top-0 left-0 w-1 h-full bg-orange-500" />
                         <div className="relative w-[500px] group">
-                            <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-700 group-focus-within:text-orange-500 transition-all" />
+                            <Search className="absolute left-6 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-300 group-focus-within:text-orange-500 transition-all" />
                             <input
                                 type="search"
                                 autoComplete="new-password"
                                 placeholder="ESCANEAR REGISTROS DE ÉLITE..."
-                                className="w-full bg-white/[0.03] border border-white/10 rounded-2xl py-5 pl-16 pr-8 text-xs font-black uppercase tracking-[0.2em] italic focus:outline-none focus:border-orange-500/30 transition-all placeholder:text-slate-800"
+                                className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl py-5 pl-16 pr-8 text-xs font-black uppercase tracking-[0.2em] italic focus:outline-none focus:border-orange-500/30 transition-all placeholder:text-slate-400 text-slate-900"
                                 value={searchTerm}
                                 onChange={e => setSearchTerm(e.target.value)}
                             />
@@ -103,13 +101,13 @@ export default function CustomersPagePremium() {
                         <div className="flex gap-6">
                             <Button
                                 onClick={() => toast.info("HERRAMIENTA DE SEGMENTACIÓN: Próximamente")}
-                                variant="ghost" className="h-16 px-10 rounded-2xl bg-white/5 border border-white/5 text-slate-500 font-black uppercase italic text-[10px] tracking-[0.3em] transition-all hover:bg-white/10 hover:text-white"
+                                variant="ghost" className="h-16 px-10 rounded-2xl bg-slate-50 border-2 border-slate-100 text-slate-400 font-black uppercase italic text-[10px] tracking-[0.3em] transition-all hover:bg-slate-900 hover:text-white"
                             >
                                 <Filter className="w-5 h-5 mr-4" /> Segmentar
                             </Button>
                             <Button
                                 onClick={() => toast.success("ABRIENDO FORMULARIO DE NUEVO CLIENTE")}
-                                className="h-16 px-12 bg-orange-600 hover:bg-orange-500 text-black font-black uppercase text-[11px] italic tracking-widest rounded-2xl shadow-3xl shadow-orange-600/20 active:scale-95 transition-all gap-4"
+                                className="h-16 px-12 bg-orange-600 hover:bg-orange-500 text-white font-black uppercase text-[11px] italic tracking-widest rounded-2xl shadow-xl shadow-orange-600/20 active:scale-95 transition-all gap-4"
                             >
                                 <Users className="w-6 h-6" /> CREAR PROTOCOLO
                             </Button>
@@ -123,14 +121,17 @@ export default function CustomersPagePremium() {
                 </div>
 
                 {/* AI INSIGHT FOOTER */}
-                <div className="flex items-center justify-between p-8 bg-orange-600 rounded-[2.5rem] shrink-0 shadow-2xl shadow-orange-950/20 mb-10">
-                    <div className="flex items-center gap-6">
-                        <div className="w-14 h-14 bg-black rounded-2xl flex items-center justify-center">
+                <div className="flex items-center justify-between p-8 bg-slate-900 rounded-[2.5rem] shrink-0 shadow-2xl shadow-slate-900/40 mb-10 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
+                        <Sparkles className="w-32 h-32 text-orange-500" />
+                    </div>
+                    <div className="flex items-center gap-6 relative z-10">
+                        <div className="w-14 h-14 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/10">
                             <Sparkles className="w-8 h-8 text-orange-500 animate-pulse" />
                         </div>
                         <div>
-                            <h4 className="text-2xl font-black italic text-black uppercase tracking-tighter leading-none">Discovery Insights: Clientes Nocturnos</h4>
-                            <p className="text-[10px] font-bold text-black/60 uppercase tracking-widest mt-1">Se detectó una alta frecuencia de pedidos de mesa entre 20:00 y 22:00.</p>
+                            <h4 className="text-2xl font-black italic text-white uppercase tracking-tighter leading-none">Discovery <span className="text-orange-500">Insights:</span> Clientes Nocturnos</h4>
+                            <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest mt-1 italic">Patrón detectado: alta frecuencia de pedidos de mesa entre 20:00 y 22:00.</p>
                         </div>
                     </div>
                     <Button
@@ -138,7 +139,7 @@ export default function CustomersPagePremium() {
                             toast.success("CAMPAÑA WHATSAPP LANZADA CON ÉXITO")
                             console.log("Launching WhatsApp campaign...")
                         }}
-                        className="bg-black text-white hover:bg-slate-900 h-14 px-10 rounded-2xl font-black italic uppercase text-xs tracking-[0.2em]"
+                        className="bg-white text-slate-900 hover:bg-orange-500 hover:text-white h-14 px-10 rounded-2xl font-black italic uppercase text-xs tracking-[0.2em] relative z-10 transition-all active:scale-95"
                     >
                         LANZAR CAMPAÑA WHATSAPP
                     </Button>
@@ -150,7 +151,7 @@ export default function CustomersPagePremium() {
                 .custom-scrollbar::-webkit-scrollbar {width: 4px; }
                 .custom-scrollbar::-webkit-scrollbar-track {background: transparent; }
                 .custom-scrollbar::-webkit-scrollbar-thumb {
-                    background: rgba(255, 255, 255, 0.05);
+                    background: rgba(0, 0, 0, 0.05);
                 border-radius: 10px; 
                 }
             `}</style>

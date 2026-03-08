@@ -34,67 +34,67 @@ export function CustomersTable({ filtered, view, setView }: CustomersTableProps)
     return (
         <table className="w-full text-left border-collapse">
             <thead>
-                <tr className="bg-white/[0.01]">
-                    <th className="p-6 text-[10px] font-black text-slate-500 uppercase tracking-widest italic">Perfil_Cliente</th>
-                    <th className="p-6 text-[10px] font-black text-slate-500 uppercase tracking-widest italic">LTV_Metric (Ventas)</th>
-                    <th className="p-6 text-[10px] font-black text-slate-500 uppercase tracking-widest italic">Puntos_Loyalty</th>
-                    <th className="p-6 text-[10px] font-black text-slate-500 uppercase tracking-widest italic text-center">Status_Tag</th>
-                    <th className="p-6 text-[10px] font-black text-slate-500 uppercase tracking-widest italic text-right">Command</th>
+                <tr className="bg-slate-50/50">
+                    <th className="p-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] italic">Perfil_Cliente</th>
+                    <th className="p-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] italic">LTV_Metric (Ventas)</th>
+                    <th className="p-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] italic">Puntos_Loyalty</th>
+                    <th className="p-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] italic text-center">Status_Tag</th>
+                    <th className="p-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] italic text-right">Command</th>
                 </tr>
             </thead>
             <tbody>
                 {filtered.map((cust, i) => (
-                    <tr key={i} className="border-b border-white/5 hover:bg-white/[0.01] transition-colors group">
-                        <td className="p-6">
-                            <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 rounded-2xl bg-slate-800 flex items-center justify-center border border-white/5 font-black text-slate-500 italic">
+                    <tr key={i} className="border-b-2 border-slate-50 hover:bg-slate-50 transition-colors group cursor-pointer">
+                        <td className="p-8">
+                            <div className="flex items-center gap-6">
+                                <div className="w-14 h-14 rounded-2xl bg-white border-2 border-slate-100 flex items-center justify-center font-black text-slate-400 italic shadow-sm group-hover:bg-slate-900 group-hover:text-white group-hover:border-slate-900 transition-all duration-500">
                                     {cust.name.substring(0, 2).toUpperCase()}
                                 </div>
                                 <div>
-                                    <p className="font-bold text-white group-hover:text-orange-400 transition-colors">{cust.name}</p>
-                                    <p className="text-[10px] font-medium text-slate-500">{cust.phone}</p>
+                                    <p className="text-lg font-black italic tracking-tighter text-slate-900 group-hover:text-orange-600 transition-colors uppercase leading-none">{cust.name}</p>
+                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2">{cust.phone}</p>
                                 </div>
                             </div>
                         </td>
-                        <td className="p-6">
-                            <p className="font-black italic text-white tracking-tighter">{formatPrice(cust.totalSpent)}</p>
-                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{cust.totalOrders} órdenes</p>
+                        <td className="p-8">
+                            <p className="text-2xl font-black italic text-slate-900 tracking-tighter">{formatPrice(cust.totalSpent)}</p>
+                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-1 italic">{cust.totalOrders} órdenes_liquidadas</p>
                         </td>
-                        <td className="p-6">
-                            <div className="flex items-center gap-2">
-                                <Trophy className="w-3.5 h-3.5 text-orange-500" />
-                                <span className="text-sm font-black italic">{cust.points}</span>
+                        <td className="p-8">
+                            <div className="flex items-center gap-3">
+                                <Trophy className="w-4 h-4 text-orange-600" />
+                                <span className="text-lg font-black italic tracking-tighter text-slate-900">{cust.points}</span>
                             </div>
                         </td>
-                        <td className="p-6">
+                        <td className="p-8">
                             <div className="flex justify-center">
                                 <span className={cn(
-                                    "px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest",
-                                    cust.totalSpent > 500000 ? "bg-yellow-500/10 text-yellow-500 border border-yellow-500/20" : "bg-slate-800 text-slate-500 border border-white/5"
+                                    "px-4 py-2 rounded-full text-[9px] font-black uppercase tracking-widest italic",
+                                    cust.totalSpent > 500000 ? "bg-amber-100 text-amber-600 border-2 border-amber-200 shadow-sm" : "bg-slate-100 text-slate-500 border-2 border-slate-200"
                                 )}>
-                                    {cust.totalSpent > 500000 ? '⭐ ELITE VIP' : 'REGULAR'}
+                                    {cust.totalSpent > 500000 ? '⭐ ELITE VIP' : 'REGULAR_STATUS'}
                                 </span>
                             </div>
                         </td>
-                        <td className="p-6 text-right">
-                            <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <td className="p-8 text-right">
+                            <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-all">
                                 <button
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         toast.success(`INICIANDO MENSAJE PARA: ${cust.name}`)
                                     }}
-                                    className="p-2.5 rounded-xl bg-orange-600/10 text-orange-500 hover:bg-orange-600 hover:text-black border border-orange-500/20 transition-all text-xs"
+                                    className="w-12 h-12 rounded-xl bg-orange-600 text-white hover:bg-orange-500 transition-all flex items-center justify-center shadow-lg shadow-orange-600/20"
                                 >
-                                    <MessageCircle className="w-4 h-4" />
+                                    <MessageCircle className="w-5 h-5" />
                                 </button>
                                 <button
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         toast.info(`DETALLES DE CLIENTE: ${cust.name}`)
                                     }}
-                                    className="p-2.5 rounded-xl bg-white/5 text-slate-400 hover:text-white border border-white/10 transition-all text-xs"
+                                    className="w-12 h-12 rounded-xl bg-slate-900 text-white hover:bg-slate-800 transition-all flex items-center justify-center shadow-lg shadow-slate-900/20"
                                 >
-                                    <MoreHorizontal className="w-4 h-4" />
+                                    <MoreHorizontal className="w-5 h-5" />
                                 </button>
                             </div>
                         </td>

@@ -125,7 +125,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
                     <JamaliBot />
                     <IncomingOrderAlert />
-                    <Toaster />
+                    <Toaster position="top-right" richColors />
                 </main>
 
                 <style jsx global>{`

@@ -44,6 +44,11 @@ Este documento es la referencia definitiva para:
 - Cálculo automático de periodos (Horas Extras y Comisiones POS).
 - Transacciones ACID para la dispersión segura de pagos.
 
+### 7. 🌐 [Ventas Online Central](/admin/online-sales)
+- Activación de Web Pública y Menú Digital.
+- Configuración de SEO, Instagram y Facebook.
+- Switch dinámico entre Menú y E-commerce.
+
 ### 7. 🛡️ Arquitectura Enterprise & Seguridad
 - **Modo Offline (PWA)**: Interfaz resiliente ante caídas de internet en el restaurante.
 - **Testing & CI/CD**: Suite de Jest automatizada conectada a GitHub Actions.
@@ -53,9 +58,9 @@ Este documento es la referencia definitiva para:
 ## 🏗️ Documentación del Sistema (Developer & Admin)
 Para profundizar en el funcionamiento interno y la escalabilidad del sistema:
 
-1.  **[Blueprint de Arquitectura](docs/ARCHITECTURE_BLUEPRINT.md)**: Stack técnico y patrones de diseño.
+1.  **[Arquitectura JAMALI OS](docs/ARCHITECTURE_JAMALISO.md)**: Stack técnico, patrones de diseño y estándares visuales (Glassmorphism).
 2.  **[Diccionario de Datos](docs/DATA_DICTIONARY.md)**: Esquema de base de datos y reglas de negocio.
-3.  **[Guía de Despliegue y Seguridad](docs/DEPLOYMENT_SECURITY_GUIDE.md)**: Checklist para pasar a producción.
+3.  **[Estructura Base de Datos](docs/DATABASE_JAMALISO.md)**: Tablas, RLS y referencialidad.
 4.  **[Guía de Onboarding](docs/ONBOARDING_RESTAURANTS.md)**: Pasos para configurar un nuevo negocio.
 
 ---

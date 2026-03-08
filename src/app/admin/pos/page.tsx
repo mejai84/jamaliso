@@ -175,10 +175,10 @@ export default function PosPremiumPage() {
     }
 
     return (
-        <div className="min-h-screen text-white font-sans relative overflow-hidden flex flex-col h-screen">
-            {/* 🖼️ FONDO PREMIUM */}
-            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center scale-105 pointer-events-none" />
-            <div className="absolute inset-0 backdrop-blur-[80px] bg-slate-950/90 pointer-events-none" />
+        <div className="min-h-screen text-slate-900 font-sans relative overflow-hidden flex flex-col h-screen">
+            {/* 🖼️ FONDO PREMIUM PIXORA (Standardized Across Modules) */}
+            <div className="fixed inset-0 bg-[url('https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center scale-105 pointer-events-none opacity-20" />
+            <div className="fixed inset-0 backdrop-blur-[100px] bg-white/80 pointer-events-none" />
 
             <PosHeader currentTime={currentTime} />
 

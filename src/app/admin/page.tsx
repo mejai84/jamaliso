@@ -33,6 +33,7 @@ import { supabase } from "@/lib/supabase/client"
 import Link from "next/link"
 import { formatPrice } from "@/lib/utils"
 import { cn } from "@/lib/utils"
+import { useRouter } from "next/navigation"
 import { useRestaurant } from "@/providers/RestaurantProvider"
 import { toast } from "sonner"
 
@@ -49,6 +50,7 @@ export default function AdminDashboard() {
     })
     const [currentTime, setCurrentTime] = useState(new Date())
     const { restaurant } = useRestaurant()
+    const router = useRouter()
 
     useEffect(() => {
         const timer = setInterval(() => setCurrentTime(new Date()), 1000)
@@ -111,50 +113,52 @@ export default function AdminDashboard() {
                     </div>
                 </div>
 
-                {/* KPI CARDS (Estilo Glow) */}
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6 shrink-0">
+                {/* KPI CARDS (Pixora Light Style) */}
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5 md:gap-8 shrink-0">
                     {[
-                        { label: 'VENTAS HOY', val: formatPrice(stats.todayRevenue), icon: DollarSign, color: 'text-orange-600', glow: 'shadow-orange-500/10' },
-                        { label: 'ÓRDENES ACTIVAS', val: stats.activeOrders, icon: Flame, color: 'text-orange-600', glow: 'shadow-orange-500/10' },
-                        { label: 'MESAS OCUPADAS', val: `${stats.occupiedTables}/${stats.totalTables}`, icon: LayoutDashboard, color: 'text-slate-900' },
-                        { label: 'STOCKS CRÍTICO', val: stats.criticalStock, icon: AlertCircle, color: 'text-red-600' },
-                        { label: 'CLIENTES NUEVOS', val: `+${stats.newCustomers}`, icon: Users, color: 'text-blue-600' },
-                        { label: 'VALORACIÓN', val: stats.rating, icon: Star, color: 'text-yellow-600' },
+                        { label: 'VENTAS HOY', val: formatPrice(stats.todayRevenue), icon: DollarSign, color: 'text-orange-600', trend: '+12%' },
+                        { label: 'ÓRDENES ACTIVAS', val: stats.activeOrders, icon: Flame, color: 'text-orange-600', trend: 'Live' },
+                        { label: 'MESAS OCUPADAS', val: `${stats.occupiedTables}/${stats.totalTables}`, icon: LayoutDashboard, color: 'text-slate-900', trend: '60%' },
+                        { label: 'STOCKS CRÍTICO', val: stats.criticalStock, icon: AlertCircle, color: 'text-rose-600', trend: '3 items' },
+                        { label: 'CLIENTES NUEVOS', val: `+${stats.newCustomers}`, icon: Users, color: 'text-slate-900' },
+                        { label: 'VALORACIÓN', val: stats.rating, icon: Star, color: 'text-amber-500', trend: '4.8/5' },
                     ].map((card, i) => (
-                        <div key={i} className={cn(
-                            "bg-white/60 backdrop-blur-xl border border-slate-200 rounded-2xl md:rounded-3xl p-4 md:p-6 transition-all hover:scale-105 hover:bg-white/80 shadow-sm",
-                            card.glow && `shadow-xl ${card.glow}`
-                        )}>
-                            <div className="flex items-center justify-between mb-2 md:mb-4">
-                                <card.icon className={cn("w-4 h-4 md:w-5 md:h-5 opacity-40", card.color)} />
-                                <TrendingUp className="w-3 h-3 md:w-4 md:h-4 text-emerald-600 opacity-0 group-hover:opacity-100" />
+                        <div key={i} className="group bg-white border-2 border-slate-100 rounded-[2rem] p-6 transition-all hover:border-orange-500/30 hover:shadow-2xl hover:shadow-orange-500/5 hover:-translate-y-1">
+                            <div className="flex items-center justify-between mb-4">
+                                <div className="p-2 bg-slate-50 rounded-xl group-hover:bg-orange-500 group-hover:text-white transition-all">
+                                    <card.icon className="w-5 h-5" />
+                                </div>
+                                {card.trend && <span className="text-[8px] font-black text-emerald-500 uppercase tracking-widest">{card.trend}</span>}
                             </div>
-                            <p className="text-[8px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 leading-none">{card.label}</p>
-                            <p className={cn("text-lg md:text-2xl font-black italic", card.color)}>{card.val}</p>
+                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1 leading-none italic">{card.label}</p>
+                            <p className={cn("text-2xl font-black italic tracking-tighter", card.color)}>{card.val}</p>
                         </div>
                     ))}
                 </div>
 
                 {/* MAIN GRID */}
-                <div className="flex flex-col lg:grid lg:grid-cols-12 gap-8 lg:gap-10 flex-1 min-h-0">
+                <div className="flex flex-col lg:grid lg:grid-cols-12 gap-8 lg:gap-12 flex-1 min-h-0">
 
                     {/* MODULOS DE CONTROL */}
-                    <div className="lg:col-span-8 flex flex-col space-y-4">
-                        <h2 className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] md:tracking-[0.4em] text-slate-400 italic px-2">Módulos de Control Operativo</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4 flex-1 lg:overflow-y-auto lg:pr-2 custom-scrollbar">
+                    <div className="lg:col-span-8 flex flex-col space-y-6">
+                        <div className="flex items-center gap-4 px-2">
+                            <div className="h-1 w-12 bg-orange-600 rounded-full" />
+                            <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-900 italic">Módulos de Control Operativo</h2>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5 flex-1 lg:overflow-y-auto lg:pr-4 custom-scrollbar">
                             {navItems.map((item, i) => (
                                 <Link key={i} href={item.href}>
-                                    <div className="group bg-white/40 backdrop-blur-2xl border border-slate-200 rounded-2xl md:rounded-[2rem] p-5 md:p-6 h-full transition-all hover:border-orange-500/40 hover:bg-white/60 cursor-pointer overflow-hidden relative shadow-sm">
-                                        <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 group-hover:scale-110 transition-all">
-                                            <item.icon className="w-16 h-16 md:w-20 md:h-20 text-slate-900" />
+                                    <div className="group bg-white border-2 border-slate-100 rounded-[2.5rem] p-8 h-full transition-all hover:border-slate-900 hover:shadow-2xl cursor-pointer overflow-hidden relative active:scale-95">
+                                        <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:opacity-[0.08] group-hover:scale-125 transition-all">
+                                            <item.icon className="w-24 h-24 text-slate-900" />
                                         </div>
-                                        <div className="relative z-10 flex flex-col h-full justify-between gap-3">
-                                            <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-orange-500/10 flex items-center justify-center border border-orange-500/20 group-hover:bg-orange-500 group-hover:text-white transition-all">
-                                                <item.icon className="w-4 h-4 md:w-5 md:h-5" />
+                                        <div className="relative z-10 flex flex-col h-full justify-between gap-6">
+                                            <div className="w-14 h-14 rounded-2xl bg-slate-50 border-2 border-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-slate-900 group-hover:text-white group-hover:border-slate-900 transition-all shadow-sm">
+                                                <item.icon className="w-6 h-6" />
                                             </div>
                                             <div>
-                                                <h3 className="text-lg md:text-xl font-black italic tracking-tighter uppercase group-hover:text-orange-600 transition-colors leading-none">{item.label}</h3>
-                                                <p className="text-[9px] md:text-[10px] font-medium text-slate-400 uppercase tracking-widest mt-1.5">{item.desc}</p>
+                                                <h3 className="text-xl md:text-2xl font-black italic tracking-tighter uppercase group-hover:text-orange-600 transition-colors leading-none">{item.label}</h3>
+                                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mt-3 italic opacity-60">{item.desc}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -195,7 +199,13 @@ export default function AdminDashboard() {
                                 </div>
                             </div>
                             <Button
-                                onClick={() => toast.success("CIERRE X GENERADO CORRECTAMENTE")}
+                                onClick={() => {
+                                    toast.loading("Generando reporte de cierre parcial...", { id: 'cierre-x' });
+                                    setTimeout(() => {
+                                        toast.success("Redirigiendo a Tesorería...", { id: 'cierre-x' });
+                                        router.push('/admin/cashier');
+                                    }, 1000);
+                                }}
                                 className="w-full h-14 md:h-16 bg-slate-900 text-white font-black uppercase tracking-[0.2em] italic rounded-2xl hover:bg-slate-800 shadow-xl transition-all active:scale-95"
                             >
                                 EJECUTAR CIERRE X

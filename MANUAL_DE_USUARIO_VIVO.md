@@ -1,5 +1,5 @@
 # 📘 Manual de Usuario Vivo — JAMALISO
-> **Versión:** 2.2 Enterprise | **Estado:** Documento Vivo | **Última revisión:** 07 Marzo 2026 (14:30)
+> **Versión:** 2.2 Enterprise | **Estado:** Documento Vivo | **Última revisión:** 08 Marzo 2026
 
 Este manual es la referencia oficial para todos los roles del sistema. Está divido en dos tipos de secciones:
 - 🟢 **Guías Operativas**: Cómo usar cada módulo paso a paso.
@@ -172,7 +172,33 @@ Monitor táctil que reemplaza las comandas en papel. Sincronización en tiempo r
 
 ---
 
-### 💼 3.5. Motor de Nómina — Payroll (`/admin/payroll`)
+### 🖥️ 3.5. Terminal POS — Venta Directa (`/admin/pos`)
+
+El corazón operativo para cobros rápidos y ventas de mostrador. Optimizada bajo la estética **Pixora Light** para máxima legibilidad y velocidad.
+
+#### ¿Para qué es este módulo?
+Diseñado para la **barra, counter o caja principal**. Su objetivo es procesar transacciones en segundos, ideal para clientes que pagan al pedir o para liquidar cuentas de salón enviadas por los meseros.
+
+#### Funciones de Poder:
+1.  **Venta Atómica (Seguridad Financiera):** Cada venta se procesa como una operación única. Si falla el internet en el último milisegundo, el sistema no descuenta inventario ni registra el pago a medias, evitando descuadres de caja.
+2.  **Buscador Inteligente:** Filtra por nombre, categoría o escanea códigos de barras para agregar ítems al carrito instantáneamente.
+3.  **Cálculo Automático de Impuestos:** Basado en la configuración regional (ej: IVA 19%, Impoconsumo 8%), el sistema desglosa los valores sin intervención humana.
+4.  **Botón de Pago Rápido (Cash):** Un solo toque para ventas en efectivo, con cálculo de cambio opcional.
+
+#### Flujo de Operación:
+1.  **Selección:** Elige productos del catálogo lateral o usa el buscador superior.
+2.  **Revisión:** Ajusta cantidades en el **Resumen de Orden**.
+3.  **Pago:**
+    - 💵 **Efectivo**: Toca "PAGAR AHORA" para procesar bajo `CASH`.
+    - 💳 **Digital/Tarjeta**: Toca el icono de smartphone para registrar pago con datáfono o QR.
+4.  **Cierre:** El sistema genera un **Ticket Térmico** automático y limpia el carrito para el siguiente cliente.
+
+> [!TIP]
+> Si intentas vender y el sistema te bloquea, verifica que hayas realizado la **Apertura de Caja** en el módulo de Control de Caja. El POS requiere una sesión activa para rastrear el dinero.
+
+---
+
+### 💼 3.6. Motor de Nómina — Payroll (`/admin/payroll`)
 
 Liquidación automática de sueldos, horas extras y comisiones de ventas.
 
@@ -189,7 +215,7 @@ Liquidación automática de sueldos, horas extras y comisiones de ventas.
 
 ---
 
-### 📦 3.6. Inventario y Recetas (`/admin/inventory`)
+### 📦 3.7. Inventario y Recetas (`/admin/inventory`)
 
 Control de materias primas y cálculo de Food Cost.
 
@@ -200,7 +226,7 @@ Control de materias primas y cálculo de Food Cost.
 
 ---
 
-### 📊 3.7. Reportes y BI (`/admin/reports`)
+### 📊 3.8. Reportes y BI (`/admin/reports`)
 
 Inteligencia del negocio para el Administrador o Dueño.
 
@@ -223,6 +249,9 @@ Usa esta lista para verificar que todo funcione correcto después de cada actual
   - [ ] Crear pedido en Mesa 5, marcar como VIP.
   - [ ] Verificar que en Cocina aparezca con borde distintivo y al inicio de la fila.
   - [ ] Verificar que suene la alerta de nueva entrada.
+
+- **🔵 Pruebas Automatizadas (Playwright & Jest):**
+  - El sistema cuenta con pruebas E2E y Unitarias automatizadas. Se recomienda a los administradores de TI ejecutar `npm run test:e2e` antes de cada gran actualización para validar los flujos de POS, Cocina y Caja simultáneamente.
 
 - **🔵 Prueba de División de Cuenta:**
   - [ ] Crear orden con 4 productos en Mesa 2.

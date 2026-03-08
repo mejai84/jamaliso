@@ -9,14 +9,18 @@ import { ClientBot } from "@/components/store/client-bot"
 export default function LayoutClientWrapper({ children }: { children: React.ReactNode }) {
     const pathname = usePathname()
 
-    // Lista de rutas SaaS donde NO queremos mostrar componentes de restaurante (Footer global, Bot, WhatsApp, etc.)
     const isSaaSRoute = pathname === "/" ||
         pathname.startsWith("/landing") ||
         pathname.startsWith("/register") ||
         pathname.startsWith("/login") ||
-        pathname.startsWith("/admin") // Admin portal has its own layout or elements
+        pathname.startsWith("/admin") ||
+        pathname.startsWith("/pricing")
 
-    if (isSaaSRoute) {
+    // Si NO es una ruta reservada del SaaS, asumimos que es una página de un restaurante
+    // o una landing personalizada. En estos casos no queremos el footer genérico de JAMALI OS.
+    const isRestaurantPage = !isSaaSRoute && pathname !== "/"
+
+    if (isSaaSRoute || isRestaurantPage) {
         return <>{children}</>
     }
 

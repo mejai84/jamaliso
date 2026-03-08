@@ -54,11 +54,10 @@
   - Elevaciones de privilegios
 - **Acción requerida:** Crear tabla `security_events` y registrar eventos desde el middleware y los Server Actions.
 
-### ⚠️ PARCIAL: Protección POS contra fraude interno
-- ✅ El sistema de permisos tiene `discount`, `change_prices`, `void_order`, `refund` como permisos separados.
-- ❌ **No hay bloqueo de edición de ventas cerradas.** Una venta con `payment_status = 'COMPLETED'` podría teóricamente ser modificada.
-- ❌ **No hay log específico de cambios de precios.** Si alguien cambia el precio de un producto, no queda registrado quién lo hizo ni cuándo.
-- **Acción requerida:** Agregar trigger SQL en `products` y `pos_sales` que registre cambios en `audit_logs`.
+### ✅ YA EXISTE: Protección POS contra fraude interno
+- El sistema de permisos tiene `discount`, `change_prices`, `void_order`, `refund` como permisos separados.
+- **Bloqueo de edición de ventas cerradas:** Se ha agregado un trigger SQL `prevent_closed_order_tampering` que lanza error y auditoría si se intenta alterar una orden con status `COMPLETED`.
+- **Log de cambios de precios:** El SQL desencadena `log_product_price_change` que inserta un registro transparente en la nueva tabla `security_events` de cada modificación de precio.
 
 ### ⚠️ PARCIAL: Tokens JWT
 - Supabase maneja la expiración de tokens automáticamente.
@@ -96,18 +95,16 @@
 
 ## 4. MONITOREO Y OBSERVABILIDAD
 
-### ❌ NO EXISTE: Sentry / LogTail / DataDog
-- No hay ninguna librería de error tracking instalada en `package.json`.
-- Si un error ocurre en producción, **nadie se entera** hasta que el restaurante llama.
-- Los errores se pierden en `console.error()` que no es persistente.
-- **Acción requerida:** Instalar `@sentry/nextjs` (free tier: 5K errors/mes). Configurar DSN en variables de entorno. Wrappear Server Actions con `Sentry.captureException()`.
+### ⚠️ PARCIAL: Sentry / LogTail / DataDog
+- Se ha instalado e inicializado el SDK de `@sentry/nextjs` (archivos globales: `sentry.client.config.ts`, `sentry.server.config.ts` y en `next.config.ts`).
+- Server Actions críticos de cobro (e.g. `processOrderPayment`) fueron modificados para registrar la variable con `Sentry.captureException()`.
+- **Acción requerida:** Vincular variable de entorno `NEXT_PUBLIC_SENTRY_DSN` a la infraestructura de Sentry del proveedor gratuito e inyectar el setup en todo el clúster.
 
-### ❌ NO EXISTE: Health Checks / Uptime Monitoring
-- No hay endpoint `/api/health` que verifique:
-  - Conexión a Supabase
-  - Estado del rate limiter
-  - Versión del deploy
-- **Acción requerida:** Crear endpoint de health check + conectar con UptimeRobot o similar (gratis).
+### ✅ YA EXISTE: Health Checks / Uptime Monitoring
+- Endpoint de monitoreo base habilitado en `/api/health` 
+  - Verificación de la conexión y latencia de Supabase.
+  - Verifica el API general de la App y emite 200/503 dependiendo dictando "healthy" o "degraded"
+- **Acción requerida (Opción futura):** Conectar a herramientas como UptimeRobot para rastreo en tiempo real constante fuera de AWS.
 
 ### ❌ NO EXISTE: Feature Flags
 - No hay sistema para activar/desactivar funcionalidades por restaurante.
@@ -120,9 +117,10 @@
 ## 5. TESTING
 
 ### ⚠️ PARCIAL: Tests automatizados
-- **Estado actual:** 2 suites, 4 tests (Jest + React Testing Library)
+- **Estado actual:** 2 suites completas, más scaffolding base en progreso (Jest + React Testing Library).
   - `button.test.tsx` — test de componente UI
   - `BillingMetrics.test.tsx` — test de componente de negocio
+  - *Módulos inicializados:* `pos.test.ts`, `orders-fixed.test.ts`, `payroll-engine.test.ts`.
 - **Lo que falta (mínimo para producción):**
 
 | Módulo | Tests necesarios | Prioridad |
@@ -136,10 +134,11 @@
 
 - **Meta sugerida:** De 4 tests → al menos 40-60 tests antes de primer cliente real.
 
-### ❌ NO EXISTE: Tests E2E (End-to-End)
-- No hay Playwright ni Cypress instalados.
-- Flujos críticos (Tomar pedido → KDS → Servir → Cobrar → Cerrar caja) no se validan automáticamente.
-- **Acción requerida:** Instalar Playwright. Crear 3-5 flujos E2E del happy path.
+### ⚠️ PARCIAL: Tests E2E (End-to-End)
+- ✅ Playwright instalado y configurado (`playwright.config.ts`).
+- ✅ Scaffolding de E2E base (`pos-flow.spec.ts`) creado para repasar flujos críticos.
+- ✅ Creada guía (workflow) en `.agent/workflows/run-tests.md`.
+- **Acción requerida:** Completar y expandir los flujos en los tests E2E y configurar en CI.
 
 ---
 

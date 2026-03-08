@@ -11,23 +11,28 @@ interface MobileHeaderProps {
 
 export function MobileHeader({ restaurant, onMenuOpen }: MobileHeaderProps) {
     return (
-        <header className="h-16 border-b border-slate-200 flex items-center px-6 lg:hidden justify-between bg-white/80 backdrop-blur-md sticky top-0 z-50 font-sans">
+        <header className="h-16 border-b-2 border-slate-100 flex items-center px-6 lg:hidden justify-between bg-white sticky top-0 z-50 font-sans shadow-sm">
             <div className="flex items-center gap-3">
-                {restaurant?.logo_url ? (
-                    <img src={restaurant.logo_url} className="w-6 h-6 object-contain" alt="Logo" />
-                ) : (
-                    <div className="relative w-6 h-6">
-                        <Image src="/images/jamali-os-logo.png" alt="JAMALI OS" fill className="object-contain" />
-                    </div>
-                )}
-                <span className="font-black italic text-sm tracking-tighter uppercase text-slate-900">
-                    {restaurant?.name || "JAMALI OS"} <span className="text-primary italic">JAMALI OS</span>
-                </span>
+                <div className="w-8 h-8 rounded-lg bg-white border-2 border-slate-100 flex items-center justify-center relative overflow-hidden transition-all shadow-sm">
+                    {restaurant?.logo_url ? (
+                        <img src={restaurant.logo_url} className="w-full h-full object-cover" alt="Logo" />
+                    ) : (
+                        <div className="relative w-full h-full p-1.5">
+                            <Image src="/images/jamali-os-logo.png" alt="JAMALI OS" fill className="object-contain" />
+                        </div>
+                    )}
+                </div>
+                <div className="flex flex-col -gap-1">
+                    <span className="font-black italic text-xs tracking-tighter uppercase text-slate-900 leading-none">
+                        JAMALI <span className="text-orange-600">OS</span>
+                    </span>
+                    <span className="text-[6px] font-black text-slate-400 tracking-widest uppercase opacity-60">SMART SYSTEM</span>
+                </div>
             </div>
             <Button
                 size="icon"
                 variant="ghost"
-                className="rounded-xl border border-slate-200 active:scale-90 transition-transform"
+                className="h-10 w-10 rounded-xl border-2 border-slate-100 bg-slate-50 active:scale-95 transition-all text-slate-900"
                 onClick={onMenuOpen}
             >
                 <Menu className="w-5 h-5" />

@@ -20,7 +20,26 @@ interface Restaurant {
     enable_whatsapp_receipts?: boolean
     landing_page_config?: any
     custom_domain?: string
-    online_store_enabled?: boolean
+    is_web_active?: boolean
+    web_mode?: 'menu' | 'ecommerce'
+    allow_pickup?: boolean
+    allow_delivery?: boolean
+    instagram_url?: string
+    facebook_url?: string
+    tiktok_url?: string
+    youtube_url?: string
+    pinterest_url?: string
+    cuisine_type?: string
+    custom_seo_title?: string
+    custom_seo_description?: string
+    whatsapp_float_enabled?: boolean
+    whatsapp_custom_message?: string
+    promo_banner_text?: string
+    promo_banner_enabled?: boolean
+    address_text?: string
+    google_maps_link?: string
+    online_hours_config?: any
+    tenant_id?: string
 }
 
 interface RestaurantContextType {
@@ -66,15 +85,19 @@ export const RestaurantProvider = ({ children }: { children: ReactNode }) => {
                 if (resBySub) currentRes = resBySub
             }
 
-            // 2. Resolver por Slug en la URL: /[slug]/menu, /[slug]/admin, etc.
-            if (!currentRes && pathname) {
-                const slugMatch = pathname.match(/^\/([a-z0-9-]+)\/(menu|admin|login)/)
-                if (slugMatch) {
-                    const urlSlug = slugMatch[1]
+            // 2. Resolver por Slug en la URL: /[slug], /[slug]/menu, /[slug]/admin, etc.
+            if (!currentRes && pathname && pathname !== '/') {
+                const segments = pathname.split('/').filter(Boolean)
+                const firstSegment = segments[0]
+
+                // Lista de palabras reservadas del SaaS que NO son slugs de restaurante
+                const reserved = ['register', 'login', 'landing', 'checkout', 'pricing', 'about', 'contact', 'support', 'api']
+
+                if (firstSegment && !reserved.includes(firstSegment)) {
                     const { data: resBySlug } = await supabase
                         .from('restaurants')
                         .select('*')
-                        .or(`slug.eq.${urlSlug},subdomain.eq.${urlSlug}`)
+                        .or(`slug.eq.${firstSegment},subdomain.eq.${firstSegment}`)
                         .maybeSingle()
 
                     if (resBySlug) currentRes = resBySlug
@@ -110,11 +133,23 @@ export const RestaurantProvider = ({ children }: { children: ReactNode }) => {
                         const { data: allRes } = await supabase
                             .from('restaurants')
                             .select('*')
-                            .eq('is_active', true)
                             .order('name')
                         if (allRes) setAccessibleRestaurants(allRes)
                     } else {
-                        if (currentRes) setAccessibleRestaurants([currentRes])
+                        // Regular Admin - fetch all restaurants in the same tenant
+                        const tId = currentRes?.tenant_id || (profile as any)?.restaurants?.tenant_id
+                        if (tId) {
+                            const { data: tenantRes } = await supabase
+                                .from('restaurants')
+                                .select('*')
+                                .eq('tenant_id', tId)
+                                .order('name')
+                            if (tenantRes) setAccessibleRestaurants(tenantRes)
+                        } else if (currentRes) {
+                            setAccessibleRestaurants([currentRes])
+                        } else if ((profile as any)?.restaurants) {
+                            setAccessibleRestaurants([(profile as any).restaurants])
+                        }
                     }
                 }
             }

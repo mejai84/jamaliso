@@ -92,4 +92,17 @@ const nextConfig: any = {
   },
 };
 
-export default withPWA(nextConfig);
+import { withSentryConfig } from '@sentry/nextjs';
+
+export default withSentryConfig(withPWA(nextConfig), {
+  // For all available options, see:
+  // https://github.com/getsentry/sentry-webpack-plugin#options
+  org: process.env.SENTRY_ORG || "jamali-os",
+  project: process.env.SENTRY_PROJECT || "javascript-nextjs",
+  silent: !process.env.CI,
+  widenClientFileUpload: true,
+  reactComponentAnnotation: {
+    enabled: true,
+  },
+  automaticVercelMonitors: true,
+});

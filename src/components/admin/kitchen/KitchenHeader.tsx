@@ -30,13 +30,13 @@ export function KitchenHeader({
     return (
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 shrink-0 relative z-10">
             <div className="space-y-1">
-                <div className="flex items-center gap-4">
-                    <h1 className="text-4xl md:text-5xl font-black italic tracking-tighter uppercase text-slate-900">
-                        KDS <span className="text-orange-600">PRO</span>
+                <div className="flex flex-col md:flex-row md:items-center gap-4">
+                    <h1 className="text-4xl md:text-6xl font-black italic tracking-tighter uppercase text-slate-900 leading-none">
+                        KDS <span className="text-orange-600">PRODUCTION</span>
                     </h1>
-                    <div className="px-4 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full flex items-center gap-2">
+                    <div className="px-4 py-1.5 bg-emerald-500/10 border-2 border-emerald-500/20 rounded-full flex items-center gap-2 w-fit">
                         <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-                        <span className="text-[10px] font-black uppercase text-emerald-600 tracking-widest italic">Live Sync</span>
+                        <span className="text-[10px] font-black uppercase text-emerald-600 tracking-[0.4em] italic">ACTIVE_CORE_SYNC</span>
                     </div>
                 </div>
             </div>

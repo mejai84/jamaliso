@@ -9,7 +9,8 @@ import {
     addItemsToOrder,
     mergeTables,
     transferOrderItem,
-    sendKitchenMessage
+    sendKitchenMessage,
+    splitOrder
 } from "@/actions/orders-fixed"
 import { toast } from "sonner"
 import { Table, Product, Category, CartItem } from "./types"
@@ -25,7 +26,7 @@ import { TransferItemModal } from "@/components/admin/waiter/TransferItemModal"
 import { SplitCheckModal } from "@/components/admin/waiter/SplitCheckModal"
 
 export default function WaiterAppPremium() {
-    const { restaurant } = useRestaurant()
+    const { restaurant, loading: contextLoading } = useRestaurant()
     const router = useRouter()
 
     // UI State
@@ -58,14 +59,15 @@ export default function WaiterAppPremium() {
     const [selectedForSplit, setSelectedForSplit] = useState<{ itemId: string, quantity: number }[]>([])
 
     useEffect(() => {
-        if (restaurant) {
+        if (!contextLoading) {
             fetchData()
             const timer = setInterval(() => setCurrentTime(new Date()), 10000)
             return () => clearInterval(timer)
         }
-    }, [restaurant])
+    }, [restaurant, contextLoading])
 
     const fetchData = async () => {
+        console.log("Fetching Waiter Data...", { restaurantId: restaurant?.id, contextLoading })
         if (!restaurant) {
             setLoading(false)
             return
@@ -199,7 +201,6 @@ export default function WaiterAppPremium() {
         try {
             const { data: { user } } = await supabase.auth.getUser()
             if (!user) return
-            const { splitOrder } = await import("@/actions/orders-fixed")
             const result = await splitOrder(selectedTable.active_order.id, selectedForSplit, user.id)
             if (result.success) {
                 toast.success("CUENTA DIVIDIDA")
@@ -251,11 +252,11 @@ export default function WaiterAppPremium() {
 
     return (
         <div className="min-h-screen text-slate-900 font-sans relative overflow-hidden flex flex-col h-screen bg-[#F8FAFC]">
-            {/* 🖼️ FONDO PREMIUM */}
-            <div className="fixed inset-0 bg-[url('https://images.unsplash.com/photo-1550966841-3ee5ad60a05a?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center scale-105 pointer-events-none" />
+            {/* 🖼️ FONDO PREMIUM (Synced with Dashboard) */}
+            <div className="fixed inset-0 bg-[url('https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center scale-105 pointer-events-none opacity-[0.15]" />
             <div className="fixed inset-0 backdrop-blur-[100px] bg-white/80 pointer-events-none" />
 
-            <div className="relative z-10 flex flex-col h-full">
+            <div className="relative z-10 flex flex-col h-full animate-in fade-in duration-1000">
                 <WaiterHeader
                     view={view}
                     onBack={() => setView('tables')}
@@ -374,6 +375,6 @@ export default function WaiterAppPremium() {
                 }
                 .animate-pulse-red { animation: pulse-red 2s infinite; }
             `}</style>
-        </div>
+        </div >
     )
 }

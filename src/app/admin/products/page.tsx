@@ -74,19 +74,16 @@ export default function AdminProductsPremium() {
     const filtered = products.filter(p => p.name.toLowerCase().includes(searchTerm.toLowerCase()))
 
     return (
-        <div className="min-h-screen bg-[#F8FAFC] text-slate-900 font-sans selection:bg-orange-500 overflow-hidden flex flex-col h-screen relative">
-
-            {/* 🌌 FONDO ESTRUCTURAL JAMALI */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[60%] bg-orange-500/5 blur-[120px] rounded-full animate-pulse" />
-                <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-500/5 blur-[120px] rounded-full opacity-50" />
-            </div>
+        <div className="min-h-screen text-slate-900 font-sans selection:bg-orange-500 overflow-hidden flex flex-col h-screen relative animate-in fade-in duration-1000">
+            {/* 🖼️ FONDO PREMIUM SOFT */}
+            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1554224155-6726b3ff858f?q=80&w=2072&auto=format&fit=crop')] bg-cover bg-center scale-105 opacity-10 pointer-events-none" />
+            <div className="absolute inset-0 backdrop-blur-[120px] bg-white/40 pointer-events-none" />
 
             {/* HEADER DE INGENIERÍA ELITE */}
-            <div className="relative z-30 p-10 flex items-center justify-between border-b border-slate-200 bg-white/60 backdrop-blur-3xl shrink-0">
+            <div className="relative z-30 p-10 flex items-center justify-between border-b-2 border-slate-50 bg-white/40 shrink-0">
                 <div className="flex items-center gap-8">
                     <Link href="/admin/hub">
-                        <Button variant="ghost" size="icon" className="h-16 w-16 rounded-[1.5rem] bg-white border border-slate-200 hover:bg-orange-600 hover:text-white transition-all group shadow-sm">
+                        <Button variant="ghost" size="icon" className="h-16 w-16 rounded-[1.5rem] bg-white border-2 border-slate-100 hover:bg-slate-900 hover:text-white transition-all group shadow-sm">
                             <ArrowLeft className="w-6 h-6 group-hover:-translate-x-1 transition-transform" />
                         </Button>
                     </Link>
@@ -104,18 +101,18 @@ export default function AdminProductsPremium() {
                         <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-orange-500 transition-all font-black" />
                         <input
                             placeholder="ESCANEAR CATÁLOGO DIGITAL..."
-                            className="w-full bg-white border border-slate-200 rounded-2xl py-5 pl-16 pr-6 text-xs font-black uppercase tracking-[0.2em] italic focus:outline-none focus:border-orange-500/30 transition-all placeholder:text-slate-400 text-slate-900 shadow-sm"
+                            className="w-full bg-white border-2 border-slate-100 rounded-2xl py-5 pl-16 pr-6 text-xs font-black uppercase tracking-[0.2em] italic focus:outline-none focus:border-orange-500/30 transition-all placeholder:text-slate-400 text-slate-900 shadow-inner"
                             value={searchTerm}
                             onChange={e => setSearchTerm(e.target.value)}
                         />
                     </div>
-                    <Button className="h-16 px-12 bg-orange-600 hover:bg-orange-500 text-white font-black uppercase text-xs italic tracking-widest rounded-2xl shadow-lg shadow-orange-600/20 active:scale-95 transition-all gap-4">
+                    <Button className="h-16 px-12 bg-slate-900 hover:bg-slate-800 text-white font-black uppercase text-xs italic tracking-widest rounded-2xl shadow-xl shadow-slate-900/10 active:scale-95 transition-all gap-4">
                         <Plus className="w-6 h-6" /> CREAR PROTOCOLO
                     </Button>
                 </div>
             </div>
 
-            <div className="relative z-10 p-8 flex-1 overflow-hidden flex flex-col gap-8 max-w-[1800px] mx-auto w-full">
+            <div className="relative z-10 p-8 flex-1 overflow-hidden flex flex-col gap-8 max-w-[1800px] mx-auto w-full animate-in fade-in slide-in-from-bottom-5 duration-1000">
 
                 {/* 1. PRODUCT METRICS ELITE */}
                 <div className="grid grid-cols-4 gap-8 shrink-0">
@@ -181,19 +178,19 @@ export default function AdminProductsPremium() {
                                 {/* Content Elite Section */}
                                 <div className="p-8 flex-1 flex flex-col justify-between relative z-20">
                                     <div className="space-y-4">
-                                        <h3 className="text-xl font-black italic tracking-tighter uppercase leading-[1.1] line-clamp-2 group-hover/card:text-orange-500 transition-colors text-slate-900">
+                                        <h3 className="text-2xl font-black italic tracking-tighter uppercase leading-[1.1] line-clamp-2 group-hover/card:text-orange-600 transition-colors text-slate-900">
                                             {prod.name}
                                         </h3>
-                                        <div className="flex gap-4">
-                                            <div className="flex items-center gap-2 text-[8px] font-black text-slate-400 uppercase tracking-widest italic leading-none"><Layers className="w-3 h-3" /> SKU_102</div>
-                                            <div className="flex items-center gap-2 text-[8px] font-black text-slate-400 uppercase tracking-widest italic leading-none"><Box className="w-3 h-3" /> DEP_HUB</div>
+                                        <div className="flex gap-5">
+                                            <div className="flex items-center gap-2 text-[9px] font-black text-slate-400 uppercase tracking-widest italic leading-none group-hover/card:text-slate-900 transition-colors"><Layers className="w-3.5 h-3.5" /> SKU_102</div>
+                                            <div className="flex items-center gap-2 text-[9px] font-black text-slate-400 uppercase tracking-widest italic leading-none group-hover/card:text-slate-900 transition-colors"><Box className="w-3.5 h-3.5" /> DEP_HUB</div>
                                         </div>
                                     </div>
 
-                                    <div className="pt-6 border-t border-slate-100 flex items-end justify-between">
+                                    <div className="pt-6 border-t-2 border-slate-50 flex items-end justify-between">
                                         <div className="space-y-1">
-                                            <p className="text-[8px] font-black text-slate-400 uppercase tracking-[0.4em] italic leading-none">Market_Value</p>
-                                            <p className="text-3xl font-black italic tracking-tighter text-slate-900 font-mono leading-none">{formatPrice(prod.price)}</p>
+                                            <p className="text-[8px] font-black text-slate-400 uppercase tracking-[0.4em] italic leading-none group-hover/card:text-orange-600 transition-colors">Market_Value</p>
+                                            <p className="text-3xl font-black italic tracking-tighter text-slate-900 font-mono leading-none group-hover/card:scale-110 transition-transform origin-left">{formatPrice(prod.price)}</p>
                                         </div>
                                         <div className="flex gap-2">
                                             <button className="h-10 w-10 rounded-xl bg-slate-50 border border-slate-200 text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition-all flex items-center justify-center active:scale-90">
