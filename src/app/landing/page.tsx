@@ -109,22 +109,22 @@ export default function ModernSaaSLanding() {
                 tiers: [
                     {
                         name: "Emprendedor",
-                        price: "99.000",
+                        price: "69.000",
                         desc: "Para negocios que inician con fuerza.",
-                        features: ["1 Sede", "POS Ilimitado", "Mermas Básicas", "Soporte Standard", "QR Menu Básico"],
+                        features: ["1 Sede", "Facturación Electrónica DIAN", "POS Ilimitado", "Mermas Básicas", "QR Menu Básico"],
                         btn: "Empezar Gratis"
                     },
                     {
                         name: "Evolución",
-                        price: "189.000",
+                        price: "149.000",
                         desc: "Control total con analítica avanzada e IA.",
-                        features: ["1 Sede", "IA Guardian (Anti-fraude)", "Escandallos Automáticos", "Ventas Online Pro", "Soporte Priority", "Marketing IA"],
+                        features: ["1 Sede", "IA Guardian (Anti-fraude)", "Escandallos Automáticos", "Ventas Online Pro", "Marketing IA", "Soporte Priority"],
                         btn: "Elegir Evolución",
                         highlight: true
                     },
                     {
                         name: "Enterprise",
-                        price: "349.000",
+                        price: "289.000",
                         desc: "La central de mando para grandes cadenas.",
                         features: ["Multi-sede Central", "Módulo de Nómina", "Concierge IA v2", "Infraestructura Dedicada", "Account Manager", "API Access"],
                         btn: "Contactar Ventas"
@@ -200,22 +200,22 @@ export default function ModernSaaSLanding() {
                 tiers: [
                     {
                         name: "Entrepreneur",
-                        price: "29",
+                        price: "18",
                         desc: "For businesses starting strong.",
-                        features: ["1 Location", "Unlimited POS", "Basic Waste Tracking", "Standard Support", "Basic QR Menu"],
+                        features: ["1 Location", "Compliant Invoicing", "Unlimited POS", "Basic Waste Tracking", "Basic QR Menu"],
                         btn: "Start Free"
                     },
                     {
                         name: "Evolution",
-                        price: "49",
+                        price: "38",
                         desc: "Total control with advanced analytics and AI.",
-                        features: ["1 Location", "AI Guardian (Anti-fraud)", "Automatic Recipe Costing", "Online Sales Pro", "Priority Support", "AI Marketing"],
+                        features: ["1 Location", "AI Guardian (Anti-fraud)", "Automatic Recipe Costing", "Online Sales Pro", "AI Marketing", "Priority Support"],
                         btn: "Choose Evolution",
                         highlight: true
                     },
                     {
                         name: "Enterprise",
-                        price: "89",
+                        price: "74",
                         desc: "The command center for large chains.",
                         features: ["Multi-branch Central", "Payroll Module", "IA Reservation Concierge", "Dedicated Infrastructure", "Account Manager", "API Access"],
                         btn: "Contact Sales"
@@ -622,8 +622,8 @@ export default function ModernSaaSLanding() {
                             <div
                                 key={i}
                                 className={`relative p-10 rounded-[3rem] border-2 transition-all hover:-translate-y-2 ${tier.highlight
-                                        ? "bg-slate-900 text-white border-slate-900 shadow-2xl shadow-orange-500/10"
-                                        : "bg-white text-slate-900 border-slate-100 hover:border-orange-200"
+                                    ? "bg-slate-900 text-white border-slate-900 shadow-2xl shadow-orange-500/10"
+                                    : "bg-white text-slate-900 border-slate-100 hover:border-orange-200"
                                     }`}
                             >
                                 {tier.highlight && (
@@ -656,8 +656,8 @@ export default function ModernSaaSLanding() {
                                     <Link
                                         href="/demo"
                                         className={`w-full py-5 rounded-2xl font-black text-sm uppercase tracking-widest flex items-center justify-center gap-2 transition-all ${tier.highlight
-                                                ? "bg-orange-500 text-white hover:bg-orange-600"
-                                                : "bg-slate-100 text-slate-900 hover:bg-slate-900 hover:text-white"
+                                            ? "bg-orange-500 text-white hover:bg-orange-600"
+                                            : "bg-slate-100 text-slate-900 hover:bg-slate-900 hover:text-white"
                                             }`}
                                     >
                                         {tier.btn} <ArrowRight className="w-5 h-5" />
