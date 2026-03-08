@@ -60,6 +60,7 @@ Administración del personal, entregas a domicilio y liquidación automática de
 | `payroll_runs` | Liquidaciones | Ejecución en bóveda (Transacción). Guarda totales por periodo. |
 | `payroll_items` | Desprendibles | Detalles cruzados (Empleado -> Concepto -> Valor $). |
 | `delivery_tracking` | Logística | Manejo de despachos y tiempos de entrega de Domicilios, KPIs de repartidores. |
+| `security_events` | Auditoría Forense | Log de eventos de seguridad (cambios de precios, intentos de edición de órdenes cerradas, violaciones de política RLS). |
 
 ---
 

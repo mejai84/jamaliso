@@ -198,7 +198,38 @@ Diseñado para la **barra, counter o caja principal**. Su objetivo es procesar t
 
 ---
 
-### 💼 3.6. Motor de Nómina — Payroll (`/admin/payroll`)
+### 🌐 3.6. Presencia Digital — Ventas Online (`/admin/online-sales`)
+
+Este módulo es tu centro de control para internet. Aquí decides qué ve el mundo y cómo te compra.
+
+#### 🔋 Activación y Modos:
+1. **Interruptor Maestro:** Arriba a la derecha activa o desactiva tu sitio web en tiempo real.
+2. **Modo de Negocio:**
+   - **SOLO MENÚ (MESA):** Los clientes ven tu carta, pero no pueden pedir. Ideal para QR en mesa informativos.
+   - **VENTA TOTAL (HÍBRIDO):** Permite recibir pedidos para Domicilio y Recogida en local.
+
+#### 🎨 Identidad Visual (Slot System):
+- **Hero Section:** Configura el video o imagen de fondo de tu página.
+- **Eslogan:** Define la frase de impacto que verán tus clientes al entrar.
+- **Redes Sociales:** Vincula Instagram, WhatsApp y Facebook para que aparezcan botones de contacto directo.
+
+---
+
+### ⚙️ 3.7. Configuración Regional (`/admin/settings`)
+
+Ajustes estructurales del restaurante. **Crucial para la legalidad y moneda.**
+
+#### 🗺️ País y Moneda:
+- Al seleccionar tu **País** (Colombia, México, España, USA), el sistema **auto-selecciona la moneda** y el símbolo correspondiente (COP, MXN, EUR, USD).
+- Esto ajusta automáticamente el formato de precios en el POS, el Menú Digital y los Reportes.
+
+#### 🏢 Datos de Empresa:
+- **NIT/RUT/RFC:** Edita tu identificador fiscal para que aparezca en los tickets de venta.
+- **Dirección y Teléfono:** Estos datos se sincronizan con el pie de página de tu web y el encabezado de las facturas.
+
+---
+
+### 💼 3.8. Motor de Nómina — Payroll (`/admin/payroll`)
 
 Liquidación automática de sueldos, horas extras y comisiones de ventas.
 

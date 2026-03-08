@@ -6,10 +6,11 @@ Este documento describe la arquitectura a alto nivel de JAMALI OS, su estructura
 JAMALI OS es un sistema integral de punto de venta (POS) y ERP especializado en el sector gastronómico (restaurantes, bares, cafeterías). Está diseñado con una arquitectura **Multi-Tenant (Multi-inquilino)**, lo que significa que un solo despliegue puede servir a múltiples restaurantes, manteniendo los datos estricta y criptográficamente aislados.
 
 ## 2. Tecnologías y Stack (Tech Stack)
-*   **Frontend / Framework:** [Next.js 16 (App Router)](https://nextjs.org/) + [React 19](https://react.dev/)
+*   **Frontend / Framework:** [Next.js 15 (App Router)](https://nextjs.org/) + [React 19](https://react.dev/)
 *   **Lenguaje:** [TypeScript](https://www.typescriptlang.org/) (Strict Mode)
 *   **Estilos y UI:** [Tailwind CSS v4](https://tailwindcss.com/) + [Framer Motion](https://www.framer.com/motion/) (Animaciones fluidas) + [Shadcn UI](https://ui.shadcn.com/)
 *   **Backend & Base de Datos:** [Supabase](https://supabase.com/) (PostgreSQL 15)
+*   **Monitoreo:** [Sentry](https://sentry.io/) (Error tracking & Performance)
 *   **Autenticación:** Supabase Auth (Email/Password, Roles basados en Base de Datos)
 *   **Visualización de Datos:** [Recharts](https://recharts.org/) (Reportes financieros)
 
@@ -162,17 +163,20 @@ graph TD
 ## 10. Perímetro de Seguridad (Edge & Network)
 *   **Edge Middleware (`src/middleware.ts`):** Rate Limiter asíncrono (100 req/min/IP) que bloquea IPs maliciosas y valida JWT perimetralmente antes de tocar la DB.
 *   **Strict CORS & Security Headers:** `X-Frame-Options`, `Strict-Transport-Security`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy` en `next.config.ts`.
+*   **Health Check Monitoring:** Endpoint `/api/health` para verificacion de latencia de DB y estado de servicios.
 
 ---
 
-## 11. Resiliencia Offline (PWA)
-*   Utiliza `@ducanh2912/next-pwa` para registrar un **Service Worker** (`sw.js`).
-*   Mantiene en caché los assets de UI. Si cae la red, POS, KDS y portal de meseros evitan pantalla de error.
-*   Motor offline (`src/lib/offline-engine.ts`): guarda pedidos en localStorage, sincroniza al reconectar.
+## 11. Resiliencia y Escalabilidad (Caching & PWA)
+*   **Edge Caching (Next.js Native):** Implementación de `unstable_cache` en `src/actions/cache.ts` para catálogos y perfiles de restaurantes, reduciendo carga en Supabase.
+*   **PWA Resiliencia:** Utiliza `@ducanh2912/next-pwa` para registrar un **Service Worker** (`sw.js`).
+*   **Offline Logic:** Motor offline (`src/lib/offline-engine.ts`) para guardado local en emergencias de red.
 
 ---
 
-## 12. Seguridad y Antifraude (Escenarios)
+## 12. Observabilidad e Infraestructura
+*   **Sentry Integration:** Captura de excepciones en Server Actions críticos (`processOrderPayment`) y monitoreo de performance en el Edge.
+*   **Anti-Fraude SQL:** Triggers de nivel de DB (`prevent_closed_order_tampering`) que bloquean ediciones de tickets cerrados y registran cambios de precios en `security_events`.
 *   **Mesero anula pedido cobrado:** Solo Manager puede anular (`void`). Se guarda registro en `audit_logs` con motivo.
 *   **Cajero abre caja sin registrar venta:** Auditoría de sesiones y movimientos no cuadra.
 *   **Descuentos excesivos:** Permiso `discount` requerido, registrado en `audit_logs` con `old_values`/`new_values`.
@@ -203,4 +207,4 @@ Desde marzo de 2026, JAMALI OS implementa el estándar **Pixora Light**:
 
 ---
 
-*Última actualización: 07 Marzo 2026 — Documento unificado (ex ARCHITECTURE_BLUEPRINT + ARCHITECTURE_ENTERPRISE + ARCHITECTURE_JAMALISO).*
+*Última actualización: 08 Marzo 2026 — Se añade Observabilidad (Sentry), Caching Nativo y Protección SQL Anti-Fraude.*
