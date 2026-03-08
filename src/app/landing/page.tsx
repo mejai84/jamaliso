@@ -96,6 +96,41 @@ export default function ModernSaaSLanding() {
             },
             integrations: { title: "Compatible con infraestructura moderna" },
             cta: { title: "Empieza a gestionar tu", titleSpan: "restaurante como un profesional.", desc: "Únete a otros restaurantes modernos que usan JAMALI OS para escalar sus operaciones.", btn: "Solicitar Demo" },
+            pricing: {
+                title: "Precios simples",
+                titleSpan: "para cada etapa.",
+                desc: "Planes diseñados para crecer contigo, desde un food truck hasta una cadena multi-sede.",
+                monthly: "Mensual",
+                yearly: "Anual",
+                save: "Ahorra 20%",
+                currency: "COP",
+                perMonth: "/ mes",
+                popular: "Recomendado",
+                tiers: [
+                    {
+                        name: "Emprendedor",
+                        price: "99.000",
+                        desc: "Para negocios que inician con fuerza.",
+                        features: ["1 Sede", "POS Ilimitado", "Mermas Básicas", "Soporte Standard", "QR Menu Básico"],
+                        btn: "Empezar Gratis"
+                    },
+                    {
+                        name: "Evolución",
+                        price: "189.000",
+                        desc: "Control total con analítica avanzada e IA.",
+                        features: ["1 Sede", "IA Guardian (Anti-fraude)", "Escandallos Automáticos", "Ventas Online Pro", "Soporte Priority", "Marketing IA"],
+                        btn: "Elegir Evolución",
+                        highlight: true
+                    },
+                    {
+                        name: "Enterprise",
+                        price: "349.000",
+                        desc: "La central de mando para grandes cadenas.",
+                        features: ["Multi-sede Central", "Módulo de Nómina", "Concierge IA v2", "Infraestructura Dedicada", "Account Manager", "API Access"],
+                        btn: "Contactar Ventas"
+                    }
+                ]
+            },
             footer: { desc: "El sistema operativo inteligente diseñado para maximizar la rentabilidad y eficiencia de los restaurantes modernos.", company: "Compañía", features: "Funciones", pricing: "Precios", privacy: "Privacidad", terms: "Términos", integrations: "Integraciones", changelog: "Novedades", about: "Sobre Nosotros", contact: "Contacto" }
         },
         en: {
@@ -152,6 +187,41 @@ export default function ModernSaaSLanding() {
             },
             integrations: { title: "Compatible with modern infrastructure" },
             cta: { title: "Start managing your", titleSpan: "restaurant like a pro.", desc: "Join other modern restaurants using JAMALI OS to scale their operations.", btn: "Request Demo" },
+            pricing: {
+                title: "Simple pricing",
+                titleSpan: "for every stage.",
+                desc: "Plans designed to grow with you, from a food truck to a multi-branch chain.",
+                monthly: "Monthly",
+                yearly: "Yearly",
+                save: "Save 20%",
+                currency: "USD",
+                perMonth: "/ mo",
+                popular: "Most Popular",
+                tiers: [
+                    {
+                        name: "Entrepreneur",
+                        price: "29",
+                        desc: "For businesses starting strong.",
+                        features: ["1 Location", "Unlimited POS", "Basic Waste Tracking", "Standard Support", "Basic QR Menu"],
+                        btn: "Start Free"
+                    },
+                    {
+                        name: "Evolution",
+                        price: "49",
+                        desc: "Total control with advanced analytics and AI.",
+                        features: ["1 Location", "AI Guardian (Anti-fraud)", "Automatic Recipe Costing", "Online Sales Pro", "Priority Support", "AI Marketing"],
+                        btn: "Choose Evolution",
+                        highlight: true
+                    },
+                    {
+                        name: "Enterprise",
+                        price: "89",
+                        desc: "The command center for large chains.",
+                        features: ["Multi-branch Central", "Payroll Module", "IA Reservation Concierge", "Dedicated Infrastructure", "Account Manager", "API Access"],
+                        btn: "Contact Sales"
+                    }
+                ]
+            },
             footer: { desc: "The intelligent operating system designed to maximize profitability and efficiency for modern restaurants.", company: "Company", features: "Features", pricing: "Pricing", privacy: "Privacy Policy", terms: "Terms of Service", integrations: "Integrations", changelog: "Changelog", about: "About Us", contact: "Contact" }
         }
     }
@@ -523,7 +593,109 @@ export default function ModernSaaSLanding() {
                 </div>
             </section>
 
-            {/* 11. FINAL CTA */}
+            {/* 11. PRICING SECTION */}
+            <section id="pricing" className="py-32 px-6 relative">
+                <div className="max-w-7xl mx-auto">
+                    <div className="text-center space-y-4 mb-20">
+                        <h2 className="text-4xl md:text-6xl font-black text-slate-900 tracking-tighter">
+                            {c.pricing.title} <span className="text-orange-500">{c.pricing.titleSpan}</span>
+                        </h2>
+                        <p className="text-lg text-slate-500 max-w-2xl mx-auto font-medium">
+                            {c.pricing.desc}
+                        </p>
+
+                        {/* Toggle Placeholder */}
+                        <div className="flex items-center justify-center gap-4 pt-8">
+                            <span className="text-sm font-bold text-slate-900">{c.pricing.monthly}</span>
+                            <div className="w-14 h-7 bg-slate-200 rounded-full p-1 cursor-not-allowed">
+                                <div className="w-5 h-5 bg-white rounded-full shadow-sm" />
+                            </div>
+                            <span className="text-sm font-bold text-slate-400">{c.pricing.yearly}</span>
+                            <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-600 text-[10px] font-black uppercase tracking-wider">
+                                {c.pricing.save}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div className="grid md:grid-cols-3 gap-8 items-start">
+                        {c.pricing.tiers.map((tier, i) => (
+                            <div
+                                key={i}
+                                className={`relative p-10 rounded-[3rem] border-2 transition-all hover:-translate-y-2 ${tier.highlight
+                                        ? "bg-slate-900 text-white border-slate-900 shadow-2xl shadow-orange-500/10"
+                                        : "bg-white text-slate-900 border-slate-100 hover:border-orange-200"
+                                    }`}
+                            >
+                                {tier.highlight && (
+                                    <div className="absolute -top-5 left-1/2 -translate-x-1/2 bg-orange-500 text-white px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg">
+                                        {c.pricing.popular}
+                                    </div>
+                                )}
+
+                                <div className="space-y-6">
+                                    <div>
+                                        <h3 className="text-2xl font-black italic tracking-tighter uppercase">{tier.name}</h3>
+                                        <p className={`text-sm font-medium mt-1 ${tier.highlight ? "text-slate-400" : "text-slate-500"}`}>{tier.desc}</p>
+                                    </div>
+
+                                    <div className="flex items-baseline gap-1">
+                                        <span className="text-sm font-bold opacity-60">{c.pricing.currency}</span>
+                                        <span className="text-5xl font-black italic tracking-tighter">${tier.price}</span>
+                                        <span className="text-sm font-bold opacity-60">{c.pricing.perMonth}</span>
+                                    </div>
+
+                                    <ul className="space-y-4 py-8 border-y border-white/10">
+                                        {tier.features.map((f, j) => (
+                                            <li key={j} className="flex items-center gap-3 text-sm font-semibold">
+                                                <CheckCircle2 className={`w-5 h-5 ${tier.highlight ? "text-orange-500" : "text-emerald-500"}`} />
+                                                {f}
+                                            </li>
+                                        ))}
+                                    </ul>
+
+                                    <Link
+                                        href="/demo"
+                                        className={`w-full py-5 rounded-2xl font-black text-sm uppercase tracking-widest flex items-center justify-center gap-2 transition-all ${tier.highlight
+                                                ? "bg-orange-500 text-white hover:bg-orange-600"
+                                                : "bg-slate-100 text-slate-900 hover:bg-slate-900 hover:text-white"
+                                            }`}
+                                    >
+                                        {tier.btn} <ArrowRight className="w-5 h-5" />
+                                    </Link>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Financial Analysis Brief */}
+                    <div className="mt-20 p-12 rounded-[3.5rem] bg-orange-50/30 border border-orange-100 flex flex-col md:flex-row items-center gap-12">
+                        <div className="flex-1 space-y-4">
+                            <div className="w-12 h-12 rounded-2xl bg-orange-500 text-white flex items-center justify-center shadow-lg">
+                                <TrendingUp className="w-6 h-6" />
+                            </div>
+                            <h3 className="text-2xl font-black italic tracking-tighter uppercase text-slate-900">Análisis Financiero: ROI Inmediato</h3>
+                            <p className="text-slate-600 font-medium leading-relaxed font-sans">
+                                Implementar JAMALI OS no es un gasto, es una inversión con retorno directo. Nuestros clientes reportan una reducción media del 12% en mermas y un incremento del 18% en ventas gracias a la agilidad del POS y el marketing con IA.
+                            </p>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4 w-full md:w-auto">
+                            {[
+                                { label: 'Ahorro Operativo', val: '-15%' },
+                                { label: 'Ventas Online', val: '+25%' },
+                                { label: 'Rotación Meseros', val: '-30%' },
+                                { label: 'Error Humano', val: '~0%' },
+                            ].map((stat, i) => (
+                                <div key={stat.label} className="bg-white p-6 rounded-3xl border border-orange-100 shadow-sm text-center min-w-[140px]">
+                                    <p className="text-2xl font-black italic tracking-tighter text-orange-600 leading-none">{stat.val}</p>
+                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2 leading-none">{stat.label}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* 12. FINAL CTA */}
             <section className="py-32 px-6">
                 <div className="max-w-4xl mx-auto bg-slate-900 rounded-[3rem] p-12 md:p-20 text-center relative overflow-hidden shadow-2xl">
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-orange-500/20 blur-[100px] rounded-full" />
