@@ -20,7 +20,7 @@ AI-powered SaaS POS for restaurants.
 Aquí encontrarás la guía para todas las funcionalidades de nivel empresarial.
 ## � Transición de Marca (Marzo 2026)
 El sistema ha migrado completamente de "Pargo OS" a **JAMALI OS**. Este cambio incluye:
-- Nueva identidad visual premium (**Pixora Light v2**) y **Landing Page SaaS 9/10**.
+- Nueva identidad visual premium (**Pixora Light v2**) y **Landing Page SaaS 9/10** con galería de módulos extendida (15+ pantallas).
 - **Onboarding Elite**: Proceso de configuración y pago interactivo unificado (Setup & Checkout).
 - Unificación de dominios y correos electrónicos (@jamali-os.com).
 - Consolidación de base de datos y arquitectura escalable.

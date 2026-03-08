@@ -239,4 +239,4 @@ JAMALI OS no es solo código; es un legado familiar transformado en tecnología 
 
 ---
 
-*Última actualización: 08 Marzo 2026 — Se añade Simbolismo de Marca, Landing Page 9/10, Inteligencia Predictiva (IA Guardian), Onboarding Elite v2 (Premium UX overhaul), Financial Core v2 (Fiscal Ready) y Multi-Branch Context Isolation.*
+*Última actualización: 08 Marzo 2026 — Se añade Simbolismo de Marca, Landing Page 9/10 (Gallery Focus + 15Screens), Inteligencia Predictiva (IA Guardian), Onboarding Elite v2 (Premium UX overhaul), Financial Core v2 (Fiscal Ready) y Multi-Branch Context Isolation.*

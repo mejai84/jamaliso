@@ -6,7 +6,8 @@ import {
     LayoutDashboard, Database, Zap, Sparkles, Smartphone,
     Server, Shield, ArrowRight, BarChart3, Users, Receipt,
     ShoppingBag, Globe, Play, Menu, Github, Linkedin, Mail,
-    CreditCard, Cloud, CheckCircle2, ChevronRight, TrendingUp, X
+    CreditCard, Cloud, CheckCircle2, ChevronRight, TrendingUp, X,
+    Package
 } from "lucide-react"
 import { useState, useEffect } from "react"
 import { AnimatePresence } from "framer-motion"
@@ -44,7 +45,7 @@ export default function ModernSaaSLanding() {
     // Diccionario de traducciones
     const t = {
         es: {
-            nav: { product: "Producto", features: "Funciones", pricing: "Precios", demo: "Demo", login: "Entrar", reqDemo: "Solicitar Demo" },
+            nav: { product: "Producto", features: "Funciones", pricing: "Precios", gallery: "galería", login: "Entrar", reqDemo: "Solicitar Demo" },
             hero: {
                 badge: "🚀 JAMALI OS 2.0 — Disponible Ahora",
                 title: "POS con IA y Sistema",
@@ -167,7 +168,7 @@ export default function ModernSaaSLanding() {
             footer: { desc: "El sistema operativo inteligente diseñado para maximizar la rentabilidad y eficiencia de los restaurantes modernos.", company: "Compañía", features: "Funciones", pricing: "Precios", privacy: "Privacidad", terms: "Términos", integrations: "Integraciones", changelog: "Novedades", about: "Sobre Nosotros", contact: "Contacto" }
         },
         en: {
-            nav: { product: "Product", features: "Features", pricing: "Pricing", demo: "Demo", login: "Log in", reqDemo: "Request Demo" },
+            nav: { product: "Product", features: "Features", pricing: "Pricing", gallery: "gallery", login: "Log in", reqDemo: "Request Demo" },
             hero: {
                 badge: "🚀 JAMALI OS 2.0 — Available Now",
                 title: "AI-Powered POS &",
@@ -318,7 +319,7 @@ export default function ModernSaaSLanding() {
                             <a href="#product" className="text-sm font-semibold text-slate-500 hover:text-slate-900 transition-colors">{c.nav.product}</a>
                             <a href="#features" className="text-sm font-semibold text-slate-500 hover:text-slate-900 transition-colors">{c.nav.features}</a>
                             <a href="#pricing" className="text-sm font-semibold text-slate-500 hover:text-slate-900 transition-colors">{c.nav.pricing}</a>
-                            <a href="#demo" className="text-sm font-semibold text-slate-500 hover:text-slate-900 transition-colors">{c.nav.demo}</a>
+                            <a href="#features-gallery" className="text-sm font-semibold text-slate-500 hover:text-slate-900 transition-colors">{c.nav.gallery}</a>
                         </div>
                     </div>
                     <div className="hidden md:flex items-center gap-4">
@@ -348,7 +349,7 @@ export default function ModernSaaSLanding() {
                                 <a href="#product" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-lg font-bold text-slate-900 border-b border-slate-50">{c.nav.product}</a>
                                 <a href="#features" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-lg font-bold text-slate-900 border-b border-slate-50">{c.nav.features}</a>
                                 <a href="#pricing" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-lg font-bold text-slate-900 border-b border-slate-50">{c.nav.pricing}</a>
-                                <a href="#demo" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-lg font-bold text-slate-900 border-b border-slate-50">{c.nav.demo}</a>
+                                <a href="#features-gallery" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-lg font-bold text-slate-900 border-b border-slate-50">{c.nav.gallery}</a>
                                 <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-lg font-bold text-slate-900 border-b border-slate-50">{c.nav.login}</Link>
                                 <div className="pt-4">
                                     <Link href="/demo" onClick={() => setMobileMenuOpen(false)} className="w-full py-4 bg-slate-900 text-white font-black rounded-2xl flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all">
@@ -673,6 +674,51 @@ export default function ModernSaaSLanding() {
                                 src: '/assets/modules_screenshots/22_jamali_guardian.png',
                                 title: lang === 'es' ? 'IA Guardian' : 'AI Guardian',
                                 desc: lang === 'es' ? 'Detección de fraude y patrones de riesgo mediante Inteligencia Artificial.' : 'Fraud detection and risk patterns powered by Artificial Intelligence.'
+                            },
+                            {
+                                src: '/assets/modules_screenshots/5_ventas_online.png',
+                                title: lang === 'es' ? 'Ventas Online' : 'Online Sales',
+                                desc: lang === 'es' ? 'Sitio web autogestionable y menú digital con pagos integrados.' : 'Self-managed website and digital menu with integrated payments.'
+                            },
+                            {
+                                src: '/assets/modules_screenshots/17_menu_catalog_studio.png',
+                                title: lang === 'es' ? 'Estudio de Menú' : 'Menu Studio',
+                                desc: lang === 'es' ? 'Personalización visual de categorías, modificadores y precios.' : 'Visual customization of categories, modifiers, and prices.'
+                            },
+                            {
+                                src: '/assets/modules_screenshots/20_business_intelligence.png',
+                                title: lang === 'es' ? 'Inteligencia de Negocio' : 'Business Intelligence',
+                                desc: lang === 'es' ? 'Gráficos avanzados y reportes descargables para toma de decisiones.' : 'Advanced charts and downloadable reports for decision making.'
+                            },
+                            {
+                                src: '/assets/modules_screenshots/21_caja_menor_gastos.png',
+                                title: lang === 'es' ? 'Caja Menor' : 'Petty Cash',
+                                desc: lang === 'es' ? 'Registro de gastos operativos y arqueos de caja blindados.' : 'Recording of operating expenses and armored cash counts.'
+                            },
+                            {
+                                src: '/assets/modules_screenshots/4_facturacion_fiscal.png',
+                                title: lang === 'es' ? 'Facturación Fiscal' : 'Tax Invoicing',
+                                desc: lang === 'es' ? 'Cumplimiento legal con facturación electrónica y reportes DIAN.' : 'Legal compliance with electronic invoicing and tax reports.'
+                            },
+                            {
+                                src: '/assets/modules_screenshots/6_geometria_salon.png',
+                                title: lang === 'es' ? 'Mapa de Salón' : 'Hall Map',
+                                desc: lang === 'es' ? 'Diseño visual de mesas y zonas con estados en tiempo real.' : 'Visual design of tables and zones with real-time status.'
+                            },
+                            {
+                                src: '/assets/modules_screenshots/10_control_asistencia.png',
+                                title: lang === 'es' ? 'Control de Asistencia' : 'Attendance Control',
+                                desc: lang === 'es' ? 'Seguimiento de turnos, entradas y salidas del personal.' : 'Personnel shift tracking, clock-ins, and clock-outs.'
+                            },
+                            {
+                                src: '/assets/modules_screenshots/8_elite_database_crm.png',
+                                title: lang === 'es' ? 'CRM Client Elite' : 'Elite CRM',
+                                desc: lang === 'es' ? 'Base de datos de clientes con historial de consumo y preferencias.' : 'Customer database with consumption history and preferences.'
+                            },
+                            {
+                                src: '/assets/modules_screenshots/26_hardware_bridge_impresoras.png',
+                                title: lang === 'es' ? 'Hardware Bridge' : 'Hardware Bridge',
+                                desc: lang === 'es' ? 'Conexión directa con impresoras térmicas y periféricos locales.' : 'Direct connection with thermal printers and local peripherals.'
                             }
                         ].map((mod, idx) => (
                             <motion.div
