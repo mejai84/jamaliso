@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { supabase } from "@/lib/supabase/client"
 import { useOrderNotifications } from "@/hooks/use-order-notifications"
 import { Toaster } from "sonner"
@@ -18,6 +18,7 @@ import { MobileSidebar } from "@/components/admin/layout/MobileSidebar"
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const router = useRouter()
+    const searchParams = useSearchParams()
     const { restaurant, loading: restaurantLoading } = useRestaurant()
 
     // Auth & UI State
@@ -34,8 +35,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         const checkAuth = async () => {
             try {
                 // Check if we are in demo mode via URL param
-                const isDemoMode = new URL(window.location.href).searchParams.get('demo') === 'true'
-                const demoUser = new URL(window.location.href).searchParams.get('user') || 'Demo User'
+                const isDemoMode = searchParams.get('demo') === 'true'
+                const demoUser = searchParams.get('user') || 'Demo User'
 
                 const { data: { session } } = await supabase.auth.getSession()
 
@@ -81,7 +82,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         if (!restaurantLoading) {
             checkAuth()
         }
-    }, [router, restaurantLoading])
+    }, [router, restaurantLoading, searchParams])
 
     if (loading) {
         return (

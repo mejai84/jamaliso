@@ -32,6 +32,8 @@ import { Label } from "@/components/ui/label"
 import { useRouter } from "next/navigation"
 import { supabase } from "@/lib/supabase/client"
 import { toast } from "sonner"
+import { useRestaurant } from "@/providers/RestaurantProvider"
+import { wizardTranslations } from "@/lib/i18n/wizard"
 import Link from "next/link"
 import Image from "next/image"
 
@@ -72,6 +74,8 @@ export default function RegisterWizard() {
 function WizardContent() {
     const router = useRouter()
     const searchParams = useSearchParams()
+    const { lang } = useRestaurant()
+    const t = wizardTranslations[lang]
     const [currentStep, setCurrentStep] = useState(1)
     const [loading, setLoading] = useState(false)
     const [percent, setPercent] = useState(25)
@@ -106,7 +110,7 @@ function WizardContent() {
             setCurrentStep(parseInt(step))
             if (status === 'success') {
                 setIsPaid(true)
-                toast.success("Pago verificado con éxito. ¡Vamos al último paso!")
+                toast.success(t.toast.success_pago)
             }
         }
     }, [searchParams])
@@ -118,7 +122,7 @@ function WizardContent() {
             try {
                 setFormData(JSON.parse(savedData))
             } catch (e) {
-                console.error("Error restoration wizard data", e)
+                console.error(t.toast.error_restoration, e)
             }
         }
     }, [])
@@ -129,17 +133,17 @@ function WizardContent() {
 
     const handleNext = () => {
         if (currentStep === 1 && !formData.restaurantName) {
-            toast.error("Por favor ingresa el nombre de tu restaurante")
+            toast.error(t.toast.error_name)
             return
         }
         if (currentStep === 4) {
             if (!formData.email || !formData.password || !formData.ownerName) {
-                toast.error("Por favor completa tus datos de acceso")
+                toast.error(t.toast.error_creds)
                 return
             }
         }
         if (currentStep === 5 && !isPaid) {
-            toast.error("Por favor completa el pago para despegar")
+            toast.error(t.toast.error_payment)
             return
         }
         if (currentStep < STEPS.length) {
@@ -149,9 +153,9 @@ function WizardContent() {
 
     const handlePayment = async () => {
         if (!formData.email) {
-            toast.error("Ingresa el email en el siguiente paso para asociar el pago (o vuelve a branding)")
+            toast.error(t.toast.error_email)
             // Opcional: mover validación de email antes del pago
-            setCurrentStep(5) // Saltamos a pedir email si no hay
+            setCurrentStep(4) // Move back to account step if email missing 
             return
         }
 
@@ -243,7 +247,7 @@ function WizardContent() {
 
             localStorage.removeItem('wizard_form_data')
 
-            toast.success("¡Bienvenido a JAMALI OS! Tu restaurante está listo.")
+            toast.success(t.toast.welcome)
             router.push('/admin/dashboard')
 
         } catch (error: any) {
@@ -303,9 +307,21 @@ function WizardContent() {
                                             {isCompleted ? <CheckCircle2 className="w-6 h-6" /> : <Icon className="w-6 h-6" />}
                                         </div>
                                         <div className="space-y-1">
-                                            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-orange-500/80 leading-none">FASE 0{step.id}</p>
-                                            <h3 className="font-bold text-xl leading-tight uppercase tracking-tight">{step.title}</h3>
-                                            <p className="text-[10px] text-white/40 uppercase font-bold tracking-widest">{step.desc}</p>
+                                            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-orange-500/80 leading-none">{t.fases} 0{step.id}</p>
+                                            <h3 className="font-bold text-xl leading-tight uppercase tracking-tight">
+                                                {step.id === 1 ? t.steps.identity.title :
+                                                    step.id === 2 ? t.steps.infrastructure.title :
+                                                        step.id === 3 ? t.steps.branding.title :
+                                                            step.id === 4 ? t.steps.account.title :
+                                                                t.steps.plan.title}
+                                            </h3>
+                                            <p className="text-[10px] text-white/40 uppercase font-bold tracking-widest">
+                                                {step.id === 1 ? t.steps.identity.desc :
+                                                    step.id === 2 ? t.steps.infrastructure.desc :
+                                                        step.id === 3 ? t.steps.branding.desc :
+                                                            step.id === 4 ? t.steps.account.desc :
+                                                                t.steps.plan.desc}
+                                            </p>
                                         </div>
                                     </div>
                                 )
@@ -315,7 +331,7 @@ function WizardContent() {
 
                     <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-[2rem] p-8 space-y-5 relative z-10 transition-all hover:border-white/20">
                         <div className="flex justify-between items-center">
-                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 italic">CONFIGURACIÓN KERNEL</span>
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40 italic">{t.kernel_config}</span>
                             <span className="text-sm font-black text-orange-500">{percent}%</span>
                         </div>
                         <div className="h-2.5 bg-white/5 rounded-full overflow-hidden border border-white/5">
@@ -752,7 +768,7 @@ function WizardContent() {
                             disabled={currentStep === 1 || loading}
                             className="order-2 md:order-1 flex items-center gap-3 px-8 py-4 text-xs font-black uppercase tracking-[0.2em] text-slate-400 hover:text-slate-900 disabled:opacity-30 transition-all group"
                         >
-                            <ChevronLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" /> VOLVER
+                            <ChevronLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" /> {t.nav.back}
                         </button>
 
                         <div className="order-1 md:order-2 w-full md:w-auto">
@@ -776,7 +792,7 @@ function WizardContent() {
                                     onClick={handleNext}
                                     className="w-full md:w-auto h-16 md:h-20 px-14 rounded-3xl bg-orange-500 text-white font-black uppercase text-xl leading-none tracking-widest flex items-center justify-center gap-4 shadow-[0_20px_40px_-10px_rgba(249,115,22,0.4)] hover:bg-orange-600 hover:-translate-y-1 active:scale-95 transition-all duration-300"
                                 >
-                                    SIGUIENTE PASO <ChevronRight className="w-7 h-7 group-hover:translate-x-1 transition-transform" />
+                                    {t.nav.next} <ChevronRight className="w-7 h-7 group-hover:translate-x-1 transition-transform" />
                                 </button>
                             )}
                         </div>

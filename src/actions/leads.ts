@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server"
 export async function saveDemoLead(data: {
     name: string;
     email: string;
+    phone: string;
     type: string;
     challenge: string;
 }) {
@@ -19,6 +20,7 @@ export async function saveDemoLead(data: {
                 {
                     full_name: data.name,
                     email: data.email,
+                    phone: data.phone,
                     business_type: data.type,
                     main_challenge: data.challenge,
                     metadata: {

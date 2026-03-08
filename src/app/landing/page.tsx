@@ -46,29 +46,31 @@ export default function ModernSaaSLanding() {
         es: {
             nav: { product: "Producto", features: "Funciones", pricing: "Precios", demo: "Demo", login: "Entrar", reqDemo: "Solicitar Demo" },
             hero: {
-                badge: "JAMALI OS 2.0 ya está disponible",
-                title: "Gestiona tu restaurante",
-                titleSpan: "con JAMALI OS",
-                desc: "El sistema operativo con IA que ayuda a los restaurantes a gestionar ventas, inventario, personal y marketing desde una única plataforma.",
-                reqDemo: "Solicitar Demo",
-                watchDemo: "Ver Demo"
+                badge: "🚀 JAMALI OS 2.0 — Disponible Ahora",
+                title: "POS con IA y Sistema",
+                titleSpan: "Operativo para Restaurantes",
+                desc: "Gestiona pedidos, inventario, empleados y marketing con inteligencia artificial desde una sola plataforma. Construido para restaurantes que quieren crecer.",
+                reqDemo: "Solicitar Demo Gratis",
+                watchDemo: "Ver en Acción"
             },
-            trust: "Diseñado para restaurantes modernos",
+            trust: "Restaurantes modernos ya confían en JAMALI OS",
             problem: {
-                title: "Los restaurantes operan",
-                titleSpan: "en el caos.",
-                desc: "Usar múltiples herramientas que no se comunican entre sí genera errores, pérdida de ingresos y equipos agotados.",
+                title: "El problema que enfrentan",
+                titleSpan: "los restaurantes.",
+                desc: "La mayoría de restaurantes dependen de múltiples herramientas desconectadas para gestionar pedidos, inventario y marketing. El resultado: caos.",
                 cards: [
-                    { title: "Múltiples herramientas desconectadas" },
-                    { title: "Control manual de inventario" },
-                    { title: "Poca visibilidad de ventas" },
-                    { title: "Sin marketing automatizado" }
+                    { title: "Sistemas desconectados que no se hablan entre sí", icon: "❌" },
+                    { title: "Control de inventario manual y propenso a errores", icon: "❌" },
+                    { title: "Cero visibilidad real sobre márgenes y ventas", icon: "❌" },
+                    { title: "Sin marketing ni fidelización automatizada", icon: "❌" }
                 ]
             },
             solution: {
                 title: "Una plataforma para gestionarlo todo.",
                 desc: "JAMALI OS centraliza la operación de tu restaurante en una sola plataforma impulsada por infraestructura cloud moderna y herramientas de IA."
             },
+            featuresTitle: "Funcionalidades Clave",
+            featuresSubtitle: "Todo lo que necesitas para gestionar un restaurante moderno, en una sola plataforma.",
             features: [
                 { title: "POS Inteligente", desc: "Pagos ultra rápidos, gestión de mesas y división de cuentas diseñados para la velocidad." },
                 { title: "Inventario Automático", desc: "Controla ingredientes en tiempo real. Conoce exactamente cuánto te cuesta cada plato." },
@@ -77,12 +79,14 @@ export default function ModernSaaSLanding() {
                 { title: "Marketing con IA", desc: "Genera descripciones de menú e imágenes para redes sociales con Inteligencia Artificial." },
                 { title: "Pedidos Online", desc: "Permite a tus clientes pedir desde su móvil vía código QR o tu web pública." }
             ],
+            midCta: { text: "¿Listo para transformar tu restaurante?", btn: "Solicitar Demo Gratis" },
             showcase: {
                 f1: { title: "Interfaz POS diseñada para la velocidad.", desc: "Opera al máximo de capacidad en horas pico. Nuestro POS minimiza los clics, haciendo la toma de pedidos y cobros casi instantánea.", list: ["Soporte para pedidos en mesa", "División rápida de cuentas", "Resiliencia sin conexión"] },
                 f2: { title: "Conoce tus números en tiempo real.", desc: "No esperes a fin de mes para conocer tus márgenes. Rastrea los ingresos diarios, costos de comida y el rendimiento de tus meseros en vivo.", link: "Explorar Analíticas" }
             },
             howTo: {
                 title: "Cómo funciona",
+                stepLabel: "PASO",
                 steps: [
                     { step: "01", title: "Configura tu restaurante", desc: "Importa tu menú vía CSV o créalo manualmente. Configura impuestos y mesas en minutos." },
                     { step: "02", title: "Comienza a gestionar pedidos", desc: "Capacita a tu personal en menos de 10 minutos. Empieza a procesar comandas y pagos de inmediato." },
@@ -93,10 +97,36 @@ export default function ModernSaaSLanding() {
                 badge: "Plataforma Nativa de IA",
                 title: "Crecimiento gastronómico impulsado por IA.",
                 desc: "JAMALI OS incluye herramientas integradas de Inteligencia Artificial que actúan como tu gerente virtual. Desde crear descripciones profesionales de platos hasta predecir necesidades de inventario.",
-                items: ["Genera imágenes de platos", "Crea posts para redes", "Analiza tendencias de ventas", "Recomienda precios"]
+                items: [
+                    { title: "Genera imágenes de platos", desc: "Crea fotos profesionales de tus platillos para redes sociales y menú digital." },
+                    { title: "Crea posts para redes", desc: "Genera contenido listo para Instagram, Facebook y TikTok en segundos." },
+                    { title: "Analiza tendencias de ventas", desc: "Identifica patrones de consumo y anticipa la demanda de ingredientes." },
+                    { title: "Recomienda precios", desc: "Optimiza tus márgenes con sugerencias basadas en costos y competencia." }
+                ]
             },
-            integrations: { title: "Compatible con infraestructura moderna" },
+            techStack: {
+                title: "Construido con tecnología moderna",
+                desc: "Infraestructura cloud de clase empresarial que escala con tu negocio.",
+                items: [
+                    { name: "Next.js", desc: "Framework React" },
+                    { name: "TypeScript", desc: "Código tipado" },
+                    { name: "PostgreSQL", desc: "Base de datos" },
+                    { name: "Supabase", desc: "Backend cloud" },
+                    { name: "Vercel", desc: "Infraestructura" },
+                    { name: "OpenAI", desc: "Modelos IA" }
+                ]
+            },
             cta: { title: "Empieza a gestionar tu", titleSpan: "restaurante como un profesional.", desc: "Únete a otros restaurantes modernos que usan JAMALI OS para escalar sus operaciones.", btn: "Solicitar Demo" },
+            roi: {
+                title: "Análisis Financiero: ROI Inmediato",
+                desc: "Implementar JAMALI OS no es un gasto, es una inversión con retorno directo. Nuestros clientes reportan una reducción media del 12% en mermas y un incremento del 18% en ventas gracias a la agilidad del POS y el marketing con IA.",
+                stats: [
+                    { label: 'Ahorro Operativo', val: '-15%' },
+                    { label: 'Ventas Online', val: '+25%' },
+                    { label: 'Rotación Meseros', val: '-30%' },
+                    { label: 'Error Humano', val: '~0%' }
+                ]
+            },
             pricing: {
                 title: "Precios simples",
                 titleSpan: "para cada etapa.",
@@ -139,29 +169,31 @@ export default function ModernSaaSLanding() {
         en: {
             nav: { product: "Product", features: "Features", pricing: "Pricing", demo: "Demo", login: "Log in", reqDemo: "Request Demo" },
             hero: {
-                badge: "JAMALI OS 2.0 is now available",
-                title: "Run your restaurant",
-                titleSpan: "with JAMALI OS",
-                desc: "The AI-powered operating system that helps restaurants manage sales, inventory, staff, and marketing from one single platform.",
-                reqDemo: "Request Demo",
-                watchDemo: "Watch Demo"
+                badge: "🚀 JAMALI OS 2.0 — Available Now",
+                title: "AI-Powered POS &",
+                titleSpan: "Restaurant Operating System",
+                desc: "Manage orders, inventory, employees and marketing from a single AI-powered platform built for modern restaurants.",
+                reqDemo: "Request Free Demo",
+                watchDemo: "See it in Action"
             },
-            trust: "Built for modern restaurants",
+            trust: "Modern restaurants already trust JAMALI OS",
             problem: {
-                title: "Restaurants run",
-                titleSpan: "on chaos.",
-                desc: "Using multiple tools that don't talk to each other leads to errors, lost revenue, and exhausted teams.",
+                title: "The problem restaurants",
+                titleSpan: "face today.",
+                desc: "Most restaurants rely on multiple disconnected tools to manage orders, inventory and marketing. The result: chaos.",
                 cards: [
-                    { title: "Multiple disconnected tools" },
-                    { title: "Manual inventory tracking" },
-                    { title: "Poor sales insights" },
-                    { title: "No automated marketing" }
+                    { title: "Disconnected systems that don't talk to each other", icon: "❌" },
+                    { title: "Manual inventory tracking prone to errors", icon: "❌" },
+                    { title: "Zero real visibility into margins and sales", icon: "❌" },
+                    { title: "No automated marketing or customer retention", icon: "❌" }
                 ]
             },
             solution: {
                 title: "One platform to manage everything.",
                 desc: "JAMALI OS centralizes restaurant operations into a single platform powered by modern cloud infrastructure and AI tools."
             },
+            featuresTitle: "Core Features",
+            featuresSubtitle: "Everything you need to run a modern restaurant, in one single platform.",
             features: [
                 { title: "Smart POS", desc: "Lightning fast checkouts, table management, and split payments built for speed." },
                 { title: "Inventory Automation", desc: "Track ingredients in real-time. Know exactly how much every dish costs." },
@@ -170,12 +202,14 @@ export default function ModernSaaSLanding() {
                 { title: "AI Marketing", desc: "Generate social media posts and menu descriptions with built-in AI." },
                 { title: "Online Orders", desc: "Let customers order directly from their phone via QR or your public site." }
             ],
+            midCta: { text: "Ready to transform your restaurant?", btn: "Request Free Demo" },
             showcase: {
                 f1: { title: "POS Interface designed for speed.", desc: "Operate at maximum capacity during peak hours. Our POS minimizes clicks, making order taking and payment processing near instantaneous.", list: ["Table-side ordering support", "Quick split checks", "Offline resilience"] },
                 f2: { title: "Know your numbers in real-time.", desc: "Don't wait until the end of the month to know your margins. Track daily revenue, food cost, and top-performing staff live.", link: "Explore Analytics" }
             },
             howTo: {
                 title: "How it works",
+                stepLabel: "STEP",
                 steps: [
                     { step: "01", title: "Setup your restaurant", desc: "Import your menu via CSV or create it manually. Configure taxes and tables in minutes." },
                     { step: "02", title: "Start managing orders", desc: "Train your staff in less than 10 minutes. Begin processing orders and payments immediately." },
@@ -186,10 +220,36 @@ export default function ModernSaaSLanding() {
                 badge: "AI Native Platform",
                 title: "AI-powered restaurant growth.",
                 desc: "JAMALI OS includes built-in AI tools that act as your virtual manager. From creating professional food descriptions to predicting inventory needs.",
-                items: ["Generate food images", "Create social posts", "Analyze sales trends", "Recommend pricing"]
+                items: [
+                    { title: "Generate food images", desc: "Create professional photos of your dishes for social media and digital menus." },
+                    { title: "Create social posts", desc: "Generate ready-to-publish content for Instagram, Facebook and TikTok in seconds." },
+                    { title: "Analyze sales trends", desc: "Identify consumption patterns and anticipate ingredient demand." },
+                    { title: "Recommend pricing", desc: "Optimize your margins with suggestions based on costs and competition." }
+                ]
             },
-            integrations: { title: "Compatible with modern infrastructure" },
+            techStack: {
+                title: "Built with modern technology",
+                desc: "Enterprise-class cloud infrastructure that scales with your business.",
+                items: [
+                    { name: "Next.js", desc: "React Framework" },
+                    { name: "TypeScript", desc: "Typed Code" },
+                    { name: "PostgreSQL", desc: "Database" },
+                    { name: "Supabase", desc: "Cloud Backend" },
+                    { name: "Vercel", desc: "Infrastructure" },
+                    { name: "OpenAI", desc: "AI Models" }
+                ]
+            },
             cta: { title: "Start managing your", titleSpan: "restaurant like a pro.", desc: "Join other modern restaurants using JAMALI OS to scale their operations.", btn: "Request Demo" },
+            roi: {
+                title: "Financial Analysis: Immediate ROI",
+                desc: "Implementing JAMALI OS is not an expense, it's an investment with direct returns. Our clients report an average 12% reduction in waste and an 18% increase in sales thanks to POS agility and AI marketing.",
+                stats: [
+                    { label: 'Operational Savings', val: '-15%' },
+                    { label: 'Online Sales', val: '+25%' },
+                    { label: 'Waiter Turnover', val: '-30%' },
+                    { label: 'Human Error', val: '~0%' }
+                ]
+            },
             pricing: {
                 title: "Simple pricing",
                 titleSpan: "for every stage.",
@@ -360,69 +420,46 @@ export default function ModernSaaSLanding() {
                     initial={{ opacity: 0, y: 40 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.7, delay: 0.5 }}
-                    className="w-full max-w-6xl mx-auto mt-20 relative perspective-[2000px]"
+                    className="w-full max-w-5xl mx-auto mt-20 relative"
                 >
-                    <div className="relative aspect-[16/9] md:aspect-[21/9] bg-white rounded-3xl overflow-hidden border border-slate-200 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] transform rotate-x-1 scale-100 hover:scale-[1.01] transition-all duration-1000 ease-out group">
-                        <motion.div
-                            className="flex h-full w-[400%]"
-                            animate={{ x: ["0%", "-25%", "-50%", "-75%", "0%"] }}
-                            transition={{
-                                duration: 24,
-                                repeat: Infinity,
-                                ease: "linear"
-                            }}
-                        >
-                            <div className="w-1/4 h-full relative">
-                                <Image src="/images/ui-dashboard.png" alt="Dashboard" fill className="object-cover object-top" priority />
-                                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent" />
-                                <div className="absolute bottom-10 left-10">
-                                    <div className="px-4 py-2 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 text-white font-bold text-sm">Dashboard Administrativo</div>
-                                </div>
-                            </div>
-                            <div className="w-1/4 h-full relative">
-                                <Image src="/images/ui-pos.png" alt="POS Sales" fill className="object-cover object-top" />
-                                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent" />
-                                <div className="absolute bottom-10 left-10">
-                                    <div className="px-4 py-2 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 text-white font-bold text-sm">Terminal Punto de Venta</div>
-                                </div>
-                            </div>
-                            <div className="w-1/4 h-full relative">
-                                <Image src="/images/ui-inventory.png" alt="Inventory" fill className="object-cover object-top" />
-                                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent" />
-                                <div className="absolute bottom-10 left-10">
-                                    <div className="px-4 py-2 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 text-white font-bold text-sm">Control Kernel Insumos</div>
-                                </div>
-                            </div>
-                            <div className="w-1/4 h-full relative">
-                                <Image src="/images/ui-menu.png" alt="Menu Catalog" fill className="object-cover object-top" />
-                                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-transparent" />
-                                <div className="absolute bottom-10 left-10">
-                                    <div className="px-4 py-2 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 text-white font-bold text-sm">Ingeniería Studio Menú</div>
-                                </div>
-                            </div>
-                        </motion.div>
-
-                        {/* Overlay Controls UI */}
-                        <div className="absolute top-6 left-6 flex gap-2">
-                            <div className="w-3 h-3 rounded-full bg-slate-200" />
-                            <div className="w-3 h-3 rounded-full bg-slate-200" />
-                            <div className="w-3 h-3 rounded-full bg-slate-200" />
-                        </div>
+                    <div className="relative aspect-[16/9] bg-white rounded-2xl overflow-hidden border border-slate-200/50 shadow-2xl shadow-slate-900/10 z-10">
+                        <Image src="/images/ui-dashboard.png" alt="JAMALI OS Dashboard" fill className="object-cover object-top" priority />
+                        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/20 via-transparent to-transparent pointer-events-none" />
                     </div>
+
+                    {/* Floating POS mock */}
+                    <motion.div
+                        initial={{ x: 40, y: 40, opacity: 0 }}
+                        animate={{ x: 0, y: 0, opacity: 1 }}
+                        transition={{ delay: 1, duration: 0.7 }}
+                        className="absolute -bottom-12 -right-12 w-[45%] rounded-2xl border-[6px] border-white shadow-[0_20px_40px_-10px_rgba(0,0,0,0.2)] overflow-hidden hidden md:block z-20 aspect-[4/3] bg-white group"
+                    >
+                        <Image src="/images/ui-pos.png" alt="JAMALI OS POS" fill className="object-cover object-top transition-transform duration-700 group-hover:scale-105" />
+                        <div className="absolute top-2 left-2 flex gap-1.5 z-10">
+                            <div className="w-2.5 h-2.5 rounded-full bg-slate-200" />
+                            <div className="w-2.5 h-2.5 rounded-full bg-slate-200" />
+                            <div className="w-2.5 h-2.5 rounded-full bg-slate-200" />
+                        </div>
+                    </motion.div>
                 </motion.div>
             </section>
 
             {/* 3. TRUST SECTION */}
-            <section className="py-12 border-y border-slate-100 bg-slate-50/50">
-                <div className="max-w-7xl mx-auto px-6 text-center space-y-6">
+            <section className="py-16 border-y border-slate-100 bg-slate-50/50">
+                <div className="max-w-7xl mx-auto px-6 text-center space-y-8">
                     <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">{c.trust}</p>
-                    <div className="flex flex-wrap justify-center items-center gap-12 text-slate-400 grayscale opacity-60">
-                        {/* Placeholder generic names for trust */}
-                        <span className="font-black text-2xl tracking-tighter">BistroCraft</span>
-                        <span className="font-bold text-2xl italic">TheGrill</span>
-                        <span className="font-medium text-2xl uppercase tracking-widest">SushiBar</span>
-                        <span className="font-bold text-2xl font-serif">Osteria</span>
-                        <span className="font-black text-2xl tracking-tighter">TACO&CO</span>
+                    <div className="flex flex-wrap justify-center items-center gap-6 md:gap-10">
+                        {[
+                            { label: lang === 'es' ? 'Restaurantes' : 'Restaurants', val: '10+' },
+                            { label: lang === 'es' ? 'Pedidos procesados' : 'Orders processed', val: '5K+' },
+                            { label: lang === 'es' ? 'Tiempo de actividad' : 'Uptime', val: '99.9%' },
+                            { label: lang === 'es' ? 'Soporte' : 'Support', val: '24/7' },
+                        ].map((s, i) => (
+                            <div key={i} className="px-6 py-4 bg-white rounded-2xl border border-slate-200 shadow-sm min-w-[130px]">
+                                <p className="text-2xl font-black text-slate-900 tracking-tighter">{s.val}</p>
+                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">{s.label}</p>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </section>
@@ -438,18 +475,11 @@ export default function ModernSaaSLanding() {
                             {c.problem.desc}
                         </p>
                     </motion.div>
-                    <motion.div {...fadeUp} className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                        {[
-                            { title: c.problem.cards[0].title, icon: Server },
-                            { title: c.problem.cards[1].title, icon: Database },
-                            { title: c.problem.cards[2].title, icon: BarChart3 },
-                            { title: c.problem.cards[3].title, icon: Globe }
-                        ].map((issue, idx) => (
-                            <div key={idx} className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm flex flex-col gap-4">
-                                <div className="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center text-red-500">
-                                    <issue.icon className="w-5 h-5" />
-                                </div>
-                                <h3 className="text-slate-900 font-bold">{issue.title}</h3>
+                    <motion.div {...fadeUp} className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        {c.problem.cards.map((issue, idx) => (
+                            <div key={idx} className="p-6 rounded-2xl bg-red-50/50 border border-red-100 shadow-sm flex items-start gap-4 hover:shadow-md transition-all">
+                                <span className="text-2xl leading-none mt-0.5">❌</span>
+                                <h3 className="text-slate-800 font-bold text-sm leading-relaxed">{issue.title}</h3>
                             </div>
                         ))}
                     </motion.div>
@@ -473,26 +503,42 @@ export default function ModernSaaSLanding() {
 
             {/* 6. FEATURES GRID */}
             <section id="features" className="py-20 px-6">
-                <div className="max-w-7xl mx-auto grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {c.features.map((feature, i) => {
-                        const Icon = i === 0 ? Receipt : i === 1 ? Database : i === 2 ? BarChart3 : i === 3 ? Users : i === 4 ? Sparkles : Smartphone;
-                        return (
-                            <motion.div
-                                key={i}
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: i * 0.1 }}
-                                className="group p-8 rounded-3xl bg-white border border-slate-200 hover:border-orange-200 hover:shadow-xl hover:shadow-orange-500/5 transition-all cursor-crosshair"
-                            >
-                                <div className="w-14 h-14 rounded-2xl bg-orange-50/50 border border-orange-100 text-orange-500 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform group-hover:bg-orange-500 group-hover:text-white group-hover:rotate-3 shadow-sm">
-                                    <Icon className="w-7 h-7" />
-                                </div>
-                                <h3 className="text-xl font-bold text-slate-900 mb-3">{feature.title}</h3>
-                                <p className="text-slate-500 text-sm leading-relaxed font-medium">{feature.desc}</p>
-                            </motion.div>
-                        )
-                    })}
+                <div className="max-w-7xl mx-auto">
+                    <div className="text-center mb-16 space-y-4">
+                        <h2 className="text-3xl md:text-5xl font-black text-slate-900 tracking-tighter">{c.featuresTitle}</h2>
+                        <p className="text-lg text-slate-500 font-medium max-w-2xl mx-auto">{c.featuresSubtitle}</p>
+                    </div>
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {c.features.map((feature, i) => {
+                            const Icon = i === 0 ? Receipt : i === 1 ? Database : i === 2 ? BarChart3 : i === 3 ? Users : i === 4 ? Sparkles : Smartphone;
+                            return (
+                                <motion.div
+                                    key={i}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ delay: i * 0.1 }}
+                                    className="group p-8 rounded-3xl bg-white border border-slate-200 hover:border-orange-200 hover:shadow-xl hover:shadow-orange-500/5 transition-all cursor-crosshair"
+                                >
+                                    <div className="w-14 h-14 rounded-2xl bg-orange-50/50 border border-orange-100 text-orange-500 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform group-hover:bg-orange-500 group-hover:text-white group-hover:rotate-3 shadow-sm">
+                                        <Icon className="w-7 h-7" />
+                                    </div>
+                                    <h3 className="text-xl font-bold text-slate-900 mb-3">{feature.title}</h3>
+                                    <p className="text-slate-500 text-sm leading-relaxed font-medium">{feature.desc}</p>
+                                </motion.div>
+                            )
+                        })}
+                    </div>
+                </div>
+            </section>
+
+            {/* 6.5 MID-PAGE CTA */}
+            <section className="py-16 px-6">
+                <div className="max-w-4xl mx-auto bg-gradient-to-r from-slate-900 to-slate-800 rounded-[2.5rem] p-10 md:p-14 flex flex-col md:flex-row items-center justify-between gap-8 shadow-2xl shadow-slate-900/10">
+                    <h3 className="text-2xl md:text-3xl font-black text-white tracking-tighter text-center md:text-left">{c.midCta.text}</h3>
+                    <Link href="/demo" className="shrink-0 px-10 py-5 bg-orange-500 text-white font-black rounded-2xl hover:bg-orange-600 transition-all flex items-center gap-3 text-lg shadow-lg shadow-orange-500/20 hover:-translate-y-0.5 active:scale-95">
+                        {c.midCta.btn} <ArrowRight className="w-5 h-5" />
+                    </Link>
                 </div>
             </section>
 
@@ -553,7 +599,7 @@ export default function ModernSaaSLanding() {
                                         <Icon className="w-10 h-10" />
                                     </div>
                                     <div className="space-y-3">
-                                        <span className="text-xs font-bold text-slate-400 tracking-widest uppercase">STEP {item.step}</span>
+                                        <span className="text-xs font-bold text-slate-400 tracking-widest uppercase">{c.howTo.stepLabel} {item.step}</span>
                                         <h3 className="text-2xl font-bold text-slate-900 tracking-tight">{item.title}</h3>
                                         <p className="text-slate-500 leading-relaxed font-medium">{item.desc}</p>
                                     </div>
@@ -567,7 +613,7 @@ export default function ModernSaaSLanding() {
             {/* 9. AI SECTION */}
             <section className="py-32 px-6 bg-gradient-to-b from-orange-50 to-white relative">
                 <div className="max-w-5xl mx-auto text-center space-y-12">
-                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-orange-100/50 border border-orange-200 text-orange-600 font-bold text-sm">
+                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-orange-100/50 border border-orange-200 text-orange-600 font-bold text-sm shadow-sm">
                         <Sparkles className="w-4 h-4" /> {c.ai.badge}
                     </div>
                     <h2 className="text-4xl md:text-6xl font-black text-slate-900 tracking-tighter">{c.ai.title}</h2>
@@ -575,25 +621,40 @@ export default function ModernSaaSLanding() {
                         {c.ai.desc}
                     </p>
 
-                    <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-4 text-left pt-10">
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 text-left pt-10">
                         {c.ai.items.map((f, i) => (
-                            <div key={i} className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-                                <Sparkles className="w-6 h-6 text-orange-500 mb-4" />
-                                <h4 className="text-slate-900 font-bold">{f}</h4>
+                            <div key={i} className="bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-xl hover:shadow-2xl hover:border-orange-500/50 transition-all group relative overflow-hidden">
+                                <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                                <div className="w-12 h-12 rounded-2xl bg-orange-500/10 border border-orange-500/20 text-orange-400 flex items-center justify-center mb-5 group-hover:bg-orange-500 group-hover:text-white transition-colors">
+                                    <Sparkles className="w-6 h-6" />
+                                </div>
+                                <h4 className="text-lg text-white font-bold mb-2 relative z-10">{f.title}</h4>
+                                <p className="text-sm text-slate-400 leading-relaxed font-medium relative z-10">{f.desc}</p>
                             </div>
                         ))}
                     </div>
                 </div>
             </section>
 
-            {/* 10. INTEGRATIONS */}
-            <section className="py-20 border-y border-slate-100 bg-slate-50">
-                <div className="max-w-7xl mx-auto px-6 text-center space-y-10">
-                    <h3 className="text-2xl font-bold text-slate-900 tracking-tight">{c.integrations.title}</h3>
-                    <div className="flex flex-wrap justify-center gap-12 items-center text-slate-400">
-                        <div className="flex items-center gap-2 font-bold text-xl"><CreditCard className="w-6 h-6" /> Payments</div>
-                        <div className="flex items-center gap-2 font-bold text-xl"><Cloud className="w-6 h-6" /> Cloud</div>
-                        <div className="flex items-center gap-2 font-bold text-xl"><BarChart3 className="w-6 h-6" /> Analytics</div>
+            {/* 10. TECH STACK */}
+            <section className="py-24 border-y border-slate-100 bg-slate-50">
+                <div className="max-w-7xl mx-auto px-6 text-center space-y-12">
+                    <div className="space-y-4">
+                        <h3 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tighter">{c.techStack.title}</h3>
+                        <p className="text-slate-500 font-medium max-w-lg mx-auto">{c.techStack.desc}</p>
+                    </div>
+                    <div className="flex flex-wrap justify-center gap-4">
+                        {c.techStack.items.map((tech, i) => (
+                            <div key={i} className="flex items-center gap-3 px-6 py-4 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-orange-200 transition-all">
+                                <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 font-black text-sm">
+                                    {tech.name.charAt(0)}
+                                </div>
+                                <div className="text-left">
+                                    <p className="font-bold text-slate-900 text-sm">{tech.name}</p>
+                                    <p className="text-[10px] font-medium text-slate-400 uppercase tracking-wider">{tech.desc}</p>
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </section>
@@ -709,18 +770,13 @@ export default function ModernSaaSLanding() {
                             <div className="w-12 h-12 rounded-2xl bg-orange-500 text-white flex items-center justify-center shadow-lg">
                                 <TrendingUp className="w-6 h-6" />
                             </div>
-                            <h3 className="text-2xl font-black italic tracking-tighter uppercase text-slate-900">Análisis Financiero: ROI Inmediato</h3>
+                            <h3 className="text-2xl font-black italic tracking-tighter uppercase text-slate-900">{c.roi.title}</h3>
                             <p className="text-slate-600 font-medium leading-relaxed font-sans">
-                                Implementar JAMALI OS no es un gasto, es una inversión con retorno directo. Nuestros clientes reportan una reducción media del 12% en mermas y un incremento del 18% en ventas gracias a la agilidad del POS y el marketing con IA.
+                                {c.roi.desc}
                             </p>
                         </div>
                         <div className="grid grid-cols-2 gap-4 w-full md:w-auto">
-                            {[
-                                { label: 'Ahorro Operativo', val: '-15%' },
-                                { label: 'Ventas Online', val: '+25%' },
-                                { label: 'Rotación Meseros', val: '-30%' },
-                                { label: 'Error Humano', val: '~0%' },
-                            ].map((stat, i) => (
+                            {c.roi.stats.map((stat, i) => (
                                 <div key={stat.label} className="bg-white p-6 rounded-3xl border border-orange-100 shadow-sm text-center min-w-[140px]">
                                     <p className="text-2xl font-black italic tracking-tighter text-orange-600 leading-none">{stat.val}</p>
                                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2 leading-none">{stat.label}</p>
@@ -767,9 +823,9 @@ export default function ModernSaaSLanding() {
                             {c.footer.desc}
                         </p>
                         <div className="flex items-center gap-4 text-slate-400">
-                            <a href="#" className="hover:text-slate-900 transition-colors"><Mail className="w-5 h-5" /></a>
-                            <a href="#" className="hover:text-slate-900 transition-colors"><Github className="w-5 h-5" /></a>
-                            <a href="#" className="hover:text-slate-900 transition-colors"><Linkedin className="w-5 h-5" /></a>
+                            <a href="mailto:contact@jamalios.com" className="hover:text-slate-900 transition-colors"><Mail className="w-5 h-5" /></a>
+                            <a href="https://github.com/jamalios" className="hover:text-slate-900 transition-colors" target="_blank" rel="noreferrer"><Github className="w-5 h-5" /></a>
+                            <a href="https://linkedin.com/company/jamalios" className="hover:text-slate-900 transition-colors" target="_blank" rel="noreferrer"><Linkedin className="w-5 h-5" /></a>
                         </div>
                     </div>
 
@@ -795,7 +851,7 @@ export default function ModernSaaSLanding() {
                 </div>
                 <div className="max-w-7xl mx-auto px-6 pt-8 border-t border-slate-100 text-sm font-medium text-slate-400 flex flex-col md:flex-row items-center justify-between gap-4">
                     <p>© 2026 JAMALI OS. All rights reserved.</p>
-                    <p>contact@jamalios.com</p>
+                    <p className="flex items-center gap-2"><Mail className="w-4 h-4" /> contact@jamalios.com</p>
                 </div>
             </footer>
         </div>

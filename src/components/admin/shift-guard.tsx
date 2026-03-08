@@ -4,21 +4,30 @@ import { useEffect, useState } from "react"
 import { supabase } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Clock, LogOut, Power } from "lucide-react"
-import { useRouter, usePathname } from "next/navigation"
+import { useRouter, usePathname, useSearchParams } from "next/navigation"
 
 export function ShiftGuard({ children }: { children: React.ReactNode }) {
     const [hasActiveShift, setHasActiveShift] = useState<boolean | null>(null)
     const [loading, setLoading] = useState(true)
     const [userRole, setUserRole] = useState<string>("")
     const [userId, setUserId] = useState<string>("")
+    const searchParams = useSearchParams()
     const router = useRouter()
     const pathname = usePathname()
 
     useEffect(() => {
         checkShift()
-    }, [pathname])
+    }, [pathname, searchParams])
 
     const checkShift = async () => {
+        const isDemo = searchParams.get('demo') === 'true'
+
+        if (isDemo) {
+            setHasActiveShift(true)
+            setLoading(false)
+            return
+        }
+
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) return
 

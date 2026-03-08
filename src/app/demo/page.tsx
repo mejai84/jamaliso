@@ -59,7 +59,7 @@ export default function DemoWizard() {
     const [selections, setSelections] = useState<Record<string, string>>({})
     const [isSimulating, setIsSimulating] = useState(false)
     const [progress, setProgress] = useState(0)
-    const [profile, setProfile] = useState({ name: '', email: '' })
+    const [profile, setProfile] = useState({ name: '', email: '', phone: '' })
 
     const handleSelect = (stepId: string, optionId: string) => {
         setSelections(prev => ({ ...prev, [stepId]: optionId }))
@@ -76,6 +76,7 @@ export default function DemoWizard() {
         saveDemoLead({
             name: profile.name,
             email: profile.email,
+            phone: profile.phone,
             type: selections.type || 'unknown',
             challenge: selections.challenge || 'unknown'
         })
@@ -202,6 +203,17 @@ export default function DemoWizard() {
                                                 value={profile.email}
                                                 onChange={e => setProfile({ ...profile, email: e.target.value })}
                                                 placeholder="juan@tu-restaurante.com"
+                                                className="w-full px-6 py-4 rounded-2xl border-2 border-slate-100 focus:border-orange-500 outline-none transition-all font-semibold text-slate-900"
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-sm font-bold text-slate-500 ml-1">WhatsApp de Contacto</label>
+                                            <input
+                                                required
+                                                type="tel"
+                                                value={profile.phone}
+                                                onChange={e => setProfile({ ...profile, phone: e.target.value })}
+                                                placeholder="+57 300 000 0000"
                                                 className="w-full px-6 py-4 rounded-2xl border-2 border-slate-100 focus:border-orange-500 outline-none transition-all font-semibold text-slate-900"
                                             />
                                         </div>

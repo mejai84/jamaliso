@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState, ReactNode } from "react"
 import { supabase } from "@/lib/supabase/client"
+import { usePathname, useSearchParams } from "next/navigation"
 
 interface Restaurant {
     id: string
@@ -40,20 +41,25 @@ interface Restaurant {
     google_maps_link?: string
     online_hours_config?: any
     tenant_id?: string
+    language?: 'en' | 'es'
 }
 
 interface RestaurantContextType {
     restaurant: Restaurant | null
     loading: boolean
+    lang: 'en' | 'es'
     accessibleRestaurants: Restaurant[]
     refreshRestaurant: () => Promise<void>
+    setLanguage: (lang: 'en' | 'es') => Promise<void>
 }
 
 const RestaurantContext = createContext<RestaurantContextType>({
     restaurant: null,
     loading: true,
+    lang: 'en',
     accessibleRestaurants: [],
-    refreshRestaurant: async () => { }
+    refreshRestaurant: async () => { },
+    setLanguage: async () => { }
 })
 
 export const useRestaurant = () => useContext(RestaurantContext)
@@ -61,6 +67,7 @@ export const useRestaurant = () => useContext(RestaurantContext)
 export const RestaurantProvider = ({ children }: { children: ReactNode }) => {
     const [restaurant, setRestaurant] = useState<Restaurant | null>(null)
     const [loading, setLoading] = useState(true)
+    const [lang, setLang] = useState<'en' | 'es'>('en')
     const [accessibleRestaurants, setAccessibleRestaurants] = useState<Restaurant[]>([])
 
     const MOCK_RESTAURANT: Restaurant = {
@@ -73,16 +80,32 @@ export const RestaurantProvider = ({ children }: { children: ReactNode }) => {
         currency_symbol: '$',
         tax_percentage: 19,
         apply_service_charge: true,
-        service_charge_percentage: 10
+        service_charge_percentage: 10,
+        language: 'en'
     }
+
+    const setUpdateLanguage = async (newLang: 'en' | 'es') => {
+        setLang(newLang)
+        if (restaurant?.id && restaurant.id !== MOCK_RESTAURANT.id) {
+            try {
+                await supabase
+                    .from('restaurants')
+                    .update({ language: newLang })
+                    .eq('id', restaurant.id)
+            } catch (err) {
+                console.error("Error updating language:", err)
+            }
+        }
+    }
+
+    const pathname = usePathname()
+    const searchParams = useSearchParams()
 
     const initRestaurant = async () => {
         try {
             setLoading(true)
             const hostname = typeof window !== 'undefined' ? window.location.hostname : ''
-            const pathname = typeof window !== 'undefined' ? window.location.pathname : ''
-            const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null
-            const isDemo = searchParams?.get('demo') === 'true'
+            const isDemo = searchParams.get('demo') === 'true'
 
             if (isDemo) {
                 setRestaurant(MOCK_RESTAURANT)
@@ -180,6 +203,15 @@ export const RestaurantProvider = ({ children }: { children: ReactNode }) => {
             if (currentRes) {
                 setRestaurant(currentRes)
                 applyBranding(currentRes)
+
+                // Detectar Lenguaje: Prioridad BD > Navegador > English (Default)
+                if (currentRes.language) {
+                    setLang(currentRes.language)
+                } else if (typeof window !== 'undefined') {
+                    const browserLang = navigator.language.split('-')[0]
+                    const detected = (browserLang === 'es' || browserLang === 'en') ? browserLang : 'en'
+                    setLang(detected)
+                }
             }
 
         } catch (error) {
@@ -191,7 +223,7 @@ export const RestaurantProvider = ({ children }: { children: ReactNode }) => {
 
     useEffect(() => {
         initRestaurant()
-    }, [])
+    }, [pathname, searchParams])
 
     const applyBranding = (res: Restaurant) => {
         if (res.primary_color) {
@@ -217,7 +249,14 @@ export const RestaurantProvider = ({ children }: { children: ReactNode }) => {
     }
 
     return (
-        <RestaurantContext.Provider value={{ restaurant, loading, accessibleRestaurants, refreshRestaurant: initRestaurant }}>
+        <RestaurantContext.Provider value={{
+            restaurant,
+            loading,
+            lang,
+            accessibleRestaurants,
+            refreshRestaurant: initRestaurant,
+            setLanguage: setUpdateLanguage
+        }}>
             {children}
         </RestaurantContext.Provider>
     )

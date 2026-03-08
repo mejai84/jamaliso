@@ -10,6 +10,8 @@ import { supabase } from "@/lib/supabase/client"
 import { sidebarSections } from "@/app/admin/navigation"
 import { BusinessSelector } from "@/components/admin/business-selector"
 import { QuickBusinessSwitch } from "@/components/admin/quick-business-switch"
+import { useRestaurant } from "@/providers/RestaurantProvider"
+import { adminTranslations } from "@/lib/i18n/admin"
 
 import { useState } from "react"
 
@@ -22,11 +24,70 @@ interface SidebarProps {
 export function Sidebar({ restaurant, userRole, userName }: SidebarProps) {
     const pathname = usePathname()
     const router = useRouter()
+    const { lang } = useRestaurant()
     const [localSearch, setLocalSearch] = useState("")
+
+    const t = adminTranslations[lang]
 
     const handleLogout = async () => {
         await supabase.auth.signOut()
         router.push("/login")
+    }
+
+    // Map navigation keys to translations
+    const getNavLabel = (label: string) => {
+        const keyMap: Record<string, keyof typeof t.nav> = {
+            "Vista General": "overview",
+            "Control de Caja": "cash_control",
+            "Portal Mesero": "waiter_portal",
+            "Cocina (KDS)": "kitchen_kds",
+            "Listado Pedidos": "order_list",
+            "Facturación DIAN/SAT": "billing",
+            "Ventas / Web App": "online_sales",
+            "Mesas & QR": "tables_qr",
+            "Logística Domicilios": "delivery_logistics",
+            "Reservas / Agenda": "reservations",
+            "CRM de Clientes": "crm",
+            "Repartidores": "drivers",
+            "Mi Turno / Entrada": "my_shift",
+            "Historial Turnos": "shift_history",
+            "Gestión de Personal": "staff_management",
+            "Nómina y Pagos": "payroll",
+            "Stock e Insumos": "inventory",
+            "Proveedores": "suppliers",
+            "Compras / Ingresos": "purchases",
+            "Menú & Productos": "menu_products",
+            "Libro de Recetas": "recipes",
+            "Promociones / Cupones": "promotions",
+            "Reportes Avanzados": "reports",
+            "Caja Menor / Gastos": "petty_cash",
+            "JAMALI Hub Live": "hub",
+            "JAMALI Guardian": "guardian",
+            "Auditoría / Roles": "audit_roles",
+            "Trazabilidad SaaS": "traceability",
+            "Configuración": "settings",
+            "Soporte Impresoras": "printers",
+            "Infraestructura Core": "core_infra",
+            "Mi Perfil": "my_profile"
+        }
+        const key = keyMap[label]
+        return key ? t.nav[key] : label
+    }
+
+    const getSectionTitle = (title: string) => {
+        const keyMap: Record<string, keyof typeof t.nav> = {
+            "OPERACIONES POS": "pos_operations",
+            "PRESENCIA DIGITAL": "digital_presence",
+            "CLIENTES & FIDELIDAD": "customers_loyalty",
+            "CONTROL DE ASISTENCIA": "attendance",
+            "TALENTO HUMANO": "human_talent",
+            "BACKOFFICE & STOCK": "backoffice_stock",
+            "ESTRATEGIA & SAAS": "strategy_saas",
+            "INFRAESTRUCTURA": "infrastructure",
+            "MI CUENTA": "my_account"
+        }
+        const key = keyMap[title]
+        return key ? t.nav[key] : title
     }
 
     return (
@@ -45,7 +106,7 @@ export function Sidebar({ restaurant, userRole, userName }: SidebarProps) {
                         <span className="text-2xl font-black italic uppercase tracking-tighter text-slate-900 leading-none">
                             JAMALI <span className="text-orange-600">OS</span>
                         </span>
-                        <span className="text-[7.5px] font-black text-slate-400 tracking-[0.6em] uppercase mt-2 opacity-60">Smart POS Framework</span>
+                        <span className="text-[7.5px] font-black text-slate-400 tracking-[0.6em] uppercase mt-2 opacity-60">{t.sidebar.smart_pos}</span>
                     </div>
                 </div>
             </div>
@@ -61,7 +122,7 @@ export function Sidebar({ restaurant, userRole, userName }: SidebarProps) {
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-orange-500 transition-colors" />
                     <input
                         type="search"
-                        placeholder="BUSCAR MÓDULO"
+                        placeholder={t.sidebar.search_placeholder}
                         value={localSearch}
                         onChange={(e) => setLocalSearch(e.target.value)}
                         className="w-full h-11 pl-12 pr-4 rounded-xl bg-slate-50 border-2 border-slate-100 outline-none focus:border-orange-500/30 text-[10px] font-black uppercase tracking-[0.2em] placeholder:text-slate-400 transition-all font-sans text-slate-900 shadow-inner"
@@ -81,7 +142,9 @@ export function Sidebar({ restaurant, userRole, userName }: SidebarProps) {
 
                     return (
                         <div key={idx} className="space-y-4 font-sans">
-                            <h4 className="px-5 text-[9px] font-black text-slate-400 uppercase tracking-[0.4em] italic">{section.title}</h4>
+                            <h4 className="px-5 text-[9px] font-black text-slate-400 uppercase tracking-[0.4em] italic">
+                                {getSectionTitle(section.title)}
+                            </h4>
                             <div className="space-y-1">
                                 {filteredItems.map((item) => {
                                     const Icon = item.icon
@@ -103,7 +166,7 @@ export function Sidebar({ restaurant, userRole, userName }: SidebarProps) {
                                                     "text-[11px] font-black uppercase italic tracking-wider transition-all",
                                                     isActive ? "text-white" : "group-hover:text-slate-900"
                                                 )}>
-                                                    {item.label}
+                                                    {getNavLabel(item.label)}
                                                 </span>
                                             </div>
                                         </Link>
@@ -137,7 +200,7 @@ export function Sidebar({ restaurant, userRole, userName }: SidebarProps) {
                     onClick={handleLogout}
                 >
                     <LogOut className="w-4 h-4" />
-                    CERRAR SESIÓN
+                    {t.sidebar.logout}
                 </button>
             </div>
             <style jsx global>{`
