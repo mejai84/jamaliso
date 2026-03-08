@@ -112,7 +112,7 @@ export default function ModernSaaSLanding() {
                         price: "69.000",
                         desc: "Para negocios que inician con fuerza.",
                         features: ["1 Sede", "Facturación Electrónica DIAN", "POS Ilimitado", "Mermas Básicas", "QR Menu Básico"],
-                        btn: "Empezar Gratis"
+                        btn: "Probar Gratis"
                     },
                     {
                         name: "Evolución",
@@ -203,7 +203,7 @@ export default function ModernSaaSLanding() {
                         price: "18",
                         desc: "For businesses starting strong.",
                         features: ["1 Location", "Compliant Invoicing", "Unlimited POS", "Basic Waste Tracking", "Basic QR Menu"],
-                        btn: "Start Free"
+                        btn: "Start Free Trial"
                     },
                     {
                         name: "Evolution",
