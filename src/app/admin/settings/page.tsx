@@ -32,6 +32,13 @@ export default function SettingsPremiumPage() {
     const [currency, setCurrency] = useState("COP")
     const [locale, setLocale] = useState("es-CO")
 
+    const handleCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const val = e.target.value;
+        setCountry(val);
+        const map: Record<string, string> = { "Colombia": "COP", "Mexico": "MXN", "España": "EUR", "USA": "USD" };
+        if (map[val]) setCurrency(map[val]);
+    };
+
     // Branding states
     const [name, setName] = useState("")
     const [logoUrl, setLogoUrl] = useState("")
@@ -243,7 +250,7 @@ export default function SettingsPremiumPage() {
                                             <select
                                                 className="w-full bg-white border border-slate-200 rounded-xl h-14 px-6 text-sm font-medium focus:outline-none focus:border-orange-500/50 appearance-none text-slate-900 italic shadow-sm"
                                                 value={country}
-                                                onChange={e => setCountry(e.target.value)}
+                                                onChange={handleCountryChange}
                                             >
                                                 <option value="Colombia" className="bg-white text-slate-900">COLOMBIA (Default)</option>
                                                 <option value="Mexico" className="bg-white text-slate-900">MÉXICO</option>

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useParams } from "next/navigation"
-import { supabase } from "@/lib/supabase/client"
+import { getCachedRestaurantBySlug, getCachedMenu } from "@/actions/cache"
 import {
     Loader2,
     ArrowRight,
@@ -88,11 +88,8 @@ export default function SlugMenuPage() {
         setLoading(true)
 
         // 1. Buscar restaurante por slug o subdomain
-        const { data: res } = await supabase
-            .from('restaurants')
-            .select('*')
-            .or(`slug.eq.${slug},subdomain.eq.${slug}`)
-            .maybeSingle()
+        const stringSlug = Array.isArray(slug) ? slug[0] : slug;
+        const res = await getCachedRestaurantBySlug(stringSlug);
 
         if (!res) {
             setError(`Restaurante "${slug}" no encontrado`)
@@ -109,14 +106,11 @@ export default function SlugMenuPage() {
 
         setRestaurant(res)
 
-        // 2. Cargar categorías y productos de ESE restaurante
-        const [catsRes, prodsRes] = await Promise.all([
-            supabase.from('categories').select('*').eq('restaurant_id', res.id).order('name'),
-            supabase.from('products').select('*').eq('restaurant_id', res.id).eq('is_available', true).order('name')
-        ])
+        // 2. Cargar categorías y productos de ESE restaurante DESDE EL CACHE
+        const menuData = await getCachedMenu(res.id);
 
-        if (catsRes.data) setCategories(catsRes.data)
-        if (prodsRes.data) setProducts(prodsRes.data as Product[])
+        if (menuData.categories) setCategories(menuData.categories)
+        if (menuData.products) setProducts(menuData.products as unknown as Product[])
         setLoading(false)
     }
 

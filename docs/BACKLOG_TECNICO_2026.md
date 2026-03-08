@@ -68,15 +68,13 @@
 
 ## 3. ESCALABILIDAD
 
-### ❌ NO EXISTE: Cache (Redis / Upstash)
-- El único uso mencionado de Redis es un **comentario** en `middleware.ts` línea 5: `// Para producción masiva se recomienda conectarlo a Redis (Upstash)`
-- **Cada request al POS, menú digital, y configuración hace query directa a Supabase.** No hay caching de:
-  - Menú (productos + categorías) — cambia pocas veces al día
-  - Configuraciones del restaurante — cambia casi nunca
-  - Perfil del usuario / permisos — cambia casi nunca
-  - Settings generales — cambia casi nunca
-- **Impacto:** Con 100+ restaurantes concurrentes, la latencia sube y el pool de conexiones de Supabase se satura (~200 conexiones directas en plan Pro).
-- **Acción requerida:** Implementar Upstash Redis (serverless, compatible con Edge) o al mínimo, React `cache()` + `revalidate` en Server Components.
+### ✅ YA EXISTE: Cache Nativo (Next.js Edge Caching)
+- **Problemática Original:** Cada acceso al Menú QR leía los datos directos de Supabase, lo cual colapsaba la cantidad concurrente de usuarios en un mismo tenant (SaaS).
+- **Solución implementada:** Se ha estructurado `src/actions/cache.ts`. Toda llamada de clientes hacia el perfil o catálogo del menú ahora atraviesa un túnel protegido mediante `unstable_cache`.
+  - Configuración del restaurante (`getCachedRestaurantBySlug`) y variables de marca.
+  - Catálogo y Menú digital (`getCachedMenu`) que retiene categorías y productos con un TTL dinámico de una hora.
+- Las consultas excesivas se bloquean en el Edge de Vercel/Next sin tocar la base de datos de Postgres.
+- **Acción requerida (futuro corporativo):** Si múltiples clientes VIP lo necesitan, escalar esta integración conectándola con una instancia Upstash/Redis central.
 
 ### ❌ NO EXISTE: Queue / Background Jobs
 - Todas las operaciones se ejecutan sincrónicamente en el request HTTP.
