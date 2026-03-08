@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
-import { supabase } from "@/lib/supabase/client"
+import { getCachedRestaurantBySlug } from "@/actions/cache"
 import {
     Loader2,
     ArrowRight,
@@ -66,11 +66,8 @@ export default function RestaurantLandingPage() {
 
     const loadRestaurant = async () => {
         setLoading(true)
-        const { data: res } = await supabase
-            .from('restaurants')
-            .select('*')
-            .or(`slug.eq.${slug},subdomain.eq.${slug}`)
-            .maybeSingle()
+        const stringSlug = Array.isArray(slug) ? slug[0] : slug;
+        const res = await getCachedRestaurantBySlug(stringSlug);
 
         if (!res) {
             setError(`Restaurante "${slug}" no encontrado`)

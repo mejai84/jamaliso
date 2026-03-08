@@ -138,7 +138,7 @@ export default function SlugMenuPage() {
                             El restaurante <span className="text-slate-900">"{slug}"</span> no existe en el ecosistema Jamali OS.
                         </p>
                     </div>
-                    <Button onClick={() => window.location.href = '/'} className="h-12 px-8 bg-slate-900 text-white rounded-xl font-black italic uppercase text-[10px] tracking-widest hover:bg-orange-600 transition-all shadow-xl shadow-slate-900/10">
+                    <Button onClick={() => window.location.href = `/${slug}`} className="h-12 px-8 bg-slate-900 text-white rounded-xl font-black italic uppercase text-[10px] tracking-widest hover:bg-orange-600 transition-all shadow-xl shadow-slate-900/10">
                         VOLVER AL INICIO
                     </Button>
                 </div>

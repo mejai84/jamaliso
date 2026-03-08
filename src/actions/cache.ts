@@ -20,7 +20,7 @@ export const getCachedRestaurantBySlug = unstable_cache(
             const { data, error } = await supabase
                 .from('restaurants')
                 .select('*')
-                .eq('slug', slug)
+                .or(`slug.eq.${slug},subdomain.eq.${slug}`)
                 .maybeSingle()
 
             if (error) {
