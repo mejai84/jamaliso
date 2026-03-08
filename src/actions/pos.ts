@@ -7,14 +7,16 @@ import * as Sentry from '@sentry/nextjs'
 import { Pool } from 'pg'
 
 // Configuración de conexión directa a BD (Bypass RLS)
-let pool: Pool;
-try {
-    pool = new Pool({
-        connectionString: process.env.DATABASE_URL,
-        ssl: { rejectUnauthorized: false }
-    })
-} catch (e) {
-    console.error("Critical: Failed to initialize PG Pool in pos.ts", e);
+let pool: Pool | null = null;
+if (process.env.DATABASE_URL) {
+    try {
+        pool = new Pool({
+            connectionString: process.env.DATABASE_URL,
+            ssl: { rejectUnauthorized: false }
+        })
+    } catch (e) {
+        console.error("Critical: Failed to initialize PG Pool in pos.ts", e);
+    }
 }
 
 export type ShiftType = 'MORNING' | 'AFTERNOON' | 'NIGHT' | 'CUSTOM'

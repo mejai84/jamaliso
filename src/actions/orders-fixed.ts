@@ -19,14 +19,16 @@ import { Pool } from 'pg'
 import { validateUserRestaurant } from '@/lib/security'
 
 // Configuración de conexión directa a BD (Bypass RLS & Transaction Support)
-let pool: Pool;
-try {
-    pool = new Pool({
-        connectionString: process.env.DATABASE_URL,
-        ssl: { rejectUnauthorized: false } // Necesario para Supabase en producción
-    })
-} catch (e) {
-    console.error("Critical: Failed to initialize PG Pool. Check DATABASE_URL.", e);
+let pool: Pool | null = null;
+if (process.env.DATABASE_URL) {
+    try {
+        pool = new Pool({
+            connectionString: process.env.DATABASE_URL,
+            ssl: { rejectUnauthorized: false } // Necesario para Supabase en producción
+        })
+    } catch (e) {
+        console.error("Critical: Failed to initialize PG Pool. Check DATABASE_URL.", e);
+    }
 }
 
 // ============================================================================
@@ -79,6 +81,7 @@ export async function createOrderWithNotes(orderData: CreateOrderData) {
         // 🛡️ Security Check & Context Retrieval
         const { user } = await validateUserRestaurant(orderData.restaurant_id)
 
+        if (!pool) throw new Error("Direct database connection not configured (DATABASE_URL missing)");
         client = await pool.connect()
         await client.query('BEGIN')
 
@@ -154,6 +157,7 @@ export async function createOrderWithNotes(orderData: CreateOrderData) {
 export async function transferOrderBetweenTables(transferData: TransferOrderData) {
     let client;
     try {
+        if (!pool) throw new Error("Direct database connection not configured (DATABASE_URL missing)");
         client = await pool.connect()
         // 🛡️ Security Check: Validate order belongs to restaurant
         const { rows: [order] } = await client.query('SELECT restaurant_id FROM orders WHERE id = $1', [transferData.order_id])
@@ -237,6 +241,7 @@ export async function splitOrder(
 ) {
     let client;
     try {
+        if (!pool) throw new Error("Direct database connection not configured (DATABASE_URL missing)");
         client = await pool.connect()
         // 🛡️ Security Check
         const { rows: [order] } = await client.query('SELECT restaurant_id FROM orders WHERE id = $1', [sourceOrderId])
@@ -371,6 +376,7 @@ export async function generateReceipt(receiptData: Receipt) {
 export async function addItemsToOrder(orderId: string, items: OrderItemWithNotes[]) {
     let client;
     try {
+        if (!pool) throw new Error("Direct database connection not configured (DATABASE_URL missing)");
         client = await pool.connect()
         // 🛡️ Security Check
         const { rows: [order] } = await client.query('SELECT restaurant_id FROM orders WHERE id = $1', [orderId])
@@ -415,6 +421,7 @@ export async function addItemsToOrder(orderId: string, items: OrderItemWithNotes
 export async function mergeTables(sourceTableId: string, targetTableId: string, userId: string) {
     let client;
     try {
+        if (!pool) throw new Error("Direct database connection not configured (DATABASE_URL missing)");
         client = await pool.connect()
         await client.query('BEGIN')
 
@@ -457,6 +464,7 @@ export async function mergeTables(sourceTableId: string, targetTableId: string, 
 export async function transferOrderItem(sourceOrderId: string, targetTableId: string, itemId: string, quantity: number, userId: string) {
     let client;
     try {
+        if (!pool) throw new Error("Direct database connection not configured (DATABASE_URL missing)");
         client = await pool.connect()
         await client.query('BEGIN')
 

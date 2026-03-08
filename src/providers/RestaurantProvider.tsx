@@ -137,7 +137,7 @@ export const RestaurantProvider = ({ children }: { children: ReactNode }) => {
                 const firstSegment = segments[0]
 
                 // Lista de palabras reservadas del SaaS que NO son slugs de restaurante
-                const reserved = ['register', 'login', 'landing', 'checkout', 'pricing', 'about', 'contact', 'support', 'api']
+                const reserved = ['register', 'login', 'landing', 'checkout', 'pricing', 'about', 'contact', 'support', 'api', 'admin', 'pos', 'setup', 'dashboard']
 
                 if (firstSegment && !reserved.includes(firstSegment)) {
                     const { data: resBySlug } = await supabase
@@ -163,7 +163,21 @@ export const RestaurantProvider = ({ children }: { children: ReactNode }) => {
                     .eq('id', session.user.id)
                     .maybeSingle()
 
-                // 3. Si no hay restaurante por subdominio, usar el del perfil
+                // 3. Si no hay restaurante por subdominio, intentar recuperar de Cookie de Sesión
+                if (!currentRes && typeof window !== 'undefined') {
+                    const match = document.cookie.match(new RegExp('(^| )jamali_os_selected_restaurant_id=([^;]+)'))
+                    if (match) {
+                        const savedId = match[2]
+                        const { data: resData } = await supabase
+                            .from('restaurants')
+                            .select('*')
+                            .eq('id', savedId)
+                            .maybeSingle()
+                        if (resData) currentRes = resData
+                    }
+                }
+
+                // 4. Fallback final: usar el del perfil
                 if (!currentRes && profile?.restaurant_id) {
                     const { data: resData } = await supabase
                         .from('restaurants')
@@ -203,6 +217,11 @@ export const RestaurantProvider = ({ children }: { children: ReactNode }) => {
             if (currentRes) {
                 setRestaurant(currentRes)
                 applyBranding(currentRes)
+
+                // Persistir selección para cambios de sede
+                if (typeof window !== 'undefined') {
+                    document.cookie = `jamali_os_selected_restaurant_id=${currentRes.id}; path=/; max-age=604800`
+                }
 
                 // Detectar Lenguaje: Prioridad BD > Navegador > English (Default)
                 if (currentRes.language) {
