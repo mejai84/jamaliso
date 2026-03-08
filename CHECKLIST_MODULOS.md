@@ -77,7 +77,17 @@
 - [ ] Soporte de dominios personalizados (Empresa. ⏳)
 - [ ] Monitoreo de errores con Sentry (2 horas. ⏳)
 
-## 💼 Estrategia Comercial y Legal
+## � Deuda Técnica y Resiliencia (CTO Action Plan)
+*Prevención de los Puntos de Ruptura (Breacking Points) antes de escalar a 100 restaurantes*
+
+- [ ] **Desacople Transaccional (Eventual Consistency)**: Migrar el descuento de inventario a Cola Background (Jobs) para no bloquear el checkout del POS (Urgente. ⏳)
+- [ ] **Hybrid Sync KDS (Kitchen Fallback)**: Añadir `setInterval` polling al KDS como respaldo a los WebSockets caídos (Urgente. ⏳)
+- [ ] **Performance Mode UI**: Diseño sólido (Sin Blur/Sombras paramétricas) para tablets Android de gama baja en Salas y Cocinas (Alta. ⏳)
+- [ ] **PWA Memory Leak Prevention**: Forzar recargas de navegador invisibles (Unmounts programados) en estado de inactividad de madrugada, para vaciar DOM de React de turnos largos (Alta. ⏳)
+- [ ] **Database Partitioning**: Empezar desarrollo de partición por meses en tabla `orders` para evitar colapso de Queries del Dashboard (1-3 meses. ⏳)
+- [ ] **Rate Limiting Hash-based**: Migrar restricción de IPs hacia restricción por ID Dispositivo para evitar falsos bloqueos en la misma WiFi del restaurante (Media. ⏳)
+
+## �💼 Estrategia Comercial y Legal
 *Activos no técnicos para vender e invertir*
 
 - [ ] Formalizar 3 contratos beta con clientes reales (Urgente. ⏳)
