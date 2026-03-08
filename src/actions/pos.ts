@@ -270,8 +270,8 @@ export async function openCashbox(
                             WHERE id = $1
                         `, [activeSession.id])
                     } else {
-                        const userName = `${activeSession.first_name || ''} ${activeSession.last_name || ''}`.trim() || 'otro usuario'
-                        return { success: false, error: `La caja fuerte ya está en uso por ${userName}. Realicen el Cierre de Caja primero.` }
+                        const operatorName = `${activeSession.first_name || ''} ${activeSession.last_name || ''}`.trim() || 'otro operador'
+                        return { success: false, error: `La caja ya está abierta y en uso por ${operatorName}. Realicen el arqueo y cierre antes de continuar.` }
                     }
                 }
             } catch (pgError) {
@@ -298,8 +298,8 @@ export async function openCashbox(
                     }).eq('id', typedSession.id)
                 } else {
                     const userObj = Array.isArray(typedSession.user) ? typedSession.user[0] : typedSession.user;
-                    const userName = `${userObj?.first_name || ''} ${userObj?.last_name || ''}`.trim() || 'otro usuario'
-                    return { success: false, error: `La caja fuerte ya está siendo operada por ${userName}. Realicen Cierre de Caja antes de abrir turno.` }
+                    const operatorName = `${userObj?.first_name || ''} ${userObj?.last_name || ''}`.trim() || 'otro operador'
+                    return { success: false, error: `Atención: Esta caja ya tiene una sesión activa iniciada por ${operatorName}.` }
                 }
             }
         }
@@ -322,6 +322,19 @@ export async function openCashbox(
 
         if (sessionError || !session) {
             console.error("Error insertando sesión caja:", sessionError)
+
+            // Atrapar error de restricción única (Duplicate Key) si la pre-validación falló por RLS
+            const isDuplicate = (sessionError as any)?.code === '23505' ||
+                sessionError?.message?.toLowerCase().includes('unique constraint') ||
+                sessionError?.message?.toLowerCase().includes('duplicate key');
+
+            if (isDuplicate) {
+                return {
+                    success: false,
+                    error: "La caja ya cuenta con una sesión abierta por otro operador. Por favor, cierren la sesión actual antes de iniciar una nueva."
+                }
+            }
+
             return { success: false, error: "Error al abrir sesión de caja: " + (sessionError?.message || "Error desconocido") }
         }
 

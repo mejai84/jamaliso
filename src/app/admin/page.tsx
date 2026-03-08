@@ -60,7 +60,17 @@ export default function AdminDashboard() {
 
     useEffect(() => {
         setIsDemo(new URL(window.location.href).searchParams.get('demo') === 'true')
-    }, [])
+        // Al montar o cambiar de sede, reseteamos estadísticas para evitar ver datos anteriores
+        setStats({
+            todayRevenue: 0,
+            activeOrders: 0,
+            criticalStock: 0,
+            occupiedTables: 0,
+            totalTables: 0,
+            newCustomers: 0,
+            rating: 4.8
+        })
+    }, [restaurant?.id])
 
     useEffect(() => {
         const timer = setInterval(() => setCurrentTime(new Date()), 1000)
