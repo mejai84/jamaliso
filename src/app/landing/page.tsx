@@ -31,6 +31,7 @@ export default function ModernSaaSLanding() {
     const [scrolled, setScrolled] = useState(false)
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
     const [lang, setLang] = useState<'es' | 'en'>('es')
+    const [isYearly, setIsYearly] = useState(false)
 
     useEffect(() => {
         const handleScroll = () => setScrolled(window.scrollY > 20)
@@ -606,11 +607,17 @@ export default function ModernSaaSLanding() {
 
                         {/* Toggle Placeholder */}
                         <div className="flex items-center justify-center gap-4 pt-8">
-                            <span className="text-sm font-bold text-slate-900">{c.pricing.monthly}</span>
-                            <div className="w-14 h-7 bg-slate-200 rounded-full p-1 cursor-not-allowed">
-                                <div className="w-5 h-5 bg-white rounded-full shadow-sm" />
-                            </div>
-                            <span className="text-sm font-bold text-slate-400">{c.pricing.yearly}</span>
+                            <span className={`text-sm font-bold transition-colors ${!isYearly ? 'text-slate-900' : 'text-slate-400'}`}>{c.pricing.monthly}</span>
+                            <button
+                                onClick={() => setIsYearly(!isYearly)}
+                                className="w-14 h-7 bg-slate-200 rounded-full p-1 relative transition-colors hover:bg-slate-300"
+                            >
+                                <motion.div
+                                    animate={{ x: isYearly ? 28 : 0 }}
+                                    className="w-5 h-5 bg-white rounded-full shadow-sm"
+                                />
+                            </button>
+                            <span className={`text-sm font-bold transition-colors ${isYearly ? 'text-slate-900' : 'text-slate-400'}`}>{c.pricing.yearly}</span>
                             <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-600 text-[10px] font-black uppercase tracking-wider">
                                 {c.pricing.save}
                             </span>
@@ -640,7 +647,15 @@ export default function ModernSaaSLanding() {
 
                                     <div className="flex items-baseline gap-1">
                                         <span className="text-sm font-bold opacity-60">{c.pricing.currency}</span>
-                                        <span className="text-5xl font-black italic tracking-tighter">${tier.price}</span>
+                                        <span className="text-5xl font-black italic tracking-tighter">
+                                            ${isYearly
+                                                ? (lang === 'es'
+                                                    ? (parseFloat(tier.price.replace('.', '')) * 0.8).toLocaleString('es-CO')
+                                                    : (parseFloat(tier.price) * 0.8).toFixed(0)
+                                                )
+                                                : tier.price
+                                            }
+                                        </span>
                                         <span className="text-sm font-bold opacity-60">{c.pricing.perMonth}</span>
                                     </div>
 
