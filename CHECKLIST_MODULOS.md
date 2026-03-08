@@ -113,3 +113,12 @@
 - [ ] Generación de Desprendibles de Pago (PDF) (2 días. ⏳)
 - [ ] Reporte de Parafiscales para Contabilidad (1 día. ⏳)
 - [ ] Gestión de Préstamos y Adelantos de Sueldo (3 días. ⏳)
+
+## 🤖 Inteligencia de Marketing & IA
+*Convertir datos en ventas proactivas y automatizadas*
+
+- [ ] **Gourmet Studio IA**: Remoción de fondos y mejora profesional de fotos de platos (⏳)
+- [ ] **Algoritmo de Rescate (Churn Prevention)**: Detección automática de VIPs inactivos y envío de cupones (⏳)
+- [ ] **Yield Management (Hot Deals)**: Ofertas dinámicas automáticas según ocupación de mesas (⏳)
+- [ ] **WhatsApp Upselling Agent**: IA que sugiere complementos y bebidas durante el pedido (⏳)
+- [ ] **Heatmap de Rentabilidad**: Análisis de Food Cost vs Ventas para ingeniería de menú (⏳)
