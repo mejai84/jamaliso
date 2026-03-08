@@ -2,13 +2,15 @@
 
 import { ChefHat, Truck, Activity, Warehouse, ChevronRight } from "lucide-react"
 import Link from "next/link"
+import { adminTranslations } from "@/lib/i18n/admin"
 
-export function AccessGrid() {
+export function AccessGrid({ lang = 'es' }: { lang?: 'en' | 'es' }) {
+    const t = adminTranslations[lang].inventory
     const list = [
-        { label: 'LIBRO DE RECETAS', icon: ChefHat, href: '/admin/inventory/recipes', sub: 'Recipe_Engine' },
-        { label: 'PROVEEDORES', icon: Truck, href: '/admin/inventory/suppliers', sub: 'Vendor_Matrix' },
-        { label: 'HISTORIAL MOVIMIENTOS', icon: Activity, href: '/admin/inventory/movements', sub: 'Loss_Analysis' },
-        { label: 'PEDIDOS Y COMPRAS', icon: Warehouse, href: '/admin/inventory/purchases', sub: 'Supply_Chain' }
+        { label: lang === 'es' ? 'LIBRO DE RECETAS' : 'RECIPE BOOK', icon: ChefHat, href: '/admin/inventory/recipes', sub: 'Recipe_Engine' },
+        { label: lang === 'es' ? 'PROVEEDORES' : 'SUPPLIERS', icon: Truck, href: '/admin/inventory/suppliers', sub: 'Vendor_Matrix' },
+        { label: lang === 'es' ? 'HISTORIAL MOVIMIENTOS' : 'MOVEMENT HISTORY', icon: Activity, href: '/admin/inventory/movements', sub: 'Loss_Analysis' },
+        { label: lang === 'es' ? 'PEDIDOS Y COMPRAS' : 'ORDERS & PURCHASES', icon: Warehouse, href: '/admin/inventory/purchases', sub: 'Supply_Chain' }
     ]
 
     return (

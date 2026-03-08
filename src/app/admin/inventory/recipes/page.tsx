@@ -114,11 +114,11 @@ export default function RecipesPage() {
     const filtered = recipes.filter(r => r.name.toLowerCase().includes(searchTerm.toLowerCase()))
 
     return (
-        <div className="min-h-screen text-white font-sans relative overflow-hidden">
+        <div className="min-h-screen text-slate-900 font-sans relative overflow-hidden">
 
             {/* 🖼️ FONDO AMBIENTE PRO */}
             <div className="fixed inset-0 bg-[url('https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center scale-110 pointer-events-none" />
-            <div className="fixed inset-0 backdrop-blur-[60px] bg-slate-950/90 pointer-events-none" />
+            <div className="fixed inset-0 backdrop-blur-[60px] bg-transparent/90 pointer-events-none" />
 
             <div className="relative z-10 p-10 space-y-10 max-w-[1600px] mx-auto h-screen flex flex-col">
 
@@ -126,7 +126,7 @@ export default function RecipesPage() {
                 <div className="flex items-center justify-between shrink-0">
                     <div className="flex items-center gap-6">
                         <Link href="/admin/inventory">
-                            <Button variant="ghost" size="icon" className="h-14 w-14 rounded-2xl bg-slate-800/40 border border-white/5">
+                            <Button variant="ghost" size="icon" className="h-14 w-14 rounded-2xl bg-slate-800/40 border border-slate-200">
                                 <ArrowLeft className="w-6 h-6 text-slate-400" />
                             </Button>
                         </Link>
@@ -141,7 +141,7 @@ export default function RecipesPage() {
                             <SearchIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
                             <input
                                 placeholder="Buscar Receta..."
-                                className="w-full bg-slate-800/40 border border-white/5 rounded-full py-3 pl-12 pr-4 text-sm focus:outline-none focus:border-orange-500/50 transition-all font-medium"
+                                className="w-full bg-slate-800/40 border border-slate-200 rounded-full py-3 pl-12 pr-4 text-sm focus:outline-none focus:border-orange-500/50 transition-all font-medium"
                                 value={searchTerm}
                                 onChange={e => setSearchTerm(e.target.value)}
                             />
@@ -162,7 +162,7 @@ export default function RecipesPage() {
                 <div className="flex-1 overflow-y-auto custom-scrollbar pr-4 -mr-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {filtered.map((recipe) => (
-                            <div key={recipe.id} className="bg-slate-800/40 backdrop-blur-xl border border-white/10 rounded-[2.5rem] p-8 space-y-6 relative group overflow-hidden transition-all hover:border-orange-500/30">
+                            <div key={recipe.id} className="bg-slate-800/40 backdrop-blur-xl border border-slate-200 rounded-[2.5rem] p-8 space-y-6 relative group overflow-hidden transition-all hover:border-orange-500/30">
                                 {/* Status Dot */}
                                 <div className={cn(
                                     "absolute top-8 right-8 w-4 h-4 rounded-full shadow-lg",
@@ -171,17 +171,17 @@ export default function RecipesPage() {
 
                                 {/* Card Header */}
                                 <div className="space-y-1">
-                                    <h3 className="text-3xl font-black italic text-white leading-none tracking-tight group-hover:text-orange-400 transition-colors uppercase">
+                                    <h3 className="text-3xl font-black italic text-slate-900 leading-none tracking-tight group-hover:text-orange-400 transition-colors uppercase">
                                         {recipe.name}
                                     </h3>
                                     <p className="text-sm font-bold text-slate-500 uppercase tracking-wider">{recipe.components_count} Componentes</p>
                                 </div>
 
                                 {/* Metrics Row */}
-                                <div className="grid grid-cols-2 gap-4 py-4 border-y border-white/5">
+                                <div className="grid grid-cols-2 gap-4 py-4 border-y border-slate-200">
                                     <div>
                                         <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Costo Total:</p>
-                                        <p className="text-2xl font-black text-white italic">${recipe.total_cost.toLocaleString()}</p>
+                                        <p className="text-2xl font-black text-slate-900 italic">${recipe.total_cost.toLocaleString()}</p>
                                     </div>
                                     <div className="text-right">
                                         <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Margen:</p>
@@ -200,10 +200,10 @@ export default function RecipesPage() {
 
                                 {/* Actions */}
                                 <div className="pt-4 flex gap-3">
-                                    <button className="flex-1 h-12 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] italic text-slate-200 transition-all">
+                                    <button className="flex-1 h-12 bg-white border border-slate-200 shadow-sm hover:bg-white/10 border border-slate-200 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] italic text-slate-200 transition-all">
                                         EDITAR FICHA
                                     </button>
-                                    <button className="w-12 h-12 bg-slate-800 hover:bg-slate-700 border border-white/10 rounded-2xl flex items-center justify-center text-slate-400">
+                                    <button className="w-12 h-12 bg-slate-800 hover:bg-slate-700 border border-slate-200 rounded-2xl flex items-center justify-center text-slate-400">
                                         <PieChart className="w-4 h-4" />
                                     </button>
                                 </div>
@@ -213,7 +213,7 @@ export default function RecipesPage() {
 
                     {filtered.length === 0 && !loading && (
                         <div className="flex flex-col items-center justify-center py-40 animate-in fade-in zoom-in duration-1000">
-                            <div className="w-32 h-32 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-10 group hover:border-orange-500/30 transition-all">
+                            <div className="w-32 h-32 rounded-full bg-white border border-slate-200 shadow-sm border border-slate-200 flex items-center justify-center mb-10 group hover:border-orange-500/30 transition-all">
                                 <ChefHat className="w-16 h-16 text-slate-700 group-hover:text-orange-500 transition-all" />
                             </div>
                             <h2 className="text-4xl font-black italic tracking-tighter uppercase mb-4">Librería de Recetas Vacía</h2>
@@ -225,7 +225,7 @@ export default function RecipesPage() {
                                 <Button
                                     onClick={() => setIsImportModalOpen(true)}
                                     variant="outline"
-                                    className="h-14 px-10 rounded-full border-white/10 text-white font-black uppercase text-[10px] tracking-widest italic hover:bg-white/5 transition-all"
+                                    className="h-14 px-10 rounded-full border-slate-200 text-slate-900 font-black uppercase text-[10px] tracking-widest italic hover:bg-white border border-slate-200 shadow-sm transition-all"
                                 >
                                     Importar desde Excel
                                 </Button>
@@ -246,13 +246,13 @@ export default function RecipesPage() {
                 />
 
                 {/* Footer KPIs Rápidos */}
-                <div className="flex gap-10 border-t border-white/5 pt-8 shrink-0">
+                <div className="flex gap-10 border-t border-slate-200 pt-8 shrink-0">
                     <div className="flex items-center gap-4">
                         <div className="p-3 bg-emerald-500/10 rounded-xl">
                             <CheckCircle2 className="w-5 h-5 text-emerald-500" />
                         </div>
                         <div>
-                            <p className="text-xs font-black italic text-white">85%</p>
+                            <p className="text-xs font-black italic text-slate-900">85%</p>
                             <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest text-[9px]">Salud de Menu</p>
                         </div>
                     </div>
@@ -261,7 +261,7 @@ export default function RecipesPage() {
                             <TrendingUp className="w-5 h-5 text-orange-500" />
                         </div>
                         <div>
-                            <p className="text-xs font-black italic text-white">62%</p>
+                            <p className="text-xs font-black italic text-slate-900">62%</p>
                             <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest text-[9px]">Margen Promedio</p>
                         </div>
                     </div>

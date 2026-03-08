@@ -1,10 +1,15 @@
-"use client"
-
 import { ChefHat, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { adminTranslations } from "@/lib/i18n/admin"
 
-export function QuickOpsHub() {
+interface QuickOpsHubProps {
+    lang: 'en' | 'es'
+}
+
+export function QuickOpsHub({ lang }: QuickOpsHubProps) {
+    const t = adminTranslations[lang].hub
+
     return (
         <div className="bg-white text-black rounded-[4rem] p-10 shadow-3xl flex items-center justify-between relative overflow-hidden group/ops animate-pulse-slow font-sans">
             <div className="absolute inset-x-0 bottom-0 h-2 bg-orange-600" />
@@ -17,8 +22,8 @@ export function QuickOpsHub() {
                     <ChefHat className="w-9 h-9" />
                 </div>
                 <div className="space-y-1">
-                    <p className="text-[10px] font-black uppercase tracking-[0.4em] text-orange-600 italic leading-none animate-pulse">Ops Core Ready</p>
-                    <h4 className="text-2xl font-black italic tracking-tighter uppercase leading-none">Control Cocina</h4>
+                    <p className="text-[10px] font-black uppercase tracking-[0.4em] text-orange-600 italic leading-none animate-pulse">{t.ops_core}</p>
+                    <h4 className="text-2xl font-black italic tracking-tighter uppercase leading-none">{t.kitchen_control}</h4>
                 </div>
             </div>
             <Link href="/admin/kitchen">

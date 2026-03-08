@@ -532,7 +532,92 @@ export default function ModernSaaSLanding() {
                 </div>
             </section>
 
-            {/* 6.5 MID-PAGE CTA */}
+            {/* 6.5 THE SUITE SHOWCASE */}
+            <section className="py-24 overflow-hidden bg-slate-900 border-y border-slate-800 relative z-10 w-full">
+                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-[0.05] pointer-events-none" />
+                <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-slate-900 to-transparent z-20 pointer-events-none" />
+                <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-slate-900 to-transparent z-20 pointer-events-none" />
+
+                <div className="max-w-7xl mx-auto px-6 text-center mb-16 relative z-30">
+                    <span className="text-orange-500 font-bold uppercase tracking-widest text-xs">{lang === 'es' ? 'El Ecosistema' : 'The Ecosystem'}</span>
+                    <h2 className="text-4xl md:text-5xl font-black text-white tracking-tighter mt-4">
+                        {lang === 'es' ? '+25 Módulos Especializados' : '+25 Specialized Modules'}
+                    </h2>
+                    <p className="text-slate-400 mt-4 font-medium max-w-2xl mx-auto">
+                        {lang === 'es'
+                            ? 'Todo lo que necesitas para operar, desde CRM de clientes élite hasta gestión de nómina, control de mermas y auditoría de seguridad.'
+                            : 'Everything you need to operate, from elite customer CRM to payroll management, waste control, and security auditing.'}
+                    </p>
+                </div>
+
+                <div className="relative flex gap-6 w-full max-w-[100vw] overflow-hidden">
+                    <motion.div
+                        initial={{ x: 0 }}
+                        animate={{ x: "-50%" }}
+                        transition={{ repeat: Infinity, duration: 30, ease: "linear" }}
+                        className="flex gap-6 min-w-max hover:[animation-play-state:paused]"
+                    >
+                        {[
+                            '/assets/modules_screenshots/2_dashboard_administrativo.png',
+                            '/assets/modules_screenshots/1_kds_production.png',
+                            '/assets/modules_screenshots/20_business_intelligence.png',
+                            '/assets/modules_screenshots/22_jamali_guardian.png',
+                            '/assets/modules_screenshots/17_menu_catalog_studio.png',
+                            '/assets/modules_screenshots/3_centro_de_pedidos.png',
+                            '/assets/modules_screenshots/6_geometria_salon.png',
+                            '/assets/modules_screenshots/11_nomina_dashboard.png',
+                            // Duplicated for seamless loop
+                            '/assets/modules_screenshots/2_dashboard_administrativo.png',
+                            '/assets/modules_screenshots/1_kds_production.png',
+                            '/assets/modules_screenshots/20_business_intelligence.png',
+                            '/assets/modules_screenshots/22_jamali_guardian.png',
+                            '/assets/modules_screenshots/17_menu_catalog_studio.png',
+                            '/assets/modules_screenshots/3_centro_de_pedidos.png',
+                            '/assets/modules_screenshots/6_geometria_salon.png',
+                            '/assets/modules_screenshots/11_nomina_dashboard.png'
+                        ].map((src, idx) => (
+                            <div key={idx} className="w-[300px] md:w-[500px] lg:w-[600px] shrink-0 rounded-2xl overflow-hidden border-2 border-slate-800 shadow-2xl relative block bg-slate-800 group">
+                                <Image src={src} alt="JAMALI OS Module" width={1200} height={800} className="w-full h-auto object-cover group-hover:scale-[1.02] transition-transform duration-700 opacity-60 group-hover:opacity-100 cursor-pointer" />
+                            </div>
+                        ))}
+                    </motion.div>
+                </div>
+
+                <div className="relative flex gap-6 w-full max-w-[100vw] overflow-hidden mt-6">
+                    <motion.div
+                        initial={{ x: "-50%" }}
+                        animate={{ x: 0 }}
+                        transition={{ repeat: Infinity, duration: 35, ease: "linear" }}
+                        className="flex gap-6 min-w-max hover:[animation-play-state:paused]"
+                    >
+                        {[
+                            '/assets/modules_screenshots/13_nomina_pagos.png',
+                            '/assets/modules_screenshots/8_elite_database_crm.png',
+                            '/assets/modules_screenshots/14_kernel_inventory.png',
+                            '/assets/modules_screenshots/23_auditoria_roles.png',
+                            '/assets/modules_screenshots/24_caja_negra_trazabilidad.png',
+                            '/assets/modules_screenshots/16_compras_ingresos.png',
+                            '/assets/modules_screenshots/19_promociones_cupones.png',
+                            '/assets/modules_screenshots/27_core_infra_servidores.png',
+                            // Duplicated for seamless loop
+                            '/assets/modules_screenshots/13_nomina_pagos.png',
+                            '/assets/modules_screenshots/8_elite_database_crm.png',
+                            '/assets/modules_screenshots/14_kernel_inventory.png',
+                            '/assets/modules_screenshots/23_auditoria_roles.png',
+                            '/assets/modules_screenshots/24_caja_negra_trazabilidad.png',
+                            '/assets/modules_screenshots/16_compras_ingresos.png',
+                            '/assets/modules_screenshots/19_promociones_cupones.png',
+                            '/assets/modules_screenshots/27_core_infra_servidores.png'
+                        ].map((src, idx) => (
+                            <div key={idx} className="w-[300px] md:w-[500px] lg:w-[600px] shrink-0 rounded-2xl overflow-hidden border-2 border-slate-800 shadow-2xl relative block bg-slate-800 group">
+                                <Image src={src} alt="JAMALI OS Module" width={1200} height={800} className="w-full h-auto object-cover group-hover:scale-[1.02] transition-transform duration-700 opacity-50 group-hover:opacity-100 cursor-pointer" />
+                            </div>
+                        ))}
+                    </motion.div>
+                </div>
+            </section>
+
+            {/* 6.75 MID-PAGE CTA */}
             <section className="py-16 px-6">
                 <div className="max-w-4xl mx-auto bg-gradient-to-r from-slate-900 to-slate-800 rounded-[2.5rem] p-10 md:p-14 flex flex-col md:flex-row items-center justify-between gap-8 shadow-2xl shadow-slate-900/10">
                     <h3 className="text-2xl md:text-3xl font-black text-white tracking-tighter text-center md:text-left">{c.midCta.text}</h3>

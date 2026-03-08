@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { supabase } from "@/lib/supabase/client"
 import { Zap } from "lucide-react"
 import { formatPrice } from "@/lib/utils"
+import { useRestaurant } from "@/providers/RestaurantProvider"
 
 // Types
 import { HubStats, PeakHour, RecentSale } from "./types"
@@ -18,6 +19,7 @@ import { QuickOpsHub } from "@/components/admin/hub/QuickOpsHub"
 import { GlobalCommandBar } from "@/components/admin/hub/GlobalCommandBar"
 
 export default function JamaliHubPage() {
+    const { lang } = useRestaurant()
     const [stats, setStats] = useState<HubStats>({
         revenue: 0,
         orders: 0,
@@ -134,7 +136,7 @@ export default function JamaliHubPage() {
                 <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full scale-150 animate-pulse" />
                 <Zap className="w-16 h-16 text-primary animate-pulse relative z-10" />
             </div>
-            <p className="font-black italic uppercase text-[10px] tracking-[0.4em] text-primary animate-pulse">Sincronizando Live Node...</p>
+            <p className="font-black italic uppercase text-[10px] tracking-[0.4em] text-primary animate-pulse">{lang === 'es' ? 'Sincronizando Live Node...' : 'Synchronizing Live Node...'}</p>
         </div>
     )
 
@@ -150,12 +152,22 @@ export default function JamaliHubPage() {
                 onReload={() => loadHubData(true)}
             />
 
-            <main className="relative z-10 px-6 pt-10 space-y-12 max-w-xl mx-auto animate-in fade-in slide-in-from-bottom-10 duration-1000">
-                <RevenueCore stats={stats} />
-                <PeakRadar peakHours={peakHours} />
-                <RapidAnalytics stats={stats} />
-                <TransactionalStream recentSales={recentSales} />
-                <QuickOpsHub />
+            <main className="relative z-10 px-6 pt-10 max-w-7xl mx-auto animate-in fade-in slide-in-from-bottom-10 duration-1000">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    {/* Left Column - Core Metrics */}
+                    <div className="lg:col-span-8 space-y-8">
+                        <RevenueCore stats={stats} lang={lang} />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <PeakRadar peakHours={peakHours} lang={lang} />
+                            <RapidAnalytics stats={stats} lang={lang} />
+                        </div>
+                    </div>
+                    {/* Right Column - Activity & Tools */}
+                    <div className="lg:col-span-4 space-y-8">
+                        <QuickOpsHub lang={lang} />
+                        <TransactionalStream recentSales={recentSales} lang={lang} />
+                    </div>
+                </div>
             </main>
 
             <GlobalCommandBar />

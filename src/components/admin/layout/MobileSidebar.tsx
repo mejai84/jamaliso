@@ -8,6 +8,8 @@ import { cn } from "@/lib/utils"
 import Image from "next/image"
 import { supabase } from "@/lib/supabase/client"
 import { sidebarSections } from "@/app/admin/navigation"
+import { useRestaurant } from "@/providers/RestaurantProvider"
+import { adminTranslations } from "@/lib/i18n/admin"
 
 interface MobileSidebarProps {
     isOpen: boolean
@@ -18,12 +20,69 @@ interface MobileSidebarProps {
 export function MobileSidebar({ isOpen, onClose, userRole }: MobileSidebarProps) {
     const pathname = usePathname()
     const router = useRouter()
+    const { lang } = useRestaurant()
+    const t = adminTranslations[lang]
 
     if (!isOpen) return null
 
     const handleLogout = async () => {
         await supabase.auth.signOut()
         router.push("/login")
+    }
+
+    const getNavLabel = (label: string) => {
+        const keyMap: Record<string, keyof typeof t.nav> = {
+            "Vista General": "overview",
+            "Control de Caja": "cash_control",
+            "Portal Mesero": "waiter_portal",
+            "Cocina (KDS)": "kitchen_kds",
+            "Listado Pedidos": "order_list",
+            "Facturación DIAN/SAT": "billing",
+            "Ventas / Web App": "online_sales",
+            "Mesas & QR": "tables_qr",
+            "Logística Domicilios": "delivery_logistics",
+            "Reservas / Agenda": "reservations",
+            "CRM de Clientes": "crm",
+            "Repartidores": "drivers",
+            "Mi Turno / Entrada": "my_shift",
+            "Historial Turnos": "shift_history",
+            "Gestión de Personal": "staff_management",
+            "Nómina y Pagos": "payroll",
+            "Stock e Insumos": "inventory",
+            "Proveedores": "suppliers",
+            "Compras / Ingresos": "purchases",
+            "Menú & Productos": "menu_products",
+            "Libro de Recetas": "recipes",
+            "Promociones / Cupones": "promotions",
+            "Reportes Avanzados": "reports",
+            "Caja Menor / Gastos": "petty_cash",
+            "JAMALI Hub Live": "hub",
+            "JAMALI Guardian": "guardian",
+            "Auditoría / Roles": "audit_roles",
+            "Trazabilidad SaaS": "traceability",
+            "Configuración": "settings",
+            "Soporte Impresoras": "printers",
+            "Infraestructura Core": "core_infra",
+            "Mi Perfil": "my_profile"
+        }
+        const key = keyMap[label]
+        return key ? t.nav[key] : label
+    }
+
+    const getSectionTitle = (title: string) => {
+        const keyMap: Record<string, keyof typeof t.nav> = {
+            "OPERACIONES POS": "pos_operations",
+            "PRESENCIA DIGITAL": "digital_presence",
+            "CLIENTES & FIDELIDAD": "customers_loyalty",
+            "CONTROL DE ASISTENCIA": "attendance",
+            "TALENTO HUMANO": "human_talent",
+            "BACKOFFICE & STOCK": "backoffice_stock",
+            "ESTRATEGIA & SAAS": "strategy_saas",
+            "INFRAESTRUCTURA": "infrastructure",
+            "MI CUENTA": "my_account"
+        }
+        const key = keyMap[title]
+        return key ? t.nav[key] : title
     }
 
     return (
@@ -55,7 +114,9 @@ export function MobileSidebar({ isOpen, onClose, userRole }: MobileSidebarProps)
 
                         return (
                             <div key={idx} className="space-y-4">
-                                <h4 className="px-4 text-[9px] font-black text-slate-400 uppercase tracking-[0.3em] font-sans">{section.title}</h4>
+                                <h4 className="px-4 text-[9px] font-black text-slate-400 uppercase tracking-[0.3em] font-sans">
+                                    {getSectionTitle(section.title)}
+                                </h4>
                                 <div className="space-y-1">
                                     {filteredItems.map((item) => {
                                         const Icon = item.icon
@@ -82,7 +143,7 @@ export function MobileSidebar({ isOpen, onClose, userRole }: MobileSidebarProps)
                                                         "text-[10px] font-black uppercase italic tracking-widest transition-all",
                                                         isActive ? "text-slate-900" : "group-hover:translate-x-1"
                                                     )}>
-                                                        {item.label}
+                                                        {getNavLabel(item.label)}
                                                     </span>
                                                 </div>
                                             </Link>
@@ -101,7 +162,7 @@ export function MobileSidebar({ isOpen, onClose, userRole }: MobileSidebarProps)
                         onClick={handleLogout}
                     >
                         <LogOut className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-                        CERRAR SESIÓN
+                        {t.sidebar.logout}
                     </Button>
 
                     <div className="flex flex-col items-center gap-2 pt-4 border-t border-slate-100 opacity-20 transition-opacity">

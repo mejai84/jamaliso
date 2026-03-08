@@ -4,6 +4,18 @@ import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { cookies } from 'next/headers'
 import * as Sentry from '@sentry/nextjs'
+import { Pool } from 'pg'
+
+// Configuración de conexión directa a BD (Bypass RLS)
+let pool: Pool;
+try {
+    pool = new Pool({
+        connectionString: process.env.DATABASE_URL,
+        ssl: { rejectUnauthorized: false }
+    })
+} catch (e) {
+    console.error("Critical: Failed to initialize PG Pool in pos.ts", e);
+}
 
 export type ShiftType = 'MORNING' | 'AFTERNOON' | 'NIGHT' | 'CUSTOM'
 
@@ -232,8 +244,62 @@ export async function openCashbox(
             return { success: false, error: "No se encontró la 'Caja Principal' configurada para este restaurante." }
         }
 
-        if (cashbox.current_status === 'OPEN') {
-            return { success: false, error: "La Caja Principal ya se encuentra abierta." }
+        // Ya no validamos cashbox.current_status ciegamente porque no es tan confiable como cashbox_sessions
+
+        // 2.5 Verificar si existe una sesión de caja ABIERTA real usando PG directo para evadir RLS y solucionar el unique constraint
+        if (pool) {
+            const client = await pool.connect()
+            try {
+                const { rows } = await client.query(`
+                    SELECT s.id, s.user_id, s.shift_id, sh.status as shift_status, p.first_name, p.last_name
+                    FROM cashbox_sessions s
+                    LEFT JOIN shifts sh ON s.shift_id = sh.id
+                    LEFT JOIN profiles p ON s.user_id = p.id
+                    WHERE s.cashbox_id = $1 AND s.status = 'OPEN'
+                `, [cashbox.id])
+
+                if (rows.length > 0) {
+                    const activeSession = rows[0]
+                    if (activeSession.shift_status !== 'OPEN') {
+                        console.warn(`Sesión huérfana detectada vía BD directa (${activeSession.id}). Cerrando automáticamente...`)
+                        await client.query(`
+                            UPDATE cashbox_sessions 
+                            SET status = 'CLOSED', closing_notes = 'Cierre forzado automático (sesión huérfana BD directa)', closing_time = NOW() 
+                            WHERE id = $1
+                        `, [activeSession.id])
+                    } else {
+                        const userName = `${activeSession.first_name || ''} ${activeSession.last_name || ''}`.trim() || 'otro usuario'
+                        return { success: false, error: `La caja fuerte ya está en uso por ${userName}. Realicen el Cierre de Caja primero.` }
+                    }
+                }
+            } catch (pgError) {
+                console.error("Error validando sesión activa en PG directa:", pgError)
+            } finally {
+                client.release()
+            }
+        } else {
+            // Fallback to Supabase client if pool is not available
+            const { data: activeSession } = await supabase
+                .from('cashbox_sessions')
+                .select('id, user_id, shift:shifts(status), user:profiles(first_name, last_name)')
+                .eq('cashbox_id', cashbox.id)
+                .eq('status', 'OPEN')
+                .maybeSingle()
+
+            if (activeSession) {
+                const typedSession = activeSession as any;
+                if (typedSession.shift?.status !== 'OPEN' && (!Array.isArray(typedSession.shift) || typedSession.shift[0]?.status !== 'OPEN')) {
+                    await supabase.from('cashbox_sessions').update({
+                        status: 'CLOSED',
+                        closing_notes: 'Cierre forzado automático (sesión huérfana)',
+                        closing_time: new Date().toISOString()
+                    }).eq('id', typedSession.id)
+                } else {
+                    const userObj = Array.isArray(typedSession.user) ? typedSession.user[0] : typedSession.user;
+                    const userName = `${userObj?.first_name || ''} ${userObj?.last_name || ''}`.trim() || 'otro usuario'
+                    return { success: false, error: `La caja fuerte ya está siendo operada por ${userName}. Realicen Cierre de Caja antes de abrir turno.` }
+                }
+            }
         }
 
         // 3. Crear la sesión de caja

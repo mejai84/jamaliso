@@ -2,15 +2,18 @@
 
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, ShoppingBag, Zap } from "lucide-react"
+import { adminTranslations } from "@/lib/i18n/admin"
 
 interface ProductionSummaryModalProps {
     isOpen: boolean
     onClose: () => void
     productionSummary: Record<string, number>
+    lang?: 'en' | 'es'
 }
 
-export function ProductionSummaryModal({ isOpen, onClose, productionSummary }: ProductionSummaryModalProps) {
+export function ProductionSummaryModal({ isOpen, onClose, productionSummary, lang = 'es' }: ProductionSummaryModalProps) {
     if (!isOpen) return null
+    const t = adminTranslations[lang].kds
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-end p-6 md:p-10 pointer-events-none">
@@ -19,8 +22,8 @@ export function ProductionSummaryModal({ isOpen, onClose, productionSummary }: P
                 <div className="p-10 border-b border-slate-100 bg-slate-50">
                     <div className="flex items-center justify-between">
                         <div>
-                            <h2 className="text-3xl font-black italic uppercase tracking-tighter text-slate-900">RESUMEN <span className="text-orange-600">TOTAL</span></h2>
-                            <p className="text-[10px] font-black text-slate-500 tracking-widest uppercase mt-1 italic">Consolidado de producción actual</p>
+                            <h2 className="text-3xl font-black italic uppercase tracking-tighter text-slate-900">{t.summary.title.split(' ')[0]} <span className="text-orange-600">{t.summary.title.split(' ')[1]}</span></h2>
+                            <p className="text-[10px] font-black text-slate-500 tracking-widest uppercase mt-1 italic">{t.summary.desc}</p>
                         </div>
                         <Button onClick={onClose} variant="ghost" className="h-14 w-14 rounded-2xl bg-white shadow-sm border border-slate-200">
                             <ArrowLeft className="w-6 h-6 text-slate-900" strokeWidth={3} />
@@ -31,7 +34,7 @@ export function ProductionSummaryModal({ isOpen, onClose, productionSummary }: P
                     {Object.entries(productionSummary).length === 0 ? (
                         <div className="h-full flex flex-col items-center justify-center opacity-30 text-center">
                             <ShoppingBag className="w-20 h-20 mb-6 text-slate-300" strokeWidth={1} />
-                            <p className="text-sm font-black italic uppercase tracking-[0.2em]">No hay ítems en marcha</p>
+                            <p className="text-sm font-black italic uppercase tracking-[0.2em]">{t.summary.empty}</p>
                         </div>
                     ) : (
                         Object.entries(productionSummary).map(([name, qty]: any) => (
@@ -48,8 +51,8 @@ export function ProductionSummaryModal({ isOpen, onClose, productionSummary }: P
                     <div className="flex items-center gap-4">
                         <Zap className="w-8 h-8 text-orange-500 fill-orange-500" />
                         <div>
-                            <p className="text-[9px] font-black uppercase tracking-[0.3em] opacity-60">Operación Proactiva</p>
-                            <p className="text-sm font-bold italic tracking-tight">Listo para organizar producción en masa</p>
+                            <p className="text-[9px] font-black uppercase tracking-[0.3em] opacity-60">{t.summary.proactive}</p>
+                            <p className="text-sm font-bold italic tracking-tight">{t.summary.ready_mass}</p>
                         </div>
                     </div>
                 </div>

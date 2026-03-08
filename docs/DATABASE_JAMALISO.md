@@ -10,7 +10,7 @@ La estructura principal sobre la cual todo pivotea.
 | Tabla | Función | Descripción |
 | :--- | :--- | :--- |
 | `tenants` | **Partner / Reseller** | Entidad de más alto nivel para Marca Blanca. Almacena: nombre del distribuidor, logo corporativo, color primario del Partner, subdominio maestro y plan de suscripción B2B. |
-| `restaurants` | **Sucursal / Cliente** | Datos de las sucursales. Cada restaurante pertenece a un `tenant_id`. Atributos clave: `name`, `subdomain`, `logo_url`, `primary_color`. Nuevos campos: `is_web_active` (boolean), `web_mode` (menu/ecommerce), `instagram_url`, `facebook_url`, `cuisine_type`. |
+| `restaurants` | **Sucursal / Cliente** | Datos de las sucursales. Cada restaurante pertenece a un `tenant_id`. Atributos clave: `name`, `subdomain`, `logo_url`, `primary_color`. Nuevos campos: `is_web_active` (boolean), `web_mode` (menu/ecommerce), `instagram_url`, `facebook_url`, `cuisine_type`, `language` (es/en). |
 | `profiles` | Usuarios | Perfiles vinculados a `auth.users`. Controlan acceso y roles. Vinculados a un `restaurant_id`. |
 | `settings` | Configuración | Ajustes globales del restaurante. **PK (restaurant_id, key)** asegura que las configuraciones sean aisladas por tenant. |
 | `shift_handoffs` | **Traspaso de Turno** | Registro de entrega de caja entre empleados. Guarda snapshots de mesas abiertas, pedidos en cocina y efectivo contado. |

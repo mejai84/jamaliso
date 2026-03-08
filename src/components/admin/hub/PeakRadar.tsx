@@ -1,18 +1,21 @@
-"use client"
-
 import { TrendingUp, Activity, BarChart3 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { PeakHour } from "@/app/admin/hub/types"
+import { adminTranslations } from "@/lib/i18n/admin"
 
 interface PeakRadarProps {
     peakHours: PeakHour[]
+    lang: 'en' | 'es'
 }
 
-export function PeakRadar({ peakHours }: PeakRadarProps) {
+export function PeakRadar({ peakHours, lang }: PeakRadarProps) {
+    const t = adminTranslations[lang].hub
+
     const peakArrayMax = (peaks: PeakHour[]) => {
         if (peaks.length === 0) return ""
         const max = [...peaks].sort((a, b) => b.count - a.count)[0]
-        return `${max.hour}:00 Y ${max.hour + 1}:00`
+        const suffix = lang === 'es' ? 'Y' : 'AND'
+        return `${max.hour}:00 ${suffix} ${max.hour + 1}:00`
     }
 
     return (
@@ -20,13 +23,13 @@ export function PeakRadar({ peakHours }: PeakRadarProps) {
             <div className="flex justify-between items-center">
                 <div className="space-y-1">
                     <h3 className="text-xs font-black text-slate-900 uppercase tracking-[0.4em] italic flex items-center gap-3">
-                        <TrendingUp className="w-4 h-4 text-orange-500 animate-bounce-slow" /> Radar de Afluencia
+                        <TrendingUp className="w-4 h-4 text-orange-500 animate-bounce-slow" /> {t.peak_radar}
                     </h3>
-                    <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest pl-7 italic">PROYECCIÓN ÚLTIMOS 30 DÍAS</p>
+                    <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest pl-7 italic">{t.projection}</p>
                 </div>
                 <div className="flex items-center gap-2 px-3 py-1.5 bg-white/5 rounded-full border border-slate-100">
                     <Activity className="w-3 h-3 text-orange-500" />
-                    <span className="text-[8px] font-black text-slate-400 uppercase tracking-[0.1em] italic">Optimizando Staff</span>
+                    <span className="text-[8px] font-black text-slate-400 uppercase tracking-[0.1em] italic">{t.optimizing}</span>
                 </div>
             </div>
 
@@ -36,7 +39,7 @@ export function PeakRadar({ peakHours }: PeakRadarProps) {
                         <div className="opacity-0 group-hover/bar:opacity-100 absolute bottom-[110%] mb-2 bg-slate-900 text-white p-3 rounded-2xl text-[9px] font-black whitespace-nowrap z-50 transition-all scale-75 group-hover/bar:scale-100 shadow-xl border border-slate-800 italic">
                             <div className="flex flex-col items-center">
                                 <span className="text-primary">{p.hour}:00 HRS</span>
-                                <span>{p.count} TRANSACCIONES</span>
+                                <span>{p.count} {t.transactions}</span>
                             </div>
                             <div className="absolute top-full left-1/2 -translate-x-1/2 w-2 h-2 bg-slate-900 rotate-45 -mt-1" />
                         </div>
@@ -56,7 +59,7 @@ export function PeakRadar({ peakHours }: PeakRadarProps) {
                 {peakHours.length === 0 && (
                     <div className="w-full flex flex-col items-center justify-center py-12 space-y-4 opacity-10">
                         <BarChart3 className="w-12 h-12" />
-                        <p className="text-[10px] font-black uppercase tracking-[0.3em] italic">Calculando Red Neuronal de Demanda...</p>
+                        <p className="text-[10px] font-black uppercase tracking-[0.3em] italic">{t.calculating}</p>
                     </div>
                 )}
             </div>
@@ -65,8 +68,8 @@ export function PeakRadar({ peakHours }: PeakRadarProps) {
                 <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-1/2 bg-primary rounded-r-full" />
                 <p className="text-[10px] text-foreground font-black italic uppercase tracking-tight leading-relaxed">
                     {peakHours.length > 0 ? (
-                        <>PUNTO MÁXIMO DE CARGA DETECTADO ENTRE <span className="text-primary underline decoration-primary/30 underline-offset-4">{peakArrayMax(peakHours)}H</span>. RECOMIENDA REFUERZO DE OPERATIVOS.</>
-                    ) : "INTEGRANDO DATOS DE AFLUENCIA PARA DETERMINAR CICLOS DE ALTO IMPACTO."}
+                        <>{t.peak_detected} <span className="text-primary underline decoration-primary/30 underline-offset-4">{peakArrayMax(peakHours)}H</span>. {t.peak_suffix}</>
+                    ) : t.integrating}
                 </p>
             </div>
             <style jsx global>{`

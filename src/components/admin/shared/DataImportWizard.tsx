@@ -11,6 +11,9 @@ import { cn } from "@/lib/utils"
 import { toast } from "sonner"
 import { DataFlow } from "@/lib/data-flow"
 
+import { useRestaurant } from "@/providers/RestaurantProvider"
+import { adminTranslations } from "@/lib/i18n/admin"
+
 interface ImportWizardProps {
     isOpen: boolean;
     onClose: () => void;
@@ -26,6 +29,8 @@ export function DataImportWizard({
     moduleName,
     requiredFields
 }: ImportWizardProps) {
+    const { lang } = useRestaurant();
+    const t = adminTranslations[lang].inventory.import_wizard;
     const [step, setStep] = useState<1 | 2 | 3>(1); // 1: Upload, 2: Mapping/Preview, 3: Success
     const [rawFile, setRawFile] = useState<File | null>(null);
     const [parsedData, setParsedData] = useState<any[]>([]);
@@ -38,7 +43,7 @@ export function DataImportWizard({
 
         try {
             const data = await DataFlow.parseCSV(file);
-            if (data.length === 0) return toast.error("El archivo está vacío");
+            if (data.length === 0) return toast.error(t.errors.empty);
 
             setRawFile(file);
             setParsedData(data);
@@ -57,7 +62,7 @@ export function DataImportWizard({
             setMapping(newMapping);
             setStep(2);
         } catch (err) {
-            toast.error("Error al leer el archivo");
+            toast.error(t.errors.read);
         }
     };
 
@@ -79,7 +84,7 @@ export function DataImportWizard({
             await onConfirm(finalData);
             setStep(3);
         } catch (err: any) {
-            toast.error(err.message || "Error al importar los datos");
+            toast.error(err.message || t.errors.process);
         } finally {
             setIsProcessing(false);
         }
@@ -101,10 +106,11 @@ export function DataImportWizard({
                         </div>
                         <div className="space-y-1">
                             <h2 className="text-2xl font-black italic uppercase tracking-tighter text-slate-900">
-                                Import <span className="text-orange-600">Protocol</span>
+                                {lang === 'es' ? 'Protocolo de' : 'Import'}{' '}
+                                <span className="text-orange-600">{lang === 'es' ? 'Importación' : 'Protocol'}</span>
                             </h2>
                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.4em] italic leading-none">
-                                Module: {moduleName} • Data Ingestion v4.2
+                                {lang === 'es' ? 'Módulo' : 'Module'}: {moduleName} • Data Ingestion v4.2
                             </p>
                         </div>
                     </div>
@@ -123,21 +129,21 @@ export function DataImportWizard({
                                 <Upload className="w-12 h-12 text-slate-300 animate-bounce" />
                             </div>
                             <div className="text-center space-y-4 max-w-sm">
-                                <h3 className="text-xl font-black italic uppercase text-slate-900">Protocolo de Carga</h3>
+                                <h3 className="text-xl font-black italic uppercase text-slate-900">{t.step1_title}</h3>
                                 <p className="text-sm font-bold text-slate-400 leading-relaxed italic">
-                                    Selecciona un archivo CSV para iniciar el proceso de sincronización masiva de {moduleName}.
+                                    {t.step1_desc} {moduleName}.
                                 </p>
                             </div>
                             <label className="cursor-pointer group">
                                 <input type="file" accept=".csv" className="hidden" onChange={handleFileSelect} />
                                 <div className="h-16 px-12 bg-slate-900 text-white font-black uppercase text-xs italic tracking-widest rounded-2xl shadow-xl hover:bg-orange-600 transition-all flex items-center gap-4 group-active:scale-95">
-                                    <FileSpreadsheet className="w-5 h-5" /> EXAMINAR EQUIPO
+                                    <FileSpreadsheet className="w-5 h-5" /> {t.step1_button}
                                 </div>
                             </label>
                             <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100 w-full flex items-center gap-6">
                                 <HelpCircle className="w-8 h-8 text-orange-400 shrink-0" />
                                 <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-relaxed">
-                                    Asegúrate de que el archivo esté separado por comas (,) y contenga una fila de encabezados en la parte superior.
+                                    {t.step1_help}
                                 </p>
                             </div>
                         </div>
@@ -148,18 +154,18 @@ export function DataImportWizard({
                         <div className="space-y-12 animate-in fade-in slide-in-from-bottom-5">
                             <div className="bg-orange-50 border border-orange-100 p-8 rounded-3xl flex items-center justify-between">
                                 <div className="space-y-2">
-                                    <h4 className="text-[11px] font-black text-orange-600 uppercase tracking-[0.4em] italic">Mapeo de Atalayas</h4>
-                                    <p className="text-sm font-bold text-slate-700 italic">Vincula las columnas de tu archivo con los campos requeridos por el sistema.</p>
+                                    <h4 className="text-[11px] font-black text-orange-600 uppercase tracking-[0.4em] italic">{t.step2_title}</h4>
+                                    <p className="text-sm font-bold text-slate-700 italic">{t.step2_desc}</p>
                                 </div>
                                 <div className="flex items-center gap-3 px-6 py-3 bg-white rounded-2xl border border-orange-100">
                                     <Table className="w-5 h-5 text-orange-500" />
-                                    <span className="text-xs font-black italic uppercase tracking-tighter text-slate-900">{parsedData.length} registros detectados</span>
+                                    <span className="text-xs font-black italic uppercase tracking-tighter text-slate-900">{parsedData.length} {t.step2_records}</span>
                                 </div>
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                                 <div className="space-y-6">
-                                    <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic border-b border-slate-100 pb-3">Campos de Mapeo</h5>
+                                    <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic border-b border-slate-100 pb-3">{t.step2_mapping_label}</h5>
                                     {requiredFields.map(field => (
                                         <div key={field.key} className="p-6 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col gap-4">
                                             <div className="flex items-center justify-between">
@@ -175,7 +181,7 @@ export function DataImportWizard({
                                                 onChange={(e) => setMapping(prev => ({ ...prev, [field.key]: e.target.value }))}
                                                 className="w-full h-12 px-4 bg-white border border-slate-200 rounded-xl text-xs font-bold focus:outline-none focus:border-orange-500 transition-all appearance-none cursor-pointer"
                                             >
-                                                <option value="" disabled>Seleccionar columna del CSV...</option>
+                                                <option value="" disabled>{t.step2_select_placeholder}</option>
                                                 {Object.keys(parsedData[0]).map(h => (
                                                     <option key={h} value={h}>{h}</option>
                                                 ))}
@@ -185,7 +191,7 @@ export function DataImportWizard({
                                 </div>
 
                                 <div className="space-y-6">
-                                    <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic border-b border-slate-100 pb-3">Previsualización (Top 3)</h5>
+                                    <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic border-b border-slate-100 pb-3">{t.step2_preview_label}</h5>
                                     <div className="space-y-4">
                                         {parsedData.slice(0, 3).map((row, i) => (
                                             <div key={i} className="p-6 bg-white border-2 border-slate-50 rounded-2xl space-y-3 opacity-60 hover:opacity-100 transition-opacity">
@@ -213,11 +219,11 @@ export function DataImportWizard({
                                 <CheckCircle2 className="w-16 h-16" />
                             </div>
                             <div className="text-center space-y-4">
-                                <h3 className="text-3xl font-black italic uppercase tracking-tighter text-slate-900">Protocolo Exitoso</h3>
-                                <p className="text-sm font-bold text-slate-400 italic">Los datos se han sincronizado correctamente con el Kernel de JAMALI OS.</p>
+                                <h3 className="text-3xl font-black italic uppercase tracking-tighter text-slate-900">{t.step3_title}</h3>
+                                <p className="text-sm font-bold text-slate-400 italic">{t.step3_desc}</p>
                             </div>
                             <Button onClick={onClose} className="h-16 px-16 bg-slate-900 text-white font-black uppercase text-xs italic tracking-widest rounded-2xl shadow-xl hover:bg-orange-600 transition-all active:scale-95">
-                                CERRAR TERMINAL
+                                {t.step3_button}
                             </Button>
                         </div>
                     )}
@@ -228,11 +234,11 @@ export function DataImportWizard({
                 {step === 2 && (
                     <div className="p-8 border-t-2 border-slate-50 flex items-center justify-between bg-slate-50/30 shrink-0">
                         <Button variant="ghost" onClick={() => setStep(1)} className="font-black italic uppercase text-[10px] tracking-widest text-slate-400 hover:text-slate-900">
-                            Reiniciar Carga
+                            {t.step2_restart}
                         </Button>
                         <div className="flex items-center gap-6">
                             <p className="text-[10px] font-black text-slate-400 uppercase italic tracking-widest pr-6 border-r border-slate-200">
-                                {isMappingComplete ? 'PROTOCOLO VERIFICADO' : 'CUIDADO: Faltan campos por vincular'}
+                                {isMappingComplete ? t.step2_verified : t.step2_warning}
                             </p>
                             <Button
                                 disabled={!isMappingComplete || isProcessing}
@@ -241,11 +247,11 @@ export function DataImportWizard({
                             >
                                 {isProcessing ? (
                                     <>
-                                        <Loader2 className="w-5 h-5 animate-spin" /> PROCESANDO...
+                                        <Loader2 className="w-5 h-5 animate-spin" /> {lang === 'es' ? 'PROCESANDO...' : 'PROCESSING...'}
                                     </>
                                 ) : (
                                     <>
-                                        EJECUTAR IMPORTACIÓN <ArrowRight className="w-5 h-5" />
+                                        {t.step2_execute} <ArrowRight className="w-5 h-5" />
                                     </>
                                 )}
                             </Button>

@@ -3,13 +3,16 @@ import { ArrowLeft, Signal, Plus } from "lucide-react"
 import Link from "next/link"
 import { toast } from "sonner"
 import { DataFlowActions } from "@/components/admin/shared/DataFlowActions"
+import { adminTranslations } from "@/lib/i18n/admin"
 
 interface InventoryHeaderProps {
     onImport: () => void;
     onExport: () => void;
+    lang?: 'en' | 'es'
 }
 
-export function InventoryHeader({ onImport, onExport }: InventoryHeaderProps) {
+export function InventoryHeader({ onImport, onExport, lang = 'es' }: InventoryHeaderProps) {
+    const t = adminTranslations[lang].inventory
     return (
         <div className="flex flex-col xl:flex-row items-center justify-between font-sans gap-8">
             <div className="flex items-center gap-8 w-full xl:w-auto">
@@ -21,9 +24,9 @@ export function InventoryHeader({ onImport, onExport }: InventoryHeaderProps) {
                 <div className="space-y-4">
                     <div className="flex items-center gap-2">
                         <Signal className="w-5 h-5 text-orange-500 animate-pulse" />
-                        <span className="text-[11px] font-black uppercase tracking-[0.5em] text-orange-500 italic">Core Supply Intelligence Engine</span>
+                        <span className="text-[11px] font-black uppercase tracking-[0.5em] text-orange-500 italic">{t.header.subtitle}</span>
                     </div>
-                    <h1 className="text-6xl md:text-8xl font-black italic tracking-tighter uppercase leading-none text-slate-900">Kernel <span className="text-orange-500">Inventory</span></h1>
+                    <h1 className="text-6xl md:text-8xl font-black italic tracking-tighter uppercase leading-none text-slate-900">{t.title.split(' ')[0]} <span className="text-orange-500">{t.title.split(' ')[1]}</span></h1>
                 </div>
             </div>
 
@@ -31,15 +34,15 @@ export function InventoryHeader({ onImport, onExport }: InventoryHeaderProps) {
                 <DataFlowActions
                     onImport={onImport}
                     onExport={onExport}
-                    importLabel="Protocolo Masivo (CSV)"
-                    exportLabel="Respaldo (CSV)"
+                    importLabel={t.header.import}
+                    exportLabel={t.header.export}
                 />
 
                 <Button
-                    onClick={() => toast.success("ABRIENDO EDITOR DE NUEVO INSUMO")}
+                    onClick={() => toast.success(t.header.opening_editor)}
                     className="h-20 px-12 bg-orange-600 hover:bg-orange-500 text-white font-black uppercase text-xs italic tracking-widest rounded-[2rem] shadow-xl shadow-orange-600/20 transition-all active:scale-95 gap-5 group"
                 >
-                    <Plus className="w-8 h-8 group-hover:rotate-90 transition-transform duration-500" /> ADQUIRIR PROTOCOLO
+                    <Plus className="w-8 h-8 group-hover:rotate-90 transition-transform duration-500" /> {t.header.add_protocol}
                 </Button>
             </div>
         </div>

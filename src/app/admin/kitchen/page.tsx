@@ -12,12 +12,15 @@ import { OrderColumn } from "@/components/admin/kitchen/OrderColumn"
 import { ProductionSummaryModal } from "@/components/admin/kitchen/ProductionSummaryModal"
 import { StockManagerModal } from "@/components/admin/kitchen/StockManagerModal"
 
+import { adminTranslations } from "@/lib/i18n/admin"
+
 export default function KitchenPage() {
-    const { restaurant } = useRestaurant()
+    const { restaurant, lang } = useRestaurant()
+    const t = adminTranslations[lang].kds
     const [orders, setOrders] = useState<Order[]>([])
     const [loading, setLoading] = useState(true)
     const [stations, setStations] = useState<PrepStation[]>([])
-    const [activeStationId, setActiveStationId] = useState<string>("TODAS")
+    const [activeStationId, setActiveStationId] = useState<string>(t.all_stations)
     const [currentTime, setCurrentTime] = useState(new Date())
     const [expandedOrders, setExpandedOrders] = useState<string[]>([])
     const [isSummaryOpen, setIsSummaryOpen] = useState(false)
@@ -47,7 +50,7 @@ export default function KitchenPage() {
         if (restaurant) { fetchData(); fetchStations(); }
         const channel = supabase.channel('kitchen-realtime')
             .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, () => {
-                fetchData(); playSound('new'); toast.info("¡NUEVA COMANDA ENTRANTE!");
+                fetchData(); playSound('new'); toast.info(t.notifications.new_order);
             })
             .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, () => fetchData())
             .on('postgres_changes', { event: '*', schema: 'public', table: 'order_items' }, () => fetchData())
@@ -59,7 +62,7 @@ export default function KitchenPage() {
                 const minutes = Math.floor((new Date().getTime() - new Date(o.created_at).getTime()) / 60000)
                 return minutes >= 10 && (o.status === 'pending' || o.status === 'preparing')
             })
-            if (lateOrders.length > 0) { playSound('alert'); toast.error("HAY COMANDAS EN CRÍTICO (RETRASADAS)", { duration: 5000 }); }
+            if (lateOrders.length > 0) { playSound('alert'); toast.error(t.notifications.critical, { duration: 5000 }); }
         }, 30000)
 
         return () => { clearInterval(timer); clearInterval(alertInterval); supabase.removeChannel(channel); }
@@ -76,7 +79,7 @@ export default function KitchenPage() {
         const { error } = await supabase.from('products').update({ is_available: !current }).eq('id', productId)
         if (!error) {
             setAllProducts(prev => prev.map(p => p.id === productId ? { ...p, is_available: !current } : p))
-            toast.success("STOCK ACTUALIZADO")
+            toast.success(t.stock.updated)
         }
     }
 
@@ -100,15 +103,15 @@ export default function KitchenPage() {
 
     const updateStatus = async (id: string, newStatus: OrderStatus) => {
         const { error } = await supabase.from('orders').update({ status: newStatus }).eq('id', id)
-        if (!error) { fetchData(); toast.success(`PEDIDO ACTUALIZADO`); }
+        if (!error) { fetchData(); toast.success(t.notifications.order_updated); }
     }
 
     const updateItemStatus = async (itemId: string, newStatus: string, orderId: string, currentOrderStatus: string) => {
         const { error } = await supabase.from('order_items').update({ status: newStatus }).eq('id', itemId)
         if (!error) {
             if (currentOrderStatus === 'pending') await supabase.from('orders').update({ status: 'preparing' }).eq('id', orderId)
-            fetchData(); toast.success(`ÍTEM ACTUALIZADO`);
-        } else toast.error("Error al actualizar ítem")
+            fetchData(); toast.success(t.notifications.item_updated);
+        } else toast.error(t.notifications.error_update)
     }
 
     const getElapsedFormatted = (dateString: string) => {
@@ -132,14 +135,14 @@ export default function KitchenPage() {
     }
 
     const filteredOrders = orders.map(order => {
-        if (activeStationId === "TODAS") return order;
+        if (activeStationId === t.all_stations) return order;
         const stationItems = order.order_items.filter(item => item.products?.station_id === activeStationId);
         if (stationItems.length === 0) return null;
         return { ...order, order_items: stationItems };
     }).filter(Boolean) as Order[];
 
     const productionSummary = filteredOrders.filter(o => o.status !== 'ready').flatMap(o => o.order_items).filter(i => i.status !== 'ready')
-        .reduce((acc: any, item: any) => { const name = item.products?.name || 'Desconocido'; acc[name] = (acc[name] || 0) + item.quantity; return acc; }, {})
+        .reduce((acc: any, item: any) => { const name = item.products?.name || t.stock.unknown; acc[name] = (acc[name] || 0) + item.quantity; return acc; }, {})
 
     const sortedOrders = [...filteredOrders].sort((a, b) => {
         const priorityA = a.priority ? 1 : 0; const priorityB = b.priority ? 1 : 0;
@@ -163,6 +166,7 @@ export default function KitchenPage() {
                     onOpenStock={() => setIsStockOpen(true)}
                     isMuted={isMuted}
                     onToggleMute={() => setIsMuted(!isMuted)}
+                    lang={lang}
                 />
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 flex-1 min-h-0">
@@ -170,7 +174,7 @@ export default function KitchenPage() {
                         <OrderColumn
                             key={column.id}
                             status={column.id}
-                            label={column.label}
+                            label={lang === 'es' ? column.label : t.status_labels[column.id as keyof typeof t.status_labels]}
                             orders={sortedOrders}
                             expandedOrders={expandedOrders}
                             onToggleOrderExpand={toggleOrderExpand}
@@ -181,13 +185,14 @@ export default function KitchenPage() {
                             getTimeStyles={getTimeStyles}
                             stations={stations}
                             activeStationId={activeStationId}
+                            lang={lang}
                         />
                     ))}
                 </div>
             </div>
 
-            <ProductionSummaryModal isOpen={isSummaryOpen} onClose={() => setIsSummaryOpen(false)} productionSummary={productionSummary} />
-            <StockManagerModal isOpen={isStockOpen} onClose={() => setIsStockOpen(false)} products={allProducts} onToggleAvailability={toggleProductAvailability} searchQuery={searchStock} onSearchChange={setSearchStock} />
+            <ProductionSummaryModal isOpen={isSummaryOpen} onClose={() => setIsSummaryOpen(false)} productionSummary={productionSummary} lang={lang} />
+            <StockManagerModal isOpen={isStockOpen} onClose={() => setIsStockOpen(false)} products={allProducts} onToggleAvailability={toggleProductAvailability} searchQuery={searchStock} onSearchChange={setSearchStock} lang={lang} />
 
             <style jsx global>{`
                 .custom-scrollbar::-webkit-scrollbar { width: 6px; }

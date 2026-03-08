@@ -132,7 +132,7 @@
 - [ ] **Factura OCR Scanner**: Carga de compras mediante foto con extracción de datos automática (⏳)
 - [ ] **Gourmet Subscriptions**: Venta de membresías y recurrencia para clientes (⏳)
 - [ ] **Simulador de Food Cost**: Análisis de impacto ante cambios de precios de insumos (⏳)
-- [ ] **Multilingüismo Pro**: Localización total (idioma, fiscalidad y cultura) por país (⏳)
+- [✅] **Multilingüismo Pro**: Localización total (idioma, fiscalidad y cultura) por país (✅)
 
 ## 🛡️ Seguridad Forense (Guardian Expansion)
 - [ ] **Guardian Vision**: Vinculación de eventos de seguridad con marcas de tiempo en video NVR (⏳)

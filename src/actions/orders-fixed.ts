@@ -74,11 +74,12 @@ export interface Receipt {
 // ============================================================================
 
 export async function createOrderWithNotes(orderData: CreateOrderData) {
-    // 🛡️ Security Check & Context Retrieval
-    const { user, profile } = await validateUserRestaurant(orderData.restaurant_id)
-
-    const client = await pool.connect()
+    let client;
     try {
+        // 🛡️ Security Check & Context Retrieval
+        const { user } = await validateUserRestaurant(orderData.restaurant_id)
+
+        client = await pool.connect()
         await client.query('BEGIN')
 
         // 🛡️ Integrity Check: Force IDs from session to prevent impersonation
@@ -135,14 +136,14 @@ export async function createOrderWithNotes(orderData: CreateOrderData) {
         revalidatePath('/admin/orders')
         if (orderData.table_id) revalidatePath('/admin/tables')
 
-        return { success: true, data: order, message: 'Pedido creado exitosamente' }
+        return { success: true, data: { ...order, created_at: undefined }, message: 'Pedido creado exitosamente' }
 
     } catch (dbError: any) {
-        await client.query('ROLLBACK')
+        if (client) await client.query('ROLLBACK')
         console.error('Error DB Directo (createOrder):', dbError)
         return { success: false, error: dbError.message || 'Error desconocido al crear pedido' }
     } finally {
-        client.release()
+        if (client) client.release()
     }
 }
 
@@ -151,8 +152,9 @@ export async function createOrderWithNotes(orderData: CreateOrderData) {
 // ============================================================================
 
 export async function transferOrderBetweenTables(transferData: TransferOrderData) {
-    const client = await pool.connect()
+    let client;
     try {
+        client = await pool.connect()
         // 🛡️ Security Check: Validate order belongs to restaurant
         const { rows: [order] } = await client.query('SELECT restaurant_id FROM orders WHERE id = $1', [transferData.order_id])
         if (!order) throw new Error('Orden no encontrada')
@@ -185,11 +187,11 @@ export async function transferOrderBetweenTables(transferData: TransferOrderData
         }
 
     } catch (dbError: any) {
-        await client.query('ROLLBACK')
+        if (client) await client.query('ROLLBACK')
         console.error('Error DB Directo (transfer):', dbError)
         return { success: false, error: dbError.message || 'Error al transferir pedido' }
     } finally {
-        client.release()
+        if (client) client.release()
     }
 }
 
@@ -233,8 +235,9 @@ export async function splitOrder(
     itemsToMove: { itemId: string, quantity: number }[],
     userId: string
 ) {
-    const client = await pool.connect()
+    let client;
     try {
+        client = await pool.connect()
         // 🛡️ Security Check
         const { rows: [order] } = await client.query('SELECT restaurant_id FROM orders WHERE id = $1', [sourceOrderId])
         if (!order) throw new Error('Orden no encontrada')
@@ -312,16 +315,16 @@ export async function splitOrder(
 
         return {
             success: true,
-            data: newOrder,
+            data: { ...newOrder, created_at: undefined, updated_at: undefined },
             message: 'Cuenta dividida exitosamente. Nueva orden creada.'
         }
 
     } catch (e: any) {
-        await client.query('ROLLBACK')
+        if (client) await client.query('ROLLBACK')
         console.error('Error splitOrder:', e)
         throw new Error(e.message || 'Error al dividir la cuenta')
     } finally {
-        client.release()
+        if (client) client.release()
     }
 }
 
@@ -366,8 +369,9 @@ export async function generateReceipt(receiptData: Receipt) {
  * Adiciona items a un pedido existente (para mesas ocupadas)
  */
 export async function addItemsToOrder(orderId: string, items: OrderItemWithNotes[]) {
-    const client = await pool.connect()
+    let client;
     try {
+        client = await pool.connect()
         // 🛡️ Security Check
         const { rows: [order] } = await client.query('SELECT restaurant_id FROM orders WHERE id = $1', [orderId])
         if (!order) throw new Error('Orden no encontrada')
@@ -397,11 +401,11 @@ export async function addItemsToOrder(orderId: string, items: OrderItemWithNotes
 
         return { success: true, message: 'Productos adicionados exitosamente' }
     } catch (dbError: any) {
-        await client.query('ROLLBACK')
+        if (client) await client.query('ROLLBACK')
         console.error('Error Adicionando Items:', dbError)
         return { success: false, error: dbError.message || 'Error al adicionar items' }
     } finally {
-        client.release()
+        if (client) client.release()
     }
 }
 
@@ -409,8 +413,9 @@ export async function addItemsToOrder(orderId: string, items: OrderItemWithNotes
  * Une dos mesas fusionando sus órdenes activas.
  */
 export async function mergeTables(sourceTableId: string, targetTableId: string, userId: string) {
-    const client = await pool.connect()
+    let client;
     try {
+        client = await pool.connect()
         await client.query('BEGIN')
 
         // 1. Obtener órdenes activas
@@ -439,10 +444,10 @@ export async function mergeTables(sourceTableId: string, targetTableId: string, 
         revalidatePath('/admin/tables')
         return { success: true, message: 'Mesas fusionadas exitosamente' }
     } catch (e: any) {
-        await client.query('ROLLBACK')
+        if (client) await client.query('ROLLBACK')
         return { success: false, error: e.message }
     } finally {
-        client.release()
+        if (client) client.release()
     }
 }
 
@@ -450,8 +455,9 @@ export async function mergeTables(sourceTableId: string, targetTableId: string, 
  * Transfiere un item específico de una mesa a otra.
  */
 export async function transferOrderItem(sourceOrderId: string, targetTableId: string, itemId: string, quantity: number, userId: string) {
-    const client = await pool.connect()
+    let client;
     try {
+        client = await pool.connect()
         await client.query('BEGIN')
 
         // 1. Obtener o crear orden en mesa destino
@@ -493,10 +499,10 @@ export async function transferOrderItem(sourceOrderId: string, targetTableId: st
         revalidatePath('/admin/tables')
         return { success: true, message: 'Ítem transferido exitosamente' }
     } catch (e: any) {
-        await client.query('ROLLBACK')
+        if (client) await client.query('ROLLBACK')
         return { success: false, error: e.message }
     } finally {
-        client.release()
+        if (client) client.release()
     }
 }
 

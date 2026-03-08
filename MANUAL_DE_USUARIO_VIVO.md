@@ -413,7 +413,25 @@ Usa esta lista para verificar que todo funcione correcto después de cada actual
 
 ---
 
-### 🚀 7. ONBOARDING ELITE (Activación de Nuevo Restaurante)
+### 🚀 7. MULTILINGÜISMO Y GLOBALIZACIÓN
+
+JAMALISO es un sistema diseñado para la expansión internacional. Por defecto, soporta **Español (ES)** e **Inglés (EN)** en todos sus módulos críticos administrativos.
+
+#### Características de Localización:
+- **Detección Automática**: El sistema identifica el idioma de su navegador al primer inicio.
+- **Cambio en Caliente**: Desde el Dashboard Principal (`/admin`), puede alternar entre Español e Inglés con un solo toque. El cambio se propaga instantáneamente a:
+  - Dashboard y KPIs.
+  - KDS (Cocina).
+  - Inventario (Stock).
+  - Barra lateral y navegación.
+- **Memoria por Negocio**: Una vez que el Administrador cambia el idioma, JAMALI OS recuerda esta preferencia para todos los usuarios de ese restaurante, asegurando coherencia operativa.
+
+> [!TIP]
+> Las traducciones no solo cambian los textos estáticos, sino también los formatos de moneda y labels técnicos para adaptarse a los estándares globales.
+
+---
+
+### 🚀 8. ONBOARDING ELITE (Activación de Nuevo Restaurante)
 
 El acceso a JAMALI OS no comienza con un formulario aburrido, sino con una experiencia de configuración interactiva unificada.
 

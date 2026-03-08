@@ -5,19 +5,22 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { Ingredient } from "@/app/admin/inventory/types"
+import { adminTranslations } from "@/lib/i18n/admin"
 
 interface InventoryKPIsProps {
     ingredients: Ingredient[]
+    lang?: 'en' | 'es'
 }
 
-export function InventoryKPIs({ ingredients }: InventoryKPIsProps) {
+export function InventoryKPIs({ ingredients, lang = 'es' }: InventoryKPIsProps) {
+    const x = adminTranslations[lang].inventory
     const totalCost = ingredients.reduce((acc, curr) => acc + (curr.current_stock * curr.cost_per_unit), 0)
     const criticalCount = ingredients.filter(i => i.current_stock <= i.min_stock).length
 
     const cards = [
-        { label: 'REFERENCIAS', val: ingredients.length, icon: Package, color: 'text-slate-900', sub: 'Active_Nodes' },
+        { label: x.kpis.references, val: ingredients.length, icon: Package, color: 'text-slate-900', sub: 'Active_Nodes' },
         {
-            label: 'STOCK CRÍTICO',
+            label: x.kpis.critical_stock,
             val: criticalCount,
             icon: AlertCircle,
             color: 'text-rose-500',
@@ -25,13 +28,13 @@ export function InventoryKPIs({ ingredients }: InventoryKPIsProps) {
             action: criticalCount > 0 ? (
                 <Link href="/admin/inventory/purchases">
                     <Button variant="ghost" className="h-8 mt-2 px-2 text-[8px] font-black bg-rose-50 text-rose-600 border border-rose-100 hover:bg-rose-500 hover:text-white rounded-lg transition-all animate-pulse">
-                        AUTOMATIZAR COMPRA
+                        {x.kpis.automate}
                     </Button>
                 </Link>
             ) : null
         },
-        { label: 'VALORACIÓN', val: `$${(totalCost / 1000).toFixed(1)}k`, icon: DollarSign, color: 'text-orange-500', sub: 'Market_Index' },
-        { label: 'CATEGORÍAS', val: new Set(ingredients.map(i => i.category)).size, icon: Layers, color: 'text-blue-500', sub: 'Cluster_Map' }
+        { label: x.kpis.valuation, val: `$${(totalCost / 1000).toFixed(1)}k`, icon: DollarSign, color: 'text-orange-500', sub: 'Market_Index' },
+        { label: x.kpis.categories, val: new Set(ingredients.map(i => i.category)).size, icon: Layers, color: 'text-blue-500', sub: 'Cluster_Map' }
     ]
 
     return (

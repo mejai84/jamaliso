@@ -132,15 +132,15 @@ export default function CouponsPage() {
     }
 
     return (
-        <div className="min-h-screen bg-[#020406] text-white p-4 md:p-8 font-sans selection:bg-orange-500 selection:text-black relative overflow-hidden">
+        <div className="min-h-screen bg-transparent text-slate-900 p-4 md:p-8 font-sans selection:bg-orange-500 selection:text-black relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-[800px] bg-gradient-to-b from-orange-500/5 to-transparent pointer-events-none" />
-            <div className="max-w-[1400px] mx-auto space-y-12 animate-in fade-in duration-1000 relative z-10 text-white">
+            <div className="max-w-[1400px] mx-auto space-y-12 animate-in fade-in duration-1000 relative z-10 text-slate-900">
                 <CouponsHeader onAddOpen={() => handleOpenModal()} />
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
                     {loading && coupons.length === 0 ? (
                         Array.from({ length: 6 }).map((_, i) => (
-                            <div key={i} className="h-96 rounded-[3.5rem] bg-slate-900/50 border border-white/5 animate-pulse" />
+                            <div key={i} className="h-96 rounded-[3.5rem] bg-slate-100 border border-slate-200 animate-pulse" />
                         ))
                     ) : coupons.map(coupon => (
                         <CouponCard
@@ -155,8 +155,8 @@ export default function CouponsPage() {
                 </div>
 
                 {coupons.length === 0 && !loading && (
-                    <div className="text-center py-40 bg-slate-900/40 rounded-[4rem] border-2 border-dashed border-white/5 animate-in zoom-in duration-700">
-                        <Ticket className="w-32 h-32 mx-auto mb-8 text-white/10" />
+                    <div className="text-center py-40 bg-white shadow-sm border border-slate-200 rounded-[4rem] border-2 border-dashed border-slate-200 animate-in zoom-in duration-700">
+                        <Ticket className="w-32 h-32 mx-auto mb-8 text-slate-900/10" />
                         <p className="text-3xl font-black opacity-20 uppercase tracking-[0.4em] italic mb-6 leading-none">Librería de Cupones Vacía</p>
                         <Button
                             variant="ghost"

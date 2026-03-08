@@ -138,7 +138,7 @@ export default function AdminDashboard() {
             })
         } catch (error) {
             console.error("Error loading dashboard stats:", error)
-            toast.error("No se pudieron sincronizar las métricas reales")
+            toast.error(lang === 'es' ? "No se pudieron sincronizar las métricas reales" : "Could not synchronize real metrics")
         } finally {
             setLoading(false)
         }
@@ -152,7 +152,7 @@ export default function AdminDashboard() {
                 <LayoutDashboard className="w-10 h-10 text-orange-500 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
             </div>
             <div className="text-center space-y-3">
-                <p className="text-2xl font-black italic uppercase italic tracking-tighter">Sincronizando <span className="text-orange-500">Métricas</span> Reales</p>
+                <p className="text-2xl font-black italic uppercase italic tracking-tighter">{t.dashboard.synchronizing} <span className="text-orange-500">{t.dashboard.real_metrics}</span> {t.dashboard.real_metrics_suffix}</p>
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.5em] animate-pulse">
                     {restaurant?.name || 'JAMALI OS'} COMMAND CENTER
                 </p>
@@ -160,13 +160,13 @@ export default function AdminDashboard() {
         </div>
     )
     const navItems = [
-        { label: 'POS VENTA', icon: ShoppingBag, href: '/admin/pos', desc: 'Terminal Punto de Venta' },
-        { label: 'KDS COCINA', icon: Flame, href: '/admin/kitchen', desc: 'Central de Producción' },
-        { label: 'CAJA', icon: Wallet, href: '/admin/cashier', desc: 'Control de Flujo de Efectivo' },
-        { label: 'INVENTARIO', icon: Package, href: '/admin/inventory', desc: 'Control de Suministros' },
-        { label: 'NÓMINA', icon: Users, href: '/admin/payroll', desc: 'Gestión de Personal' },
-        { label: 'PRODUCTOS', icon: Utensils, href: '/admin/products', desc: 'Ingeniería de Menú' },
-        { label: 'REPORTES', icon: BarChart3, href: '/admin/reports', desc: 'Business Intelligence' },
+        { label: t.nav.pos_operations, icon: ShoppingBag, href: '/admin/pos', desc: lang === 'es' ? 'Terminal Punto de Venta' : 'Point of Sale Terminal' },
+        { label: t.nav.kitchen_kds, icon: Flame, href: '/admin/kitchen', desc: lang === 'es' ? 'Central de Producción' : 'Production Central' },
+        { label: t.nav.cash_control, icon: Wallet, href: '/admin/cashier', desc: lang === 'es' ? 'Control de Flujo de Efectivo' : 'Cash Flow Control' },
+        { label: t.nav.inventory, icon: Package, href: '/admin/inventory', desc: lang === 'es' ? 'Control de Suministros' : 'Supply Control' },
+        { label: t.nav.payroll, icon: Users, href: '/admin/payroll', desc: lang === 'es' ? 'Gestión de Personal' : 'Staff Management' },
+        { label: t.nav.menu_products, icon: Utensils, href: '/admin/products', desc: lang === 'es' ? 'Ingeniería de Menú' : 'Menu Engineering' },
+        { label: t.nav.reports, icon: BarChart3, href: '/admin/reports', desc: 'Business Intelligence' },
     ]
 
     return (
@@ -220,55 +220,7 @@ export default function AdminDashboard() {
                     </div>
                 </header>
 
-                {/* Dashboard Alerts / Demo Banner */}
-                {isDemo && (
-                    <div className="mb-10 relative group">
-                        <div className="absolute -inset-1 bg-gradient-to-r from-orange-600 via-amber-500 to-orange-400 rounded-[2.5rem] blur opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
-                        <div className="relative bg-slate-900 rounded-[2rem] p-8 md:p-12 overflow-hidden shadow-2xl">
-                            {/* Background Sparkles / Decorative element */}
-                            <div className="absolute top-0 right-0 p-12 opacity-10 scale-150 rotate-12">
-                                <Sparkles className="w-32 h-32 text-orange-400" />
-                            </div>
-
-                            <div className="relative flex flex-col md:flex-row items-center gap-10">
-                                <div className="flex-1 space-y-6 text-center md:text-left">
-                                    <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-500/10 border border-orange-500/20 text-orange-400 text-[10px] font-black uppercase tracking-[0.2em] animate-pulse">
-                                        <Sparkles className="w-3 h-3" />
-                                        {t.dashboard.demo.title}
-                                    </span>
-                                    <h2 className="text-4xl md:text-5xl font-black italic tracking-tighter text-white uppercase leading-[0.9]">
-                                        {t.dashboard.demo.title}
-                                    </h2>
-                                    <p className="text-slate-400 text-lg font-medium leading-relaxed max-w-xl">
-                                        {t.dashboard.demo.desc}
-                                    </p>
-                                    <div className="flex flex-col sm:flex-row items-center gap-4 pt-4">
-                                        <Link
-                                            href="/landing#pricing"
-                                            className="w-full sm:w-auto px-8 h-16 bg-orange-500 hover:bg-orange-600 text-slate-900 rounded-2xl flex items-center justify-center gap-3 font-black uppercase italic tracking-widest shadow-xl shadow-orange-500/25 transition-all active:scale-95 group/btn"
-                                        >
-                                            <TrendingUp className="w-5 h-5 transition-transform group-hover/btn:-translate-y-0.5 group-hover/btn:translate-x-0.5" />
-                                            {t.dashboard.demo.activate}
-                                        </Link>
-                                        <Link
-                                            href="/landing"
-                                            className="w-full sm:w-auto px-8 h-16 bg-white/5 hover:bg-white/10 text-white rounded-2xl flex items-center justify-center font-black uppercase italic tracking-widest transition-all border-white/10"
-                                        >
-                                            <ArrowRight className="w-5 h-5 mr-2" />
-                                            {t.dashboard.demo.back}
-                                        </Link>
-                                    </div>
-                                </div>
-
-                                <div className="hidden lg:block w-72 h-72 bg-gradient-to-br from-orange-500/20 to-transparent rounded-full border border-orange-500/10 flex items-center justify-center animate-pulse">
-                                    <div className="w-48 h-48 bg-orange-500/10 rounded-full border-2 border-dashed border-orange-500/20 flex items-center justify-center">
-                                        <LayoutDashboard className="w-20 h-20 text-orange-500 opacity-50" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                )}
+                {/* Hub Alerts (ex-Demo Banner) removed from here */}
 
                 {/* Quick Stats Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
@@ -391,10 +343,10 @@ export default function AdminDashboard() {
                                 <span className="text-orange-500">{t.dashboard.real_metrics_suffix}</span>
                             </h3>
                             <p className="text-slate-400 text-sm font-medium leading-relaxed mb-8">
-                                Sistema optimizado. {restaurant?.name || '---'} opera al 100%.
+                                {lang === 'es' ? `Sistema optimizado. ${restaurant?.name || '---'} opera al 100%.` : `System optimized. ${restaurant?.name || '---'} is 100% operational.`}
                             </p>
                             <Button className="w-full bg-white text-slate-900 hover:bg-orange-500 hover:text-white h-16 rounded-2xl font-black uppercase italic tracking-widest text-xs transition-all border-none">
-                                Ver Reportes <ArrowUpRight className="ml-2 w-4 h-4" />
+                                {lang === 'es' ? 'Ver Reportes' : 'View Reports'} <ArrowUpRight className="ml-2 w-4 h-4" />
                             </Button>
                         </div>
                     </div>
@@ -408,7 +360,7 @@ export default function AdminDashboard() {
                                         {t.dashboard.control_modules}
                                     </h3>
                                     <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">
-                                        Accesos directos de alta prioridad
+                                        {lang === 'es' ? 'Accesos directos de alta prioridad' : 'High priority direct access'}
                                     </p>
                                 </div>
                                 <BarChart3 className="w-6 h-6 text-slate-300" />
@@ -416,12 +368,12 @@ export default function AdminDashboard() {
 
                             <div className="grid grid-cols-2 sm:grid-cols-3 gap-6">
                                 {[
-                                    { icon: ShoppingBag, label: "PEDIDOS", color: "orange", href: "/admin/orders" },
-                                    { icon: Utensils, label: "POS MESERO", color: "blue", href: "/admin/waiter" },
-                                    { icon: ChefHat, label: "COCINA", color: "rose", href: "/admin/kitchen" },
-                                    { icon: Users, label: "PERSONAL", color: "emerald", href: "/admin/employees" },
-                                    { icon: Package, label: "STOCK", color: "amber", href: "/admin/inventory" },
-                                    { icon: Settings, label: "AJUSTES", color: "slate", href: "/admin/settings" }
+                                    { icon: ShoppingBag, label: t.nav.order_list.toUpperCase(), color: "orange", href: "/admin/orders" },
+                                    { icon: Utensils, label: t.nav.waiter_portal.toUpperCase(), color: "blue", href: "/admin/waiter" },
+                                    { icon: ChefHat, label: lang === 'es' ? 'COCINA' : 'KITCHEN', color: "rose", href: "/admin/kitchen" },
+                                    { icon: Users, label: t.nav.staff_management.toUpperCase(), color: "emerald", href: "/admin/employees" },
+                                    { icon: Package, label: t.nav.inventory.toUpperCase(), color: "amber", href: "/admin/inventory" },
+                                    { icon: Settings, label: t.nav.settings.toUpperCase(), color: "slate", href: "/admin/settings" }
                                 ].map((module, i) => (
                                     <Link
                                         key={i}

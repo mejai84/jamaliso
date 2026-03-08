@@ -1,14 +1,16 @@
-"use client"
-
 import { Activity, Wallet } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { HubStats } from "@/app/admin/hub/types"
+import { adminTranslations } from "@/lib/i18n/admin"
 
 interface RapidAnalyticsProps {
     stats: HubStats
+    lang: 'en' | 'es'
 }
 
-export function RapidAnalytics({ stats }: RapidAnalyticsProps) {
+export function RapidAnalytics({ stats, lang }: RapidAnalyticsProps) {
+    const t = adminTranslations[lang].hub
+
     return (
         <div className="grid grid-cols-2 gap-4 md:gap-6 font-sans">
             <div className="bg-white/60 backdrop-blur-3xl border border-slate-200 rounded-2xl md:rounded-[3rem] p-6 md:p-8 space-y-4 md:space-y-6 shadow-sm relative overflow-hidden group">
@@ -19,7 +21,7 @@ export function RapidAnalytics({ stats }: RapidAnalyticsProps) {
                     <Activity className="w-5 h-5 md:w-7 md:h-7" />
                 </div>
                 <div>
-                    <p className="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] md:tracking-[0.3em] italic mb-1">Ocupación Live</p>
+                    <p className="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] md:tracking-[0.3em] italic mb-1">{t.live_occupancy}</p>
                     <p className="text-2xl md:text-3xl font-black italic tracking-tighter text-slate-900 leading-none group-hover:text-orange-500 transition-colors">
                         {stats.activeTables} <span className="text-[9px] md:text-[11px] text-slate-500 uppercase tracking-widest ml-1">Nodes</span>
                     </p>
@@ -37,13 +39,13 @@ export function RapidAnalytics({ stats }: RapidAnalyticsProps) {
                     <Wallet className="w-5 h-5 md:w-7 md:h-7" />
                 </div>
                 <div>
-                    <p className="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] md:tracking-[0.3em] italic mb-1">Status Cashbox</p>
+                    <p className="text-[8px] md:text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] md:tracking-[0.3em] italic mb-1">{t.cashbox_status}</p>
                     <p className={cn(
                         "text-[10px] md:text-lg font-black italic tracking-[0.1em] uppercase leading-none flex items-center gap-2",
                         stats.cashboxStatus === 'OPEN' ? "text-orange-500" : "text-rose-500"
                     )}>
                         <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse shadow-sm" />
-                        {stats.cashboxStatus === 'OPEN' ? 'ABIERTA' : 'OFFLINE'}
+                        {stats.cashboxStatus === 'OPEN' ? t.open : t.offline}
                     </p>
                 </div>
             </div>

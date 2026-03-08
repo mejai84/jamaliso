@@ -2,6 +2,7 @@
 
 import { Package } from "lucide-react"
 import { Order, OrderStatus, PrepStation } from "@/app/admin/kitchen/types"
+import { adminTranslations } from "@/lib/i18n/admin"
 import { OrderCard } from "./OrderCard"
 
 interface OrderColumnProps {
@@ -17,6 +18,7 @@ interface OrderColumnProps {
     getTimeStyles: (mins: number) => { text: string, border: string, bg: string }
     stations: PrepStation[]
     activeStationId: string
+    lang?: 'en' | 'es'
 }
 
 export function OrderColumn({
@@ -31,8 +33,10 @@ export function OrderColumn({
     getMinutes,
     getTimeStyles,
     stations,
-    activeStationId
+    activeStationId,
+    lang = 'es'
 }: OrderColumnProps) {
+    const t = adminTranslations[lang].kds
     const columnOrders = orders.filter(o => o.status === status)
 
     return (
@@ -41,7 +45,7 @@ export function OrderColumn({
                 <div className="absolute top-0 left-0 w-1 h-full bg-orange-500" />
                 <div>
                     <h2 className="text-2xl font-black italic uppercase tracking-tighter text-slate-900 leading-none">{label}</h2>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2 italic opacity-60">MONITOREO ACTIVO</p>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2 italic opacity-60">{t.column.active_monitoring}</p>
                 </div>
                 <div className="w-12 h-12 rounded-2xl bg-slate-900 border-2 border-slate-800 flex items-center justify-center font-black text-white shadow-lg text-lg italic">
                     {columnOrders.length}
@@ -52,7 +56,7 @@ export function OrderColumn({
                 {columnOrders.length === 0 ? (
                     <div className="h-full flex flex-col items-center justify-center opacity-10">
                         <Package className="w-16 h-16 mb-4" />
-                        <p className="text-xs font-black uppercase tracking-widest italic">Sin pedidos activos</p>
+                        <p className="text-xs font-black uppercase tracking-widest italic">{t.column.no_active_orders}</p>
                     </div>
                 ) : (
                     columnOrders.map(order => (

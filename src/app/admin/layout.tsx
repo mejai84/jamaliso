@@ -15,6 +15,7 @@ import Image from "next/image"
 import { Sidebar } from "@/components/admin/layout/Sidebar"
 import { MobileHeader } from "@/components/admin/layout/MobileHeader"
 import { MobileSidebar } from "@/components/admin/layout/MobileSidebar"
+import { DemoBanner } from "@/components/admin/DemoBanner"
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const router = useRouter()
@@ -133,6 +134,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     />
 
                     <div className="flex-1 relative overflow-y-auto custom-scrollbar">
+                        <DemoBanner />
                         {children}
                     </div>
 

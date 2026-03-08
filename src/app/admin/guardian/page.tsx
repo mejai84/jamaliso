@@ -28,8 +28,12 @@ import {
     getGuardianRestaurants
 } from "@/actions/guardian"
 import { formatPrice } from "@/lib/utils"
+import { useRestaurant } from "@/providers/RestaurantProvider"
+import { adminTranslations } from "@/lib/i18n/admin"
 
 export default function JamaliGuardianPage() {
+    const { lang } = useRestaurant()
+    const t = adminTranslations[lang].guardian
     const router = useRouter()
     const [loading, setLoading] = useState(true)
     const [isAuthorized, setIsAuthorized] = useState(false)
@@ -69,7 +73,7 @@ export default function JamaliGuardianPage() {
 
                 const allowed = ['owner', 'developer', 'admin']
                 if (!profile || !allowed.includes(profile.role)) {
-                    toast.error("ACCESO DENEGADO")
+                    toast.error(lang === 'es' ? "ACCESO DENEGADO" : "ACCESS DENIED")
                     router.push("/admin/hub")
                     return
                 }
@@ -157,9 +161,9 @@ export default function JamaliGuardianPage() {
     const handleAction = async (id: string, action: 'APPROVED' | 'REJECTED') => {
         const promise = authorizeEvent(id, action);
         toast.promise(promise, {
-            loading: 'Transmitiendo autorización remota...',
+            loading: t.actions.transmitting,
             success: (res) => {
-                if (res.success) return `Evento fiscal ${action === 'APPROVED' ? 'Autorizado' : 'Rechazado'} satisfactoriamente`
+                if (res.success) return action === 'APPROVED' ? t.actions.success_auth : t.actions.success_rej
                 throw new Error(res.error)
             },
             error: (err) => err.message
@@ -168,7 +172,7 @@ export default function JamaliGuardianPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-8 gap-6 font-sans">
+            <div className="min-h-screen bg-transparent flex flex-col items-center justify-center p-8 gap-6 font-sans">
                 <div className="relative">
                     <motion.div
                         animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.4, 0.2] }}
@@ -177,7 +181,7 @@ export default function JamaliGuardianPage() {
                     />
                     <ShieldAlert className="w-16 h-16 text-red-500 animate-pulse relative z-10" />
                 </div>
-                <p className="font-black italic uppercase text-[10px] tracking-[0.4em] text-red-500 animate-pulse">Iniciando Protocolo Guardian...</p>
+                <p className="font-black italic uppercase text-[10px] tracking-[0.4em] text-red-500 animate-pulse">{t.starting}</p>
             </div>
         )
     }
@@ -188,7 +192,7 @@ export default function JamaliGuardianPage() {
     const inventoryAlerts = alerts.filter(a => a.event_type === 'LOW_STOCK_ALERT')
 
     return (
-        <div className="min-h-screen bg-black text-white font-sans selection:bg-red-500 overflow-x-hidden relative">
+        <div className="min-h-screen bg-transparent text-slate-900 font-sans selection:bg-red-500 overflow-x-hidden relative">
             <AnimatePresence>
                 {/* 🛡️ BACKGROUND GUARDIAN AESTHETIC */}
                 <div className="absolute inset-0 bg-gradient-to-b from-red-500/5 via-transparent to-transparent pointer-events-none" />
@@ -196,7 +200,7 @@ export default function JamaliGuardianPage() {
                 <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10 pointer-events-none" />
 
                 {/* HEADER */}
-                <header className="relative z-20 p-8 flex items-center justify-between border-b border-red-500/10 backdrop-blur-md bg-black/40">
+                <header className="relative z-20 p-8 flex items-center justify-between border-b border-red-500/10 backdrop-blur-md bg-transparent/40">
                     <div className="flex items-center gap-6">
                         <motion.div
                             whileHover={{ rotate: [0, -10, 10, 0] }}
@@ -220,7 +224,7 @@ export default function JamaliGuardianPage() {
                     {/* 🏢 RESTAURANT SELECTOR */}
                     <div className="space-y-4">
                         <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-500 italic flex items-center gap-3">
-                            <Building2 className="w-3 h-3" /> Selector de Sede
+                            <Building2 className="w-3 h-3" /> {t.unit_selector}
                         </p>
                         <div className="flex gap-4 overflow-x-auto pb-4 custom-scrollbar">
                             {restaurants.map((res) => (
@@ -231,7 +235,7 @@ export default function JamaliGuardianPage() {
                                         "px-6 py-4 rounded-2xl border text-xs font-black uppercase italic tracking-widest whitespace-nowrap transition-all",
                                         selectedRestaurant?.id === res.id
                                             ? "bg-red-500 border-red-500 text-black shadow-xl shadow-red-500/20"
-                                            : "bg-slate-900/40 border-white/5 text-slate-500 hover:border-red-500/20"
+                                            : "bg-white shadow-sm border border-slate-200 border-slate-200 text-slate-500 hover:border-red-500/20"
                                     )}
                                 >
                                     {res.name}
@@ -259,16 +263,16 @@ export default function JamaliGuardianPage() {
                                 {/* 1. PULSE DASHBOARD */}
                                 <div className="grid grid-cols-2 gap-4">
                                     {[
-                                        { label: 'Ingreso Hoy', val: formatPrice(kpis.revenue), icon: Zap, color: 'text-orange-500' },
-                                        { label: 'Margen Real', val: `${kpis.realizationMargin.toFixed(1)}%`, icon: Activity, color: 'text-emerald-500' },
-                                        { label: 'Labor Cost', val: formatPrice(kpis.laborCost), icon: TerminalSquare, color: 'text-blue-500' },
-                                        { label: 'Mermas Hoy', val: formatPrice(kpis.totalWaste), icon: AlertTriangle, color: 'text-red-500' },
+                                        { label: t.kpis.revenue, val: formatPrice(kpis.revenue), icon: Zap, color: 'text-orange-500' },
+                                        { label: t.kpis.margin, val: `${kpis.realizationMargin.toFixed(1)}%`, icon: Activity, color: 'text-emerald-500' },
+                                        { label: t.kpis.labor, val: formatPrice(kpis.laborCost), icon: TerminalSquare, color: 'text-blue-500' },
+                                        { label: t.kpis.waste, val: formatPrice(kpis.totalWaste), icon: AlertTriangle, color: 'text-red-500' },
                                     ].map((kpi, i) => (
                                         <div
                                             key={i}
-                                            className="bg-white/[0.03] backdrop-blur-xl border border-white/5 rounded-[2rem] p-6 group"
+                                            className="bg-white shadow-md backdrop-blur-xl border border-slate-200 rounded-[2rem] p-6 group"
                                         >
-                                            <div className={cn("p-3 rounded-xl bg-white/5 w-fit mb-4", kpi.color)}>
+                                            <div className={cn("p-3 rounded-xl bg-white border border-slate-200 shadow-sm w-fit mb-4", kpi.color)}>
                                                 <kpi.icon className="w-4 h-4" />
                                             </div>
                                             <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest italic mb-1">{kpi.label}</p>
@@ -279,18 +283,18 @@ export default function JamaliGuardianPage() {
 
                                 {/* 2. SECURITY FEED */}
                                 <div className="space-y-6">
-                                    <div className="flex bg-slate-900/40 p-1.5 rounded-2xl border border-white/5 gap-1 shadow-inner relative z-30">
+                                    <div className="flex bg-white shadow-sm border border-slate-200 p-1.5 rounded-2xl border border-slate-200 gap-1 shadow-inner relative z-30">
                                         {[
-                                            { id: 'security', label: 'AUDITORÍA', icon: ShieldAlert },
-                                            { id: 'risk', label: 'INTELIGENCIA', icon: Brain },
-                                            { id: 'inventory', label: 'BODEGA', icon: Package },
+                                            { id: 'security', label: t.tabs.audit, icon: ShieldAlert },
+                                            { id: 'risk', label: t.tabs.intel, icon: Brain },
+                                            { id: 'inventory', label: t.tabs.warehouse, icon: Package },
                                         ].map(tab => (
                                             <button
                                                 key={tab.id}
                                                 onClick={() => setActiveTab(tab.id as any)}
                                                 className={cn(
                                                     "flex-1 h-12 rounded-xl flex items-center justify-center gap-2 text-[9px] font-black uppercase tracking-widest italic transition-all relative z-10",
-                                                    activeTab === tab.id ? "bg-red-500 text-black shadow-lg" : "text-slate-500 hover:text-white"
+                                                    activeTab === tab.id ? "bg-red-500 text-black shadow-lg" : "text-slate-500 hover:text-slate-900"
                                                 )}
                                             >
                                                 <tab.icon className="w-4 h-4" /> {tab.label}
@@ -309,12 +313,13 @@ export default function JamaliGuardianPage() {
                                                     className="space-y-4"
                                                 >
                                                     {securityAlerts.length === 0 ? (
-                                                        <EmptyState icon={ShieldAlert} text="SISTEMA LIMPIO: Cero Fraudes" />
+                                                        <EmptyState icon={ShieldAlert} text={t.empty.clean} />
                                                     ) : (
                                                         securityAlerts.map(alert => (
                                                             <SecurityCard
                                                                 key={alert.id}
                                                                 alert={alert}
+                                                                t={t}
                                                                 onApprove={() => handleAction(alert.id, 'APPROVED')}
                                                                 onReject={() => handleAction(alert.id, 'REJECTED')}
                                                             />
@@ -333,18 +338,18 @@ export default function JamaliGuardianPage() {
                                                 >
                                                     <div className="bg-red-500/10 border border-red-500/20 p-6 rounded-[2rem] mb-4">
                                                         <p className="text-[10px] font-black text-red-500 uppercase tracking-[0.2em] mb-2 flex items-center gap-2">
-                                                            <Brain className="w-4 h-4" /> Análisis de Patrones IA
+                                                            <Brain className="w-4 h-4" /> {t.ai.title}
                                                         </p>
                                                         <p className="text-sm font-bold text-slate-400 leading-tight">
-                                                            Score calculado por Abuso de Descuentos, Ratio de Anulación y Historial Forense.
+                                                            {t.ai.desc}
                                                         </p>
                                                     </div>
 
                                                     {riskData.length === 0 ? (
-                                                        <EmptyState icon={Brain} text="DATOS INSUFICIENTES" />
+                                                        <EmptyState icon={Brain} text={t.empty.insufficient} />
                                                     ) : (
                                                         riskData.map((item, idx) => (
-                                                            <div key={idx} className="bg-slate-900/20 border border-white/5 p-8 rounded-[2.5rem] group hover:bg-slate-900/40 transition-all overflow-hidden relative">
+                                                            <div key={idx} className="bg-slate-50 border border-slate-200 p-8 rounded-[2.5rem] group hover:bg-white shadow-sm border border-slate-200 transition-all overflow-hidden relative">
                                                                 <div className={cn(
                                                                     "absolute -right-20 -top-20 w-40 h-40 blur-[80px] opacity-20 pointer-events-none",
                                                                     item.aggregate_risk_score > 70 ? "bg-red-500" :
@@ -361,16 +366,16 @@ export default function JamaliGuardianPage() {
                                                                                     item.risk_level === 'MEDIUM' ? "bg-orange-500/10 text-orange-500 border border-orange-500/20" :
                                                                                         "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20"
                                                                             )}>
-                                                                                {item.risk_level === 'CRITICAL' ? 'ALERTA ROJA' : item.risk_level}
+                                                                                {item.risk_level === 'CRITICAL' ? t.risk.red_alert : item.risk_level}
                                                                             </span>
-                                                                            <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest italic">{item.total_orders} Órdenes</span>
+                                                                            <span className="text-[9px] font-bold text-slate-500 uppercase tracking-widest italic">{item.total_orders} {t.risk.orders}</span>
                                                                         </div>
                                                                     </div>
                                                                     <div className="text-right">
-                                                                        <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1 italic">Score Sospecha</p>
+                                                                        <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1 italic">{t.risk.suspicion}</p>
                                                                         <p className={cn(
                                                                             "text-3xl font-black italic tracking-tighter leading-none",
-                                                                            item.aggregate_risk_score > 70 ? "text-red-500" : "text-white"
+                                                                            item.aggregate_risk_score > 70 ? "text-red-500" : "text-slate-900"
                                                                         )}>
                                                                             {Math.round(item.aggregate_risk_score)}%
                                                                         </p>
@@ -380,11 +385,11 @@ export default function JamaliGuardianPage() {
                                                                 <div className="space-y-6 relative z-10">
                                                                     <div className="grid grid-cols-3 gap-2">
                                                                         {[
-                                                                            { l: 'ANULACIÓN', v: item.cancel_score, max: 50 },
-                                                                            { l: 'DESCUENTOS', v: item.discount_score, max: 30 },
-                                                                            { l: 'HISTORIAL', v: item.history_score, max: 20 },
+                                                                            { l: t.risk.void, v: item.cancel_score, max: 50 },
+                                                                            { l: t.risk.discounts, v: item.discount_score, max: 30 },
+                                                                            { l: t.risk.history, v: item.history_score, max: 20 },
                                                                         ].map((sub, sidx) => (
-                                                                            <div key={sidx} className="bg-white/5 p-3 rounded-xl border border-white/5">
+                                                                            <div key={sidx} className="bg-white border border-slate-200 shadow-sm p-3 rounded-xl border border-slate-200">
                                                                                 <p className="text-[7px] font-black text-slate-500 uppercase tracking-widest mb-1 italic">{sub.l}</p>
                                                                                 <div className="flex items-baseline gap-1">
                                                                                     <span className="text-xs font-black italic">{Math.round(sub.v)}</span>
@@ -394,7 +399,7 @@ export default function JamaliGuardianPage() {
                                                                         ))}
                                                                     </div>
                                                                     <div>
-                                                                        <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
+                                                                        <div className="h-2 w-full bg-white border border-slate-200 shadow-sm rounded-full overflow-hidden">
                                                                             <motion.div
                                                                                 initial={{ width: 0 }}
                                                                                 animate={{ width: `${item.aggregate_risk_score}%` }}
@@ -422,7 +427,7 @@ export default function JamaliGuardianPage() {
                                                     className="space-y-4"
                                                 >
                                                     {inventoryAlerts.length === 0 ? (
-                                                        <EmptyState icon={Package} text="STOCK SALUDABLE: 100% Ok" />
+                                                        <EmptyState icon={Package} text={t.empty.healthy} />
                                                     ) : (
                                                         inventoryAlerts.map(alert => (
                                                             <div key={alert.id} className="p-6 rounded-2xl bg-orange-500/5 border border-orange-500/10 flex items-center justify-between group">
@@ -433,7 +438,7 @@ export default function JamaliGuardianPage() {
                                                                     <div>
                                                                         <p className="text-xs font-black uppercase tracking-tighter leading-none mb-2">{alert.metadata.ingredient_name}</p>
                                                                         <p className="text-[9px] font-bold text-orange-500/60 uppercase tracking-widest italic leading-none">
-                                                                            Crítico: {alert.metadata.current_stock} {alert.metadata.unit}
+                                                                            {t.inventory.critical}: {alert.metadata.current_stock} {alert.metadata.unit}
                                                                         </p>
                                                                     </div>
                                                                 </div>
@@ -453,12 +458,12 @@ export default function JamaliGuardianPage() {
                     </AnimatePresence>
                 </main>
 
-                <nav className="fixed bottom-10 left-1/2 -translate-x-1/2 w-[340px] h-20 bg-slate-900/60 backdrop-blur-3xl border border-white/10 rounded-full flex items-center justify-around px-8 shadow-2xl z-50">
+                <nav className="fixed bottom-10 left-1/2 -translate-x-1/2 w-[340px] h-20 bg-slate-900/60 backdrop-blur-3xl border border-slate-200 rounded-full flex items-center justify-around px-8 shadow-2xl z-50">
                     {[Zap, Activity, TerminalSquare, Settings].map((Icon, i) => (
                         <motion.button
                             key={i}
                             whileTap={{ scale: 0.8 }}
-                            className={cn("p-4 transition-all", i === 0 ? "text-red-500" : "text-slate-500 hover:text-white")}
+                            className={cn("p-4 transition-all", i === 0 ? "text-red-500" : "text-slate-500 hover:text-slate-900")}
                         >
                             <Icon className="w-6 h-6" />
                         </motion.button>
@@ -480,8 +485,8 @@ export default function JamaliGuardianPage() {
 
 function EmptyState({ icon: Icon, text }: { icon: any, text: string }) {
     return (
-        <div className="h-[400px] flex flex-col items-center justify-center border border-dashed border-white/5 rounded-[3rem] p-12 bg-white/[0.01]">
-            <div className="w-20 h-20 rounded-[2rem] bg-slate-900/50 flex items-center justify-center mb-6">
+        <div className="h-[400px] flex flex-col items-center justify-center border border-dashed border-slate-200 rounded-[3rem] p-12 bg-slate-50/50">
+            <div className="w-20 h-20 rounded-[2rem] bg-slate-100 flex items-center justify-center mb-6">
                 <Icon className="w-8 h-8 text-slate-700" />
             </div>
             <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-600 italic text-center leading-relaxed">
@@ -491,7 +496,7 @@ function EmptyState({ icon: Icon, text }: { icon: any, text: string }) {
     )
 }
 
-function SecurityCard({ alert, onApprove, onReject }: { alert: any, onApprove: () => void, onReject: () => void }) {
+function SecurityCard({ alert, t, onApprove, onReject }: { alert: any, t: any, onApprove: () => void, onReject: () => void }) {
     const isPending = alert.status === 'PENDING'
 
     return (
@@ -501,7 +506,7 @@ function SecurityCard({ alert, onApprove, onReject }: { alert: any, onApprove: (
             animate={{ opacity: 1, scale: 1 }}
             className={cn(
                 "p-8 rounded-[2.5rem] border backdrop-blur-md transition-all",
-                isPending ? "bg-slate-900/40 border-red-500/20 shadow-2xl shadow-red-500/5" : "bg-white/[0.02] border-white/5 opacity-60"
+                isPending ? "bg-white shadow-sm border border-slate-200 border-red-500/20 shadow-2xl shadow-red-500/5" : "bg-white shadow-sm border-slate-200 opacity-60"
             )}
         >
             <div className="flex items-center justify-between mb-8">
@@ -529,7 +534,7 @@ function SecurityCard({ alert, onApprove, onReject }: { alert: any, onApprove: (
                         "px-4 py-2 rounded-full border text-[8px] font-black uppercase italic tracking-widest leading-none",
                         alert.status === 'APPROVED' ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-500" : "bg-red-500/10 border-red-500/20 text-red-500"
                     )}>
-                        {alert.status}
+                        {alert.status === 'APPROVED' ? t.actions.approved : alert.status === 'REJECTED' ? t.actions.denied : alert.status}
                     </div>
                 )}
             </div>
@@ -543,10 +548,10 @@ function SecurityCard({ alert, onApprove, onReject }: { alert: any, onApprove: (
                     <motion.button
                         whileTap={{ scale: 0.95 }}
                         onClick={onReject}
-                        className="h-14 bg-white/5 hover:bg-red-500/10 border border-white/10 rounded-2xl flex items-center justify-center gap-3 transition-all"
+                        className="h-14 bg-white border border-slate-200 shadow-sm hover:bg-red-500/10 border border-slate-200 rounded-2xl flex items-center justify-center gap-3 transition-all"
                     >
                         <XCircle className="w-4 h-4 text-red-500" />
-                        <span className="text-[10px] font-black uppercase tracking-widest italic">Rechazar</span>
+                        <span className="text-[10px] font-black uppercase tracking-widest italic">{t.actions.reject}</span>
                     </motion.button>
                     <motion.button
                         whileTap={{ scale: 0.95 }}
@@ -554,7 +559,7 @@ function SecurityCard({ alert, onApprove, onReject }: { alert: any, onApprove: (
                         className="h-14 bg-red-600 hover:bg-red-500 text-black rounded-2xl flex items-center justify-center gap-3 transition-all shadow-xl shadow-red-500/20"
                     >
                         <CheckCircle2 className="w-4 h-4" />
-                        <span className="text-[10px] font-black uppercase tracking-widest italic">Autorizar</span>
+                        <span className="text-[10px] font-black uppercase tracking-widest italic">{t.actions.authorize}</span>
                     </motion.button>
                 </div>
             )}

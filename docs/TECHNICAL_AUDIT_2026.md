@@ -24,6 +24,7 @@ En esta sesión se ha transformado el sistema de un POS robusto a una plataforma
 | **Branch Isolation v2** | Sincronización dinámica de KPIs, POS y Cajas al cambiar de sede (sucursal). | Eliminación de contaminación de datos y reportes erróneos en cadenas multi-sede. |
 | **Landing Branding v4** | Landing Page overhaul 9/10 (SaaS Premium), IA Marketing destacado. | Impacto visual inmediato y posicionamiento de marca de lujo (High-End). Aumenta conversión a nivel B2B. |
 | **Executive Summary** | Creación de resumen persuasivo técnico-comercial para inversores. | Posicionamiento claro del modelo de negocio, tecnología de vanguardia y pricing SaaS. |
+| **Multilingüismo Pro** | Internalización (i18n) dinámica de módulos administrativos (Dashboard, KDS, Inventory). | Escalabilidad internacional. Detección automática de idioma y persistencia por restaurante. |
 
 ---
 
@@ -62,6 +63,7 @@ Se ha cumplido la **Regla Estricta de Documentación** previa al cierre:
 - [x] **Premium UX Rehaul**: Landing Page llevada a nivel 9/10 SaaS (hero robusto, social proof, UI metrics).
 - [x] **Financial Core v2**: Facturación fiscal y comprobantes contables con diseño premium.
 - [x] **Executive Summary**: Creado `JAMALI_OS_EXECUTIVE_SUMMARY_2026.md` para pitch a inversores/partners.
+- [x] **Multilingüismo Pro**: Implementada localización total (ES/EN) en Dashboard, KDS e Inventario.
 
 ---
 

@@ -16,9 +16,11 @@ import { InventoryTable } from "@/components/admin/inventory/InventoryTable"
 import { DataFlow, CSVColumn } from "@/lib/data-flow"
 import { DataImportWizard } from "@/components/admin/shared/DataImportWizard"
 import { toast } from "sonner"
+import { adminTranslations } from "@/lib/i18n/admin"
 
 export default function InventoryPage() {
-    const { restaurant } = useRestaurant()
+    const { restaurant, lang } = useRestaurant()
+    const t = adminTranslations[lang].inventory
     const [ingredients, setIngredients] = useState<Ingredient[]>([])
     const [loading, setLoading] = useState(true)
     const [searchTerm, setSearchTerm] = useState("")
@@ -44,15 +46,15 @@ export default function InventoryPage() {
     const handleExport = () => {
         const columns: CSVColumn<Ingredient>[] = [
             { header: 'ID', key: 'id' },
-            { header: 'Nombre', key: 'name' },
-            { header: 'Categoría', key: 'category' },
-            { header: 'Unidad', key: 'unit' },
-            { header: 'Stock_Actual', key: 'current_stock' },
-            { header: 'Stock_Mínimo', key: 'min_stock' },
-            { header: 'Costo_Unitario', key: 'cost_per_unit' }
+            { header: t.fields.name, key: 'name' },
+            { header: t.fields.category, key: 'category' },
+            { header: t.fields.unit, key: 'unit' },
+            { header: t.fields.current_stock, key: 'current_stock' },
+            { header: t.fields.min_stock, key: 'min_stock' },
+            { header: t.fields.cost_per_unit, key: 'cost_per_unit' }
         ];
         DataFlow.exportToCSV(ingredients, columns, 'inventario-jamaliso');
-        toast.info("Descargando respaldo de Kernel de Inventario...");
+        toast.info(t.notifications.exporting);
     }
 
     const handleImport = async (data: any[]) => {
@@ -82,7 +84,7 @@ export default function InventoryPage() {
                 <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full scale-150 animate-pulse" />
                 <Zap className="w-16 h-16 text-primary animate-pulse relative z-10" />
             </div>
-            <p className="font-black italic uppercase text-[10px] tracking-[0.4em] text-primary animate-pulse">Iniciando Kernel de Suministros...</p>
+            <p className="font-black italic uppercase text-[10px] tracking-[0.4em] text-primary animate-pulse">{t.loading}</p>
         </div>
     )
 
@@ -96,13 +98,15 @@ export default function InventoryPage() {
                 <InventoryHeader
                     onExport={handleExport}
                     onImport={() => setIsImportModalOpen(true)}
+                    lang={lang}
                 />
-                <AccessGrid />
-                <InventoryKPIs ingredients={ingredients} />
+                <AccessGrid lang={lang} />
+                <InventoryKPIs ingredients={ingredients} lang={lang} />
                 <InventoryTable
                     ingredients={ingredients}
                     searchTerm={searchTerm}
                     onSearchChange={setSearchTerm}
+                    lang={lang}
                 />
             </div>
 
@@ -110,14 +114,14 @@ export default function InventoryPage() {
                 isOpen={isImportModalOpen}
                 onClose={() => setIsImportModalOpen(false)}
                 onConfirm={handleImport}
-                moduleName="Inventario de Insumos"
+                moduleName={t.import_wizard_name}
                 requiredFields={[
-                    { key: 'name', label: 'Nombre' },
-                    { key: 'category', label: 'Categoría' },
-                    { key: 'unit', label: 'Unidad' },
-                    { key: 'current_stock', label: 'Stock_Actual' },
-                    { key: 'min_stock', label: 'Stock_Mínimo' },
-                    { key: 'cost_per_unit', label: 'Costo_Unitario' }
+                    { key: 'name', label: t.fields.name },
+                    { key: 'category', label: t.fields.category },
+                    { key: 'unit', label: t.fields.unit },
+                    { key: 'current_stock', label: t.fields.current_stock },
+                    { key: 'min_stock', label: t.fields.min_stock },
+                    { key: 'cost_per_unit', label: t.fields.cost_per_unit }
                 ]}
             />
         </div>

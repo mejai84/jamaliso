@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Clock, Star, Package, Flame, AlertTriangle, Timer, Play, CheckCircle, Bell, SkipForward, QrCode, Monitor, User } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Order, OrderStatus, PrepStation } from "@/app/admin/kitchen/types"
+import { adminTranslations } from "@/lib/i18n/admin"
 
 interface OrderCardProps {
     order: Order
@@ -16,14 +17,15 @@ interface OrderCardProps {
     getTimeStyles: (mins: number) => { text: string, border: string, bg: string }
     stations: PrepStation[]
     activeStationId: string
+    lang?: 'en' | 'es'
 }
 
 // Detect order source from guest_info or order_type
-function getOrderSource(order: Order): { label: string; icon: any; color: string; bg: string } {
-    if (order.guest_info?.platform === 'qr') return { label: 'QR DIGITAL', icon: QrCode, color: 'text-purple-700', bg: 'bg-purple-100 border-purple-200' }
-    if (order.order_type === 'takeout') return { label: 'PARA LLEVAR', icon: Package, color: 'text-blue-700', bg: 'bg-blue-100 border-blue-200' }
-    if (order.order_type === 'delivery') return { label: 'DELIVERY', icon: Package, color: 'text-cyan-700', bg: 'bg-cyan-100 border-cyan-200' }
-    return { label: 'MESA', icon: User, color: 'text-slate-600', bg: 'bg-slate-100 border-slate-200' }
+function getOrderSource(order: Order, t: any): { label: string; icon: any; color: string; bg: string } {
+    if (order.guest_info?.platform === 'qr') return { label: t.card.qr || 'QR DIGITAL', icon: QrCode, color: 'text-purple-700', bg: 'bg-purple-100 border-purple-200' }
+    if (order.order_type === 'takeout') return { label: t.card.takeout || 'PARA LLEVAR', icon: Package, color: 'text-blue-700', bg: 'bg-blue-100 border-blue-200' }
+    if (order.order_type === 'delivery') return { label: t.card.delivery || 'DELIVERY', icon: Package, color: 'text-cyan-700', bg: 'bg-cyan-100 border-cyan-200' }
+    return { label: t.card.table || 'MESA', icon: User, color: 'text-slate-600', bg: 'bg-slate-100 border-slate-200' }
 }
 
 export function OrderCard({
@@ -36,15 +38,17 @@ export function OrderCard({
     getMinutes,
     getTimeStyles,
     stations,
-    activeStationId
+    activeStationId,
+    lang = 'es'
 }: OrderCardProps) {
+    const t = adminTranslations[lang].kds
     const totalItems = order.order_items.length;
     const readyItems = order.order_items.filter(i => i.status === 'ready').length;
     const hasUnstartedItems = order.order_items.some(i => !i.status || i.status === 'pending');
     const progress = (readyItems / totalItems) * 100;
     const minutes = getMinutes(order.created_at);
     const styles = getTimeStyles(minutes);
-    const source = getOrderSource(order);
+    const source = getOrderSource(order, t);
     const SourceIcon = source.icon;
 
     return (
@@ -56,7 +60,7 @@ export function OrderCard({
         )}>
             {order.priority && (
                 <div className="absolute top-0 right-0 px-4 py-1.5 bg-[#FFD700] text-slate-900 font-black italic text-[9px] uppercase tracking-widest rounded-bl-2xl flex items-center gap-2">
-                    <Star className="w-3 h-3 fill-slate-900" /> PRIORIDAD VIP
+                    <Star className="w-3 h-3 fill-slate-900" /> {t.card.vip}
                 </div>
             )}
 
@@ -88,7 +92,7 @@ export function OrderCard({
                         <span className="text-lg font-black italic text-slate-900">{readyItems}/{totalItems}</span>
                         <Package className="w-6 h-6 text-slate-900" strokeWidth={3} />
                     </div>
-                    <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mt-1">ITEMS LISTOS</p>
+                    <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mt-1">{t.card.items_ready}</p>
                 </div>
             </div>
 
@@ -110,7 +114,7 @@ export function OrderCard({
                     "flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] transition-all",
                     expanded ? "text-slate-600" : "text-orange-600 animate-bounce"
                 )}>
-                    {expanded ? "Cerrar Detalles" : "Ver Pedido Completo"}
+                    {expanded ? t.card.close : t.card.view}
                     <Flame className={cn("w-4 h-4 transition-transform", expanded && "rotate-180")} strokeWidth={3} />
                 </div>
             </button>
@@ -123,8 +127,8 @@ export function OrderCard({
                                 <AlertTriangle className="w-5 h-5 text-orange-600" strokeWidth={3} />
                             </div>
                             <div className="flex flex-col">
-                                <p className="text-[12px] font-black text-white uppercase tracking-widest leading-none">⚠️ ATENCIÓN COCINA</p>
-                                <p className="text-[13px] font-black italic text-orange-50 uppercase mt-1">Hay productos sin iniciar en esta comanda</p>
+                                <p className="text-[12px] font-black text-white uppercase tracking-widest leading-none"> {t.card.attention}</p>
+                                <p className="text-[13px] font-black italic text-orange-50 uppercase mt-1">{t.card.unstarted}</p>
                             </div>
                         </div>
                     )}
@@ -154,7 +158,7 @@ export function OrderCard({
                                                     isReady ? "line-through text-slate-400" : "text-slate-900"
                                                 )}>{item.products?.name}</span>
                                                 <div className="flex items-center gap-2 mt-1">
-                                                    {station && activeStationId === 'TODAS' && (
+                                                    {station && activeStationId === t.all_stations && (
                                                         <span className="text-[9px] font-black text-white px-2 py-0.5 rounded bg-orange-600 shadow-sm">
                                                             {station.name.toUpperCase()}
                                                         </span>
@@ -164,7 +168,7 @@ export function OrderCard({
                                                             "text-[9px] font-black uppercase tracking-wider flex items-center gap-1 px-2 py-0.5 rounded",
                                                             minutes > item.products.preparation_time ? "bg-rose-100 text-rose-600 animate-pulse" : "bg-slate-100 text-slate-500"
                                                         )}>
-                                                            <Timer className="w-3 h-3" /> {item.products.preparation_time} MIN
+                                                            <Timer className="w-3 h-3" /> {item.products.preparation_time} {t.card.min}
                                                         </span>
                                                     )}
                                                 </div>
@@ -181,9 +185,9 @@ export function OrderCard({
                                             )}
                                         >
                                             {isReady ? (
-                                                <><CheckCircle className="w-5 h-5" strokeWidth={3} /> LISTO</>
+                                                <><CheckCircle className="w-5 h-5" strokeWidth={3} /> {t.card.ready}</>
                                             ) : (
-                                                <><Play className="w-5 h-5 fill-white" strokeWidth={3} /> INICIAR</>
+                                                <><Play className="w-5 h-5 fill-white" strokeWidth={3} /> {t.card.start}</>
                                             )}
                                         </Button>
                                     </div>
@@ -203,7 +207,7 @@ export function OrderCard({
                         <div className="p-5 bg-amber-50 border-2 border-amber-200 rounded-[1.5rem] flex items-start gap-3 shadow-inner">
                             <Bell className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
                             <div className="space-y-1">
-                                <p className="text-[9px] font-black text-amber-600 uppercase tracking-widest italic">Nota de Comanda</p>
+                                <p className="text-[9px] font-black text-amber-600 uppercase tracking-widest italic">{t.card.note}</p>
                                 <p className="text-xs font-black italic text-amber-950 uppercase leading-snug">"{order.notes}"</p>
                             </div>
                         </div>
@@ -213,7 +217,7 @@ export function OrderCard({
                         {order.status === 'pending' && (
                             <Button onClick={() => onUpdateStatus(order.id, 'preparing')} className="w-full h-14 bg-slate-900 text-white hover:bg-slate-800 rounded-2xl font-black italic text-[11px] uppercase tracking-widest shadow-xl">
                                 <Play className="w-4 h-4 mr-2 fill-white" />
-                                INICIAR ESTA ORDEN
+                                {t.card.start_order}
                             </Button>
                         )}
                         {order.status === 'preparing' && (
@@ -227,15 +231,15 @@ export function OrderCard({
                                 )}
                             >
                                 {progress === 100 ? (
-                                    <><CheckCircle className="w-4 h-4" /> MARCAR TODO LISTO</>
+                                    <><CheckCircle className="w-4 h-4" /> {t.card.mark_ready}</>
                                 ) : (
-                                    <><SkipForward className="w-4 h-4" /> TERMINAR FORZADO</>
+                                    <><SkipForward className="w-4 h-4" /> {t.card.force_terminate}</>
                                 )}
                             </Button>
                         )}
                         {order.status === 'ready' && (
                             <Button onClick={() => onUpdateStatus(order.id, 'delivered')} className="w-full h-14 bg-emerald-600 hover:bg-emerald-700 text-white font-black italic text-[11px] uppercase tracking-widest rounded-2xl shadow-xl shadow-emerald-500/30">
-                                ENTREGAR A MESERO
+                                {t.card.handover}
                             </Button>
                         )}
                     </div>
