@@ -20,6 +20,7 @@ En esta sesión se ha transformado el sistema de un POS robusto a una plataforma
 | **JAMALI GUEST BOOK** | Sistema de Reservas con Concierge IA y Auditoría Social. | Aumento en la tasa de conversión de clientes desde la web pública y control de aforo. |
 | **Premium UX Elite** | Rediseño estructural bajo el estándar Pixora Light v2 con Glassmorphism 3.0. | Experiencia de usuario de nivel "Top-Tier" que justifica precios Premium. |
 | **Onboarding Elite** | Unificación de Demo, Setup y Pago en un flujo interactivo de 5 fases. | Reducción drástica del abandono en registro (Churn) y activación inmediata. |
+| **Financial Core v2** | Facturación Fiscal con desglose de impuestos y Vouchers contables profesionales. | Legalidad total y control de Caja Menor con impresión térmica 80mm. |
 
 ---
 
@@ -56,6 +57,7 @@ Se ha cumplido la **Regla Estricta de Documentación** previa al cierre:
 - [x] **IMPLEMENTATION_JAMALI_GUARDIAN.md**: Marcado como 100% fases completadas.
 - [x] **JAMALI_GUEST_BOOK**: Sistema de reservas 100% funcional y documentado.
 - [x] **Premium UX Rehaul**: Landing Page, Login y Registro 100% modernizados.
+- [x] **Financial Core v2**: Facturación fiscal y comprobantes contables con diseño premium.
 
 ---
 

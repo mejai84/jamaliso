@@ -142,7 +142,16 @@ El sistema utiliza un flag `isPaid` y `setupCompleted` para orquestar el acceso 
 
 ---
 
-## 9. Patrón de Acceso a Datos (Híbrido)
+## 9. Premium Financial Core (Fiscal Ready)
+JAMALI OS ha evolucionado su sistema de transacciones para cumplir con estándares contables de alta gama:
+1.  **Facturación Electrónica (v2.0):** Desglose detallado de impuestos por ítem y total neto. Documento equivalente para impresión térmica (80mm).
+2.  **Vouchers de Caja Menor:** Generación de comprobantes profesionales de ingreso/egreso con branding real del restaurante y protocolo de justificación.
+3.  **Auditoría de Cierre (Z-Report):** Reporte de final de turno que sincroniza el saldo teórico con el conteo físico, detectando novedades con precisión forense.
+4.  **Identidad Legal:** Los documentos impresos integran automáticamente el logo, NIT y dirección legal configurados en el sistema.
+
+---
+
+## 10. Patrón de Acceso a Datos (Híbrido)
 Para garantizar integridad en operaciones complejas, JAMALI OS utiliza dos capas:
 
 1.  **Capa Supabase (Client-Side):**
@@ -169,14 +178,14 @@ graph TD
 
 ---
 
-## 10. Perímetro de Seguridad (Edge & Network)
+## 11. Perímetro de Seguridad (Edge & Network)
 *   **Edge Middleware (`src/middleware.ts`):** Rate Limiter asíncrono (100 req/min/IP) que bloquea IPs maliciosas y valida JWT perimetralmente antes de tocar la DB.
 *   **Strict CORS & Security Headers:** `X-Frame-Options`, `Strict-Transport-Security`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy` en `next.config.ts`.
 *   **Health Check Monitoring:** Endpoint `/api/health` para verificacion de latencia de DB y estado de servicios.
 
 ---
 
-## 11. Resiliencia y Escalabilidad (Caching & PWA)
+## 12. Resiliencia y Escalabilidad (Caching & PWA)
 *   **Edge Caching (Next.js Native):** Implementación de `unstable_cache` en `src/actions/cache.ts` para catálogos y perfiles de restaurantes, reduciendo carga en Supabase.
 *   **PWA Resiliencia:** Utiliza `@ducanh2912/next-pwa` para registrar un **Service Worker** (`sw.js`).
 *   **Offline Logic:** Motor offline (`src/lib/offline-engine.ts`) para guardado local en emergencias de red.
@@ -184,7 +193,7 @@ graph TD
 
 ---
 
-## 12. Observabilidad e Inteligencia Forense (IA Guardian)
+## 13. Observabilidad e Inteligencia Forense (IA Guardian)
 *   **Sentry Integration:** Captura de excepciones en Server Actions críticos (`processOrderPayment`) y monitoreo de performance en el Edge.
 *   **Predictive Anti-Fraude SQL:**
     *   **Triggers IA:** `pattern_anomaly_watchdog` detecta ráfagas (Burst) de anulaciones y comportamientos de alto riesgo.
@@ -194,14 +203,14 @@ graph TD
 
 ---
 
-## 13. Riesgos Técnicos y Mitigaciones
+## 14. Riesgos Técnicos y Mitigaciones
 1.  **Caída de Supabase** → Modo Offline Emergencia (pedidos en localStorage + sync).
 2.  **Lentitud en reportes** → Vistas materializadas (`materialized views`) para dashboards históricos.
 3.  **Pool exhaustion** → Supabase Transaction Pooler (Puerto 6543) + `client.release()` estricto.
 
 ---
 
-## 14. Patrón de Refactorización Atómica (SaaS Enterprise)
+## 15. Patrón de Refactorización Atómica (SaaS Enterprise)
 1.  **Límite de LOC:** `page.tsx` ≤ 150-200 líneas.
 2.  **Extracción de Tipos:** Interfaces en `types.ts` dentro de cada módulo.
 3.  **Componentes Discretos:** UI en `src/components/admin/[module_name]/`.
@@ -209,7 +218,7 @@ graph TD
 
 ---
 
-## 15. Interfaz y Diseño (Pixora Light Theme)
+## 16. Interfaz y Diseño (Pixora Light Theme)
 Desde marzo de 2026, JAMALI OS implementa el estándar **Pixora Light**:
 *   **Color System:** `Slate-900` textos + `Orange-600` (`#EA580C`) acciones principales.
 *   **Escalado Inteligente:** `font-size` dinámico (100% móvil, 85% tablet, 75% laptop, 65% monitores grandes).
@@ -219,4 +228,4 @@ Desde marzo de 2026, JAMALI OS implementa el estándar **Pixora Light**:
 
 ---
 
-*Última actualización: 08 Marzo 2026 — Se añade Inteligencia Predictiva (IA Guardian) y Onboarding Elite v2 (Premium UX overhaul).*
+*Última actualización: 08 Marzo 2026 — Se añade Inteligencia Predictiva (IA Guardian), Onboarding Elite v2 (Premium UX overhaul) y Financial Core v2 (Fiscal Ready).*
