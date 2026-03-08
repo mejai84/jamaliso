@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import "./globals.css";
@@ -25,13 +26,15 @@ export default function RootLayout({
     return (
         <html lang="es" className="light" suppressHydrationWarning>
             <body className={`${outfit.className} bg-background text-foreground antialiased`}>
-                <RestaurantProvider>
-                    <CartProvider>
-                        <LayoutClientWrapper>
-                            {children}
-                        </LayoutClientWrapper>
-                    </CartProvider>
-                </RestaurantProvider>
+                <Suspense fallback={null}>
+                    <RestaurantProvider>
+                        <CartProvider>
+                            <LayoutClientWrapper>
+                                {children}
+                            </LayoutClientWrapper>
+                        </CartProvider>
+                    </RestaurantProvider>
+                </Suspense>
             </body>
         </html>
     );
