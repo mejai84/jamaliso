@@ -241,7 +241,7 @@ export default function AdminDashboard() {
                 {/* Quick Stats Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
                     {/* Ventas Hoy */}
-                    <div className="bg-white rounded-[2rem] p-8 border-2 border-slate-50 shadow-sm relative overflow-hidden group hover:border-emerald-500/20 transition-all duration-300">
+                    <div className="bg-white rounded-[2rem] p-6 2xl:p-8 border-2 border-slate-50 shadow-sm relative overflow-hidden group hover:border-emerald-500/20 transition-all duration-300">
                         <div className="flex justify-between items-start mb-6">
                             <div className="p-4 bg-emerald-500/10 rounded-2xl">
                                 <Wallet className="w-6 h-6 text-emerald-600" />
@@ -259,7 +259,7 @@ export default function AdminDashboard() {
                     </div>
 
                     {/* Órdenes Activas */}
-                    <div className="bg-white rounded-[2rem] p-8 border-2 border-slate-50 shadow-sm relative overflow-hidden group hover:border-orange-500/20 transition-all duration-300">
+                    <div className="bg-white rounded-[2rem] p-6 2xl:p-8 border-2 border-slate-50 shadow-sm relative overflow-hidden group hover:border-orange-500/20 transition-all duration-300">
                         <div className="flex justify-between items-start mb-6">
                             <div className="p-4 bg-orange-500/10 rounded-2xl">
                                 <ShoppingBag className="w-6 h-6 text-orange-600" />
@@ -278,7 +278,7 @@ export default function AdminDashboard() {
                     </div>
 
                     {/* Mesas Ocupadas */}
-                    <div className="bg-white rounded-[2rem] p-8 border-2 border-slate-50 shadow-sm relative overflow-hidden group hover:border-blue-500/20 transition-all duration-300">
+                    <div className="bg-white rounded-[2rem] p-6 2xl:p-8 border-2 border-slate-50 shadow-sm relative overflow-hidden group hover:border-blue-500/20 transition-all duration-300">
                         <div className="flex justify-between items-start mb-6">
                             <div className="p-4 bg-blue-500/10 rounded-2xl">
                                 <Utensils className="w-6 h-6 text-blue-600" />
@@ -296,7 +296,7 @@ export default function AdminDashboard() {
                     </div>
 
                     {/* Stock Crítico */}
-                    <div className="bg-white rounded-[2rem] p-8 border-2 border-slate-50 shadow-sm relative overflow-hidden group hover:border-rose-500/20 transition-all duration-300">
+                    <div className="bg-white rounded-[2rem] p-6 2xl:p-8 border-2 border-slate-50 shadow-sm relative overflow-hidden group hover:border-rose-500/20 transition-all duration-300">
                         <div className="flex justify-between items-start mb-6">
                             <div className="p-4 bg-rose-500/10 rounded-2xl">
                                 <Package className="w-6 h-6 text-rose-600" />
@@ -313,10 +313,10 @@ export default function AdminDashboard() {
                 </div>
 
                 {/* Main Sections Grid */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 2xl:gap-10">
                     {/* Secondary Metrics / Activity Center */}
-                    <div className="lg:col-span-4 space-y-10">
-                        <div className="bg-white rounded-[2.5rem] p-10 border-2 border-slate-50 shadow-sm space-y-8">
+                    <div className="lg:col-span-4 space-y-6 2xl:space-y-10">
+                        <div className="bg-white rounded-[2.5rem] p-6 2xl:p-10 border-2 border-slate-50 shadow-sm space-y-6 2xl:space-y-8">
                             <div>
                                 <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.3em] italic mb-6">
                                     {t.dashboard.notifications}
@@ -349,8 +349,8 @@ export default function AdminDashboard() {
                             </div>
                         </div>
 
-                        <div className="bg-slate-900 rounded-[2.5rem] p-10 text-white relative overflow-hidden group shadow-2xl shadow-slate-900/20">
-                            <div className="absolute top-0 right-0 p-12 opacity-5 scale-150 rotate-12">
+                        <div className="bg-slate-900 rounded-[2.5rem] p-6 2xl:p-10 text-white relative overflow-hidden group shadow-2xl shadow-slate-900/20">
+                            <div className="absolute top-0 right-0 p-8 2xl:p-12 opacity-5 scale-150 rotate-12">
                                 <TrendingUp className="w-24 h-24" />
                             </div>
                             <h4 className="text-[10px] font-black text-orange-500 uppercase tracking-[0.4em] italic mb-4">{t.dashboard.synchronizing}</h4>
@@ -368,9 +368,9 @@ export default function AdminDashboard() {
                     </div>
 
                     {/* Operations Control Center */}
-                    <div className="lg:col-span-8 space-y-10">
-                        <div className="bg-white rounded-[2.5rem] p-10 border-2 border-slate-50 shadow-sm h-full">
-                            <div className="flex items-center justify-between mb-10">
+                    <div className="lg:col-span-8 space-y-6 2xl:space-y-10">
+                        <div className="bg-white rounded-[2.5rem] p-6 2xl:p-10 border-2 border-slate-50 shadow-sm h-full">
+                            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 2xl:mb-10 gap-4">
                                 <div>
                                     <h3 className="text-2xl font-black italic tracking-tighter text-slate-900 uppercase">
                                         {t.dashboard.control_modules}
@@ -394,10 +394,10 @@ export default function AdminDashboard() {
                                     <Link
                                         key={i}
                                         href={module.href}
-                                        className="group p-8 rounded-[2rem] bg-slate-50 border-2 border-transparent hover:border-slate-100 hover:bg-white hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300 flex flex-col items-center gap-4 text-center active:scale-95"
+                                        className="group p-4 2xl:p-8 rounded-2xl 2xl:rounded-[2rem] bg-slate-50 border-2 border-transparent hover:border-slate-100 hover:bg-white hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300 flex flex-col items-center gap-2 2xl:gap-4 text-center active:scale-95"
                                     >
-                                        <div className={`p-5 rounded-2xl bg-${module.color}-500/10 group-hover:bg-${module.color}-500 transition-colors`}>
-                                            <module.icon className={`w-6 h-6 text-${module.color}-600 group-hover:text-white transition-colors`} />
+                                        <div className={`p-4 2xl:p-5 rounded-2xl bg-${module.color}-500/10 group-hover:bg-${module.color}-500 transition-colors`}>
+                                            <module.icon className={`w-5 h-5 2xl:w-6 2xl:h-6 text-${module.color}-600 group-hover:text-white transition-colors`} />
                                         </div>
                                         <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest group-hover:text-slate-900">
                                             {module.label}

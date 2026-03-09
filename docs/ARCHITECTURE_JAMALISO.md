@@ -241,4 +241,12 @@ JAMALI OS no es solo código; es un legado familiar transformado en tecnología 
 
 ---
 
-*Última actualización: 08 Marzo 2026 — Se añade Simbolismo de Marca, Landing Page 9/10 (Gallery Focus + 15Screens), Inteligencia Predictiva (IA Guardian), Onboarding Elite v2 (Premium UX overhaul), Financial Core v2 (Fiscal Ready) y Multi-Branch Context Isolation.*
+## 18. Subsistema Fiscal Pro (Anexo 1.9 DIAN - Colombia)
+JAMALISO integra un motor de fiscalización redundante para cumplir con la normativa colombiana:
+- **Validación Previa Hybrid**: Las facturas de restaurante (Ticket POS) se transmiten en tiempo real. Si la DIAN presenta latencia, el sistema cambia a modo asíncrono usando una `zip_key` para reconciliación posterior.
+- **Identidad de Hardware**: Cada terminal (Kiosco/POS) reporta su `cash_plate_number` (Placa física) cumpliendo el requisito de identificación de máquina registradora.
+- **Loyalty Sync**: Los beneficios de comprador (Puntos) se reportan en el XML fiscal para garantizar transparencia en la base gravable.
+
+---
+
+*Última actualización: 10 Marzo 2026 — Se añade Simbolismo de Marca, Landing Page 9/10, Inteligencia Predictiva (IA Guardian), Onboarding Elite v2, Financial Core v2 (Fiscal Ready), POS Electrónico (Anexo 1.9 DIAN) y Multi-Branch Context Isolation.*

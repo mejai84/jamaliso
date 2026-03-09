@@ -17,10 +17,11 @@
 ## 🧾 Facturación Electrónica DIAN
 *Obligatorio por ley en Colombia — sin esto ningún restaurante formal puede usarte*
 
-- [ ] Investigar proveedores de facturación electrónica certificados DIAN (1 semana. ⏳)
-- [ ] Integrar API de facturación con tabla receipts (2 semanas. ⏳)
-- [ ] Soporte para múltiples resoluciones DIAN por restaurante (1 semana. ⏳)
-- [ ] Generación de PDF de factura y envío por WhatsApp (3 días. ⏳)
+- [✅] Investigar proveedores de facturación electrónica certificados DIAN (FacturaLatam/API DIAN. ✅)
+- [✅] Integrar API de facturación con tabla receipts (Motor Fiscal Pro Anexo 1.9. ✅)
+- [✅] Soporte para múltiples resoluciones DIAN por restaurante (Carga vía Wizard Fiscal. ✅)
+- [✅] Generación de POS Electrónico (Documento Equivalente Electrónico sin topes de UVT. ✅)
+- [ ] Envío automático de factura por WhatsApp (Integración API WhatsApp. ⏳)
 
 ## 🛒 Producto — Funcionalidades Clave
 *Features que tienen los competidores y que Jamali OS necesita para competir*
@@ -29,9 +30,9 @@
 - [✅] Integración con impresoras térmicas ESC/POS (Thermal Print Active. ✅)
 - [✅] KDS PRO: Filtrado por estación, Alertas Sonoras, Resumen de Producción y Gestor de Stock (✅)
 - [✅] Pedidos por QR: Menú digital auto-servicio con inyección directa a KDS (✅)
-- [ ] Programa de lealtad / puntos por compra (1 semana. ⏳)
-- [ ] Tienda online propia por restaurante (1 mes. ⏳)
-- [ ] Módulo de autoservicio (kiosco) (Enero 2026. ⏳)
+- [✅] Programa de lealtad / puntos por compra (Loyalty Engine V1. ✅)
+- [✅] Tienda online propia por restaurante (Web E-commerce V1. ✅)
+- [✅] Módulo de autoservicio (kiosco) (Self-Service Terminal V1. ✅)
 - [✅] Plano de salón visual drag & drop (Architecture Engine v2. ✅)
 - [✅] Notificación al mesero cuando pedido está listo (Bell & Zap Indicators. ✅)
 - [✅] WAITER PRO: Favoritos, Reloj de Servicio, Split Check, Transferencia y Unión de Mesas (✅)
@@ -120,9 +121,10 @@
 - [✅] Motor de Comisiones: Cálculo automático por venta cerrada en POS (✅)
 - [✅] Dashboard de Nómina: Control de turnos y KPIs de talento (✅)
 - [✅] Catálogo Legal: Conceptos de ley (Salud, Pensión, Horas Extra) (✅)
-- [ ] Generación de Desprendibles de Pago (PDF) (2 días. ⏳)
-- [ ] Reporte de Parafiscales para Contabilidad (1 día. ⏳)
-- [ ] Gestión de Préstamos y Adelantos de Sueldo (3 días. ⏳)
+- [✅] Generación de Desprendibles de Pago (PDF) (✅)
+- [✅] Reporte de Parafiscales e Integración Contable (SIIGO/Helisa) (✅)
+- [✅] Gestión de Novedades (Incapacidades, Vacaciones, Permisos) (✅)
+- [✅] Gestión de Préstamos y Adelantos de Sueldo (✅)
 
 ## 🤖 Inteligencia de Marketing & IA
 *Convertir datos en ventas proactivas y automatizadas*
@@ -135,7 +137,7 @@
 
 ## 📡 Hardware & Operaciones Especiales
 - [ ] **Voice-to-KDS**: Comandos de voz en cocina para actualizar estado de pedidos (⏳)
-- [ ] **Self-Service Kiosk**: Interfaz táctil para pedidos autónomos del cliente (⏳)
+- [✅] **Self-Service Kiosk**: Interfaz táctil para pedidos autónomos e integración fiscal prepago (✅)
 - [ ] **Face-ID Entry**: Reconocimiento facial para asistencia y auditoría del Guardian (⏳)
 
 ## 💼 ERP Avanzado & Negocio

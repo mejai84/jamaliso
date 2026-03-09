@@ -95,7 +95,7 @@ export function MobileSidebar({ isOpen, onClose, userRole }: MobileSidebarProps)
                 {/* Decorative Glow */}
                 <div className="absolute top-0 left-0 w-full h-64 bg-primary/5 blur-[80px] pointer-events-none" />
 
-                <div className="p-8 border-b border-slate-100 flex items-center justify-between relative z-10">
+                <div className="p-5 border-b border-slate-100 flex items-center justify-between relative z-10">
                     <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-center relative overflow-hidden">
                             <Image src="/images/jamali-os-logo.png" alt="JAMALI OS" fill className="object-contain p-1.5" />
@@ -107,17 +107,17 @@ export function MobileSidebar({ isOpen, onClose, userRole }: MobileSidebarProps)
                     </Button>
                 </div>
 
-                <div className="flex-1 overflow-y-auto p-6 space-y-10 custom-scrollbar relative z-10">
+                <div className="flex-1 overflow-y-auto p-4 space-y-6 custom-scrollbar relative z-10">
                     {sidebarSections.map((section, idx) => {
                         const filteredItems = section.items.filter(item => userRole === 'admin' || item.roles.includes(userRole))
                         if (filteredItems.length === 0) return null
 
                         return (
-                            <div key={idx} className="space-y-4">
-                                <h4 className="px-4 text-[9px] font-black text-slate-400 uppercase tracking-[0.3em] font-sans">
+                            <div key={idx} className="space-y-2">
+                                <h4 className="px-3 text-[8px] font-black text-slate-400 uppercase tracking-[0.3em] font-sans">
                                     {getSectionTitle(section.title)}
                                 </h4>
-                                <div className="space-y-1">
+                                <div className="space-y-0.5">
                                     {filteredItems.map((item) => {
                                         const Icon = item.icon
                                         const isActive = pathname === item.href
@@ -130,17 +130,17 @@ export function MobileSidebar({ isOpen, onClose, userRole }: MobileSidebarProps)
                                                 className="block group relative"
                                             >
                                                 <div className={cn(
-                                                    "flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-300 relative",
+                                                    "flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-300 relative",
                                                     isActive
                                                         ? "bg-primary/10 text-primary border border-primary/5 shadow-sm"
                                                         : "text-slate-500 hover:bg-slate-50"
                                                 )}>
                                                     <Icon className={cn(
-                                                        "w-5 h-5 transition-all",
+                                                        "w-4 h-4 transition-all",
                                                         isActive ? "text-primary scale-110" : "group-hover:text-primary/70"
                                                     )} />
                                                     <span className={cn(
-                                                        "text-[10px] font-black uppercase italic tracking-widest transition-all",
+                                                        "text-[9px] font-black uppercase italic tracking-widest transition-all",
                                                         isActive ? "text-slate-900" : "group-hover:translate-x-1"
                                                     )}>
                                                         {getNavLabel(item.label)}
@@ -155,10 +155,10 @@ export function MobileSidebar({ isOpen, onClose, userRole }: MobileSidebarProps)
                     })}
                 </div>
 
-                <div className="p-8 border-t border-slate-100 bg-slate-50 relative z-10">
+                <div className="p-5 border-t border-slate-100 bg-slate-50 relative z-10">
                     <Button
                         variant="ghost"
-                        className="w-full justify-start gap-4 h-14 text-[10px] font-black uppercase italic tracking-[0.3em] text-rose-500/70 hover:bg-rose-50 hover:text-rose-600 rounded-xl transition-all border border-rose-100 group mb-6"
+                        className="w-full justify-start gap-3 h-11 text-[9px] font-black uppercase italic tracking-[0.3em] text-rose-500/70 hover:bg-rose-50 hover:text-rose-600 rounded-xl transition-all border border-rose-100 group mb-4"
                         onClick={handleLogout}
                     >
                         <LogOut className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />

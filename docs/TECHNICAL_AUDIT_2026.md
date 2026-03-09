@@ -27,6 +27,7 @@ En esta sesión se ha transformado el sistema de un POS robusto a una plataforma
 | **Smart Cashier Shield** | Sistema de autorización por PIN y protocolo contra 30 tipos de fraude. | Eliminación del riesgo de robo por anulación, descuentos o fraudes de caja. |
 | **Atomic POS Safeguard** | Bloqueo de liberación de mesas sin pago y arqueo ciego forzado. | Integridad financiera del 100% y eliminación de 'manual balancing'. |
 | **Inventory Shrinkage** | Traceable inventory deduction based on recipes and movements. | Control total de costos (Food Cost) y detección de 'robo hormiga'. |
+| **JAMALI FISCAL PRO** | Motor de cumplimiento Anexo 1.9 DIAN para POS Electrónico y Contingencia. | Legalidad total en Colombia, ahorro en papel y cumplimiento sin topes de UVT. |
 | **Waiter Portal v2.0** | Operaciones atómicas de unión/transferencia y traducción total. | Fluidez operativa en salón y eliminación de errores de estado en mesas. |
 
 ---
@@ -38,7 +39,8 @@ En esta sesión se ha transformado el sistema de un POS robusto a una plataforma
 - **Vistas Inteligentes**: 1 (`guardian_employee_risk`) que actúa como el "Cerebro" del sistema.
 - **Engine de Nómina**: Motor ACID con cálculos de Parafiscales y Provisiones (Nómina PRO).
 - **Triggers de Seguridad**: 5 niveles (Anulaciones, Descuentos, Stock Crítico, Ráfagas, Reservas).
-- **Server Actions**: +7 funciones críticas (Guardian & Reservations) para orquestación segura.
+- **Motor Fiscal**: Integración Anexo 1.9 DIAN con firma digital y transmisión asíncrona.
+- **Server Actions**: +12 funciones críticas (Guardian, Reservations, Billing & Kiosk) para orquestación segura.
 - **Estética**: Implementación del "Pixora Light v2" (Landing, Login, Onboarding Wizard) y "Dark Elite Guardian" (Owner App).
 
 - **RLS (Row Level Security)**: Hardened in Session 08 (March 2026). Previously leaky policies like `auth.uid() IS NOT NULL` were replaced with strict `restaurant_id = get_my_restaurant_id()` checks.
@@ -72,6 +74,7 @@ Se ha cumplido la **Regla Estricta de Documentación** previa al cierre:
 - [x] **Inventory Traceability**: Implementado seguimiento de insumos con deducción automática y logs de movimientos.
 - [x] **Waiter Portal v2.0**: Actualizado el manual de usuario con las nuevas lógicas de salón.
 - [x] **POS State Machine Fix**: Corregida máquina de estados (`payment_requested`), Real-time en mesero, query cajero, restricción cocina, Server Actions.
+- [x] **JAMALI FISCAL PRO**: Ecosistema completo integrado. Motor Anexo 1.9, Wizard de configuración Pixora UI, y transmisión automática desde POS/Kiosco operativa.
 
 ---
 

@@ -11,6 +11,16 @@ Este manual es la referencia oficial para todos los roles del sistema. Está div
 
 JAMALISO es un sistema operativo SaaS diseñado para la elite del sector gastronómico. Bajo su estándar **Pixora Light v2**, ofrece una experiencia visual premium inspirada en sistemas operativos modernos (Glassmorphism), centralizando la operación de salón, cocina, inventario y finanzas con una latencia mínima.
 
+### 🗺️ El Nuevo Mapa Maestro de Navegación (v5.0)
+
+JAMALISO ha evolucionado hacia una estructura de **5 Dominios Estratégicos** para simplificar la operación y reducir la carga cognitiva:
+
+1.  **⚡ VENTAS Y OPERACIÓN**: Central de Front-of-House (POS, Mesas, Reservas, Caja y Pedidos).
+2.  **🍳 PRODUCCIÓN Y LOGÍSTICA**: Gestión de Back-of-House (KDS, Menú, Stock, Recetas y Compras).
+3.  **👥 GESTIÓN DE TALENTO**: Ecosistema de RRHH (Reloj Laboral, Nómina, Novedades y Staff).
+4.  **🌐 ECOSISTEMA DIGITAL**: Crecimiento y Marketing (Web App, CRM y Fidelidad).
+5.  **⚙️ COMANDO CENTRAL**: Estrategia y Seguridad (Analítica, Fiscal, Auditoría y Configuración).
+
 ### Ciclo Diario de Operación (Resumen Rápido)
 
 | Momento | Responsable | Acción |
@@ -352,8 +362,18 @@ JAMALI PAYROLL PRO no solo le dice cuánto debe pagar hoy, sino cuánto está ac
 - **Vacaciones** (4.17%)
 Esto le permite al dueño conocer la **Rentabilidad Real** de su negocio después de todas las cargas prestacionales ocultas.
 
-#### 4. Sincronización DIAN:
-El sistema está optimizado para generar el soporte de **Nómina Electrónica**, marcando cada registro con los estándares requeridos por la autoridad tributaria.
+#### 5. Gestión de Novedades Laborales:
+Ubicado en **Gestión de Talento → Novedades Laborales**, permite registrar ausentismos legales:
+- **Incapacidades**: Se liquidan al **66.67%** automáticamente en la quincena correspondiente.
+- **Vacaciones**: El sistema bloquea el consumo de auxilio de transporte para estos días.
+- **Permisos No Remunerados**: Deducción automática del Salario Básico.
+
+#### 6. Notificaciones y Entrega:
+- **Envío Masivo**: Al finalizar una nómina, use el botón **"EMITIR RECIBOS"** para enviar comprobantes por Email/WhatsApp.
+- **Generación PDF**: Descargue los desprendibles legales directamente para archivo físico o firma del empleado.
+
+#### 7. Integración Contable:
+- **Exportación Directa**: Genere archivos CSV listos para importar en **SIIGO** o **HELISA**, eliminando errores de digitación manual.
 
 ---
 
@@ -402,6 +422,34 @@ Si tiene una lista de 500 productos o ingredientes en Excel, no los cree uno a u
 
 > [!TIP]
 > Use la importación masiva durante la **Inauguración** del restaurante para cargar todo su menú e inventario inicial en menos de 5 minutos.
+
+---
+
+### 🧾 3.13. JAMALI FISCAL PRO — Facturación y POS Electrónico (`/admin/billing`)
+
+Este módulo garantiza que tu restaurante cumpla al 100% con la normativa de la **DIAN (Anexo 1.9)** en Colombia. El sistema automatiza la emisión de facturas y documentos equivalentes sin que el cajero deba realizar pasos adicionales.
+
+#### 🛠️ 1. Configuración Inicial (Wizard Fiscal):
+Para activar la legalidad de tu software, sigue el **Asistente de Activación Pixora** en la parte superior del tablero de facturación:
+1.  **Datos de Empresa**: Ingresa NIT, Razón Social y la **Placa de Máquina (POS)**.
+2.  **Identidad de Software**: Pega el `Software ID` y `PIN` generados en el portal de la DIAN.
+3.  **Firma Digital**: Carga tu certificado `.p12` y su contraseña. JAMALI OS lo cifra de forma segura.
+4.  **Habilitación/Producción**: Ingresa el `Test Set ID` si estás en pruebas, o activa el switch de **PRODUCCIÓN** para empezar a emitir legalmente.
+
+#### 🚀 2. Operación Automática (Invisible):
+No necesitas botones nuevos. El sistema lo hace por ti:
+-   **En el POS**: Al presionar "Pagar", el sistema genera el JSON fiscal, lo firma y lo envía a la DIAN en segundo plano.
+-   **En el Kiosco de Autoservicio**: Los pedidos pagados con tarjeta emiten automáticamente su documento electrónico al finalizar la compra.
+
+#### 🛡️ 3. Gestión de Contingencia (Modo de Crisis):
+Si los servicios de la DIAN o tu internet fallan:
+1.  El tablero de facturación se pondrá en **Color Ámbar**.
+2.  Activa el botón **"ACTIVAR CONTINGENCIA"**.
+3.  Los documentos se guardarán localmente con una `ZipKey`.
+4.  Una vez restablecido el servicio, el sistema los re-transmitirá automáticamente para legalizarlos.
+
+#### 📱 4. Diseño Mobile-First:
+El tablero fiscal, las gráficas de impuestos y el asistente de configuración son **100% Responsivos**. Puedes revisar tus ventas fiscales, descargar el **Libro Auxiliar (PDF)** o autorizar transmisiones desde cualquier smartphone o tablet.
 
 ---
 

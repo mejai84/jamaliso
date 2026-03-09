@@ -63,7 +63,9 @@ Este documento es la referencia definitiva para:
 ### 6. 💼 [JAMALI PAYROLL PRO](/admin/payroll)
 - **Cumplimiento Legal**: Motor de liquidación para Colombia (SMLV, Salud, Pensión, ARL, Auxilio Transporte).
 - **Provisiones IFRS**: Acumulación automática de Prima, Cesantías y Vacaciones.
+- **Novedades Laborales**: Gestión de Incapacidades (66.6%), Vacaciones y Permisos con impacto real en liquidación.
 - **Transacciones ACID**: Dispersión segura de pagos y control de costo real de empresa (Employer Cost).
+- **Ecosistema Contable**: Exportación directa a SIIGO/Helisa y notificaciones automáticas vía Email/WhatsApp.
 
 ### 7. 🌐 [Ventas Online Central](/admin/online-sales)
 - Activación de Web Pública y Menú Digital.
@@ -94,6 +96,14 @@ Este documento es la referencia definitiva para:
 - **Vínculo Atómico**: Imposible liberar mesa sin pago registrado.
 - **Trazabilidad de Insumos**: Deducción automática de ingredientes con movimientos rastreables.
 - **Máquina de Estados Unificada**: `pending → preparing → ready → delivered → payment_requested → paid`.
+
+### 12. 📑 [JAMALI FISCAL PRO (Anexo 1.9 DIAN)](/admin/billing)
+- **POS Electrónico**: Cumplimiento total para tickets de máquina registradora sin tope de UVT.
+- **Modo Contingencia**: Emisión de documentos de emergencia con sincronización asíncrona.
+- **Identidad de Máquina**: Registro legal de placas físicas y cajeros por transacción.
+| **Navigation 5.0** | Reorganización de 20+ módulos en 5 dominios estratégicos (Sales, Production, Talent, Digital, Central). | Mejora drástica de la UX, reducción de clics y flujo lógico de trabajo profesional. |
+| **Novedades Lab.** | Gestión de ausentismos con impacto automático en el motor de pagos. | Eliminación de errores manuales en descuentos por incapacidad o permisos. |
+- **Wizard de Habilitación**: Proceso guiado para activar el software propio ante la DIAN.
 
 ---
 ## 🏗️ Documentación del Sistema (Developer & Admin)

@@ -11,9 +11,10 @@ La estructura principal sobre la cual todo pivotea.
 | :--- | :--- | :--- |
 | `tenants` | **Partner / Reseller** | Entidad de más alto nivel para Marca Blanca. Almacena: nombre del distribuidor, logo corporativo, color primario del Partner, subdominio maestro y plan de suscripción B2B. |
 | `restaurants` | **Sucursal / Cliente** | Datos de las sucursales. Cada restaurante pertenece a un `tenant_id`. Atributos clave: `name`, `subdomain`, `logo_url`, `primary_color`. Nuevos campos: `is_web_active` (boolean), `web_mode` (menu/ecommerce), `instagram_url`, `facebook_url`, `cuisine_type`, `language` (es/en). |
-| `profiles` | Usuarios | Perfiles vinculados a `auth.users`. Controlan acceso y roles. Vinculados a un `restaurant_id`. |
+| `profiles` | Usuarios | Perfiles vinculados a `auth.users`. Controlan acceso y roles. Vinculados a un `restaurant_id`. **Roles:** `super_admin`, `fiscal_manager`, `auditor`, `owner`, `admin`, etc. |
 | `settings` | Configuración | Ajustes globales del restaurante. **PK (restaurant_id, key)** asegura que las configuraciones sean aisladas por tenant. |
 | `shift_handoffs` | **Traspaso de Turno** | Registro de entrega de caja entre empleados. Guarda snapshots de mesas abiertas, pedidos en cocina y efectivo contado. |
+| `software_provider_info` | **Proveedor de Software** | Datos legales del creador del software (JAMALISO SAS). Requerido por la DIAN para el XML fiscal. |
 
 ## 2. Subsistema de Punto de Venta (POS) y Menú
 Estructura de ventas en piso.
@@ -47,6 +48,8 @@ Control estricto contra descuadres robos.
 | `cashbox_sessions` | Transaccional | Turno de un cajero. Guarda: base inicial, dinero esperado vs declarado, responsable y descuadres. Agregadas columnas: `closed_with_pending`, `transferred_to`. |
 | `cash_movements` | Flujo | Entradas y salidas manuales durante una sesión activa. |
 | `petty_cash_vouchers` | Egresos | Pagos a proveedores en efectivo, recibos. |
+| `electronic_invoices` | **Fiscalización** | Registro legal DIAN/SAT. Incluye: `cufe_uuid`, `qr_url`, `is_pos_equivalent`. Nuevos campos Anexo 1.9: `cash_plate_number`, `zip_key`. |
+| `fiscal_settings` | **Configuración Fiscal** | Parámetros de conexión DIAN: `dian_software_id`, `technical_key`, `certificate_base64`, `environment`. |
 | `void_logs` | **Anulaciones** | Registro forense de cada anulación. Campos: operador, supervisor PIN, razón, monto, severidad. |
 
 ## 5. Subsistema Laboral y Nómina (Payroll Engine)
@@ -64,7 +67,17 @@ Administración del personal, entregas a domicilio y liquidación automática de
 | `reservations` | Guest Book | Gestión de reservas de mesas. Incluye datos de contacto, fecha, hora, número de personas y estados (pending, confirmed, etc). |
 | `security_audit` | Auditoría Forense | Log de eventos de seguridad, autorizaciones remotas, alertas push de inventario e IA. |
 
-## 6. Subsistema de Inteligencia Predictiva (IA Guardian)
+## 6. Subsistema de Expansión de Negocio (Módulos Extra)
+Las herramientas para aumentar el ticket promedio y la retención de clientes.
+
+| Tabla | Función | Descripción |
+| :--- | :--- | :--- |
+| `loyalty_settings` | Reglas | Configuración del motor de lealtad (puntos por moneda, valor de redención, etc). |
+| `customer_loyalty` | Saldos | Puntos acumulados actualmente y de por vida por cada cliente en un restaurante. |
+| `loyalty_transactions` | Historial | Earn, Redeem, Expire de puntos por orden conectada al programa VIP. |
+| `kiosk_settings` | Autoservicio | Configuración visual y operativa del tótem/kiosco para pedidos sin cajero. |
+
+## 7. Subsistema de Inteligencia Predictiva (IA Guardian)
 | Recurso | Tipo | Función |
 | :--- | :--- | :--- |
 | `guardian_employee_risk` | **Vista** | Motor IA que cruza anulaciones, descuentos y auditoría previa para generar un Score de Riesgo (0-100%). |
@@ -78,7 +91,7 @@ Administración del personal, entregas a domicilio y liquidación automática de
 - `/supabase_migrations/20260307000000_jamaliso_initial_schema.sql`
 - `/docs/schema_dump_v1.json` (Mapa JSON para integraciones).
 
-## 6. Protección y Propiedad Intelectual
+## 8. Protección y Propiedad Intelectual
 El código fuente de este proyecto está protegido bajo las leyes de propiedad intelectual internacionales y la Ley 23 de 1982 (Colombia). El repositorio incluye un archivo `LICENSE` que restringe su uso y reproducción sin autorización expresa de **Jaime Jaramillo**.
 
 ---

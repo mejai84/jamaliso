@@ -1,14 +1,15 @@
-"use client"
-
-import { Search } from "lucide-react"
+import { Search, Landmark, PiggyBank } from "lucide-react"
 import { formatPrice } from "@/lib/utils"
 import { Employee } from "@/app/admin/payroll/types"
+import { supabase } from "@/lib/supabase/client"
+import { toast } from "sonner"
 
 interface EmployeesTabProps {
     employees: Employee[]
+    onRefresh?: () => void
 }
 
-export function EmployeesTab({ employees }: EmployeesTabProps) {
+export function EmployeesTab({ employees, onRefresh }: EmployeesTabProps) {
     return (
         <div className="flex-1 animate-in fade-in slide-in-from-bottom-4 duration-500 overflow-hidden flex flex-col font-sans">
             <div className="bg-white/60 backdrop-blur-3xl border border-slate-200 rounded-[2rem] p-6 h-full flex flex-col shadow-sm">
@@ -74,9 +75,40 @@ export function EmployeesTab({ employees }: EmployeesTabProps) {
                                         <p className="text-[7px] font-bold text-slate-400 uppercase tracking-widest italic">AUX_TRANSPORTE</p>
                                     </td>
                                     <td className="px-4 py-3 border-y border-r border-slate-100 last:rounded-r-xl">
-                                        <div className="flex items-center gap-1.5">
-                                            <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_5px_rgba(16,185,129,0.3)]" />
-                                            <span className="text-[8px] font-black text-slate-500 uppercase italic">OPERACIONAL</span>
+                                        <div className="flex items-center gap-3">
+                                            <div className="flex items-center gap-1.5 min-w-[100px]">
+                                                <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_5px_rgba(16,185,129,0.3)]" />
+                                                <span className="text-[8px] font-black text-slate-500 uppercase italic">OPERACIONAL</span>
+                                            </div>
+                                            <button
+                                                onClick={async () => {
+                                                    const amount = prompt(`REGISTRAR ADELANTO PARA ${emp.full_name?.toUpperCase()}\n\nIngrese el monto total del préstamo:`)
+                                                    if (!amount || isNaN(Number(amount))) return
+                                                    const cuota = prompt(`Ingrese el valor de la cuota quincenal/mensual:`)
+                                                    if (!cuota || isNaN(Number(cuota))) return
+
+                                                    const { error } = await supabase.from('payroll_loans').insert({
+                                                        restaurant_id: emp.restaurant_id,
+                                                        employee_id: emp.id,
+                                                        total_amount: Number(amount),
+                                                        balance: Number(amount),
+                                                        instalment_amount: Number(cuota),
+                                                        description: 'Adelanto de nómina registrado desde panel admin',
+                                                        status: 'ACTIVE'
+                                                    })
+
+                                                    if (!error) {
+                                                        toast.success("PRÉSTAMO REGISTRADO Y ACTIVADO")
+                                                        onRefresh?.()
+                                                    } else {
+                                                        toast.error("Error: " + error.message)
+                                                    }
+                                                }}
+                                                className="w-8 h-8 rounded-lg bg-orange-50 text-orange-500 hover:bg-orange-600 hover:text-white flex items-center justify-center transition-all"
+                                                title="Registrar Préstamo/Adelanto"
+                                            >
+                                                <PiggyBank className="w-4 h-4" />
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>

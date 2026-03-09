@@ -5,6 +5,8 @@ import { revalidatePath } from 'next/cache'
 import { cookies } from 'next/headers'
 import * as Sentry from '@sentry/nextjs'
 import { Pool } from 'pg'
+import { emitFiscalDocument } from '@/actions/billing-actions'
+import { deductInventoryFromOrder } from './inventory-actions'
 
 // Configuración de conexión directa a BD (Bypass RLS)
 let pool: Pool | null = null;
@@ -584,7 +586,6 @@ export async function performPartialAudit(
     }
 }
 
-import { deductInventoryFromOrder } from './inventory-actions'
 
 /**
  * Procesa el pago de una orden existente de forma atómica.
@@ -632,6 +633,12 @@ export async function processOrderPayment(
         // 3. 🚀 DEDUCCIÓN AUTOMÁTICA DE INVENTARIO (Recetas)
         if (restaurantId) {
             await deductInventoryFromOrder(orderId, restaurantId)
+
+            // 4. 📑 EMISIÓN FISCAL AUTOMÁTICA (DIAN ANEXO 1.9)
+            // Ejecutamos en segundo plano para no bloquear al cajero
+            emitFiscalDocument(orderId, restaurantId, true).catch(err => {
+                console.error("🔥 Error de fondo en emisión fiscal:", err)
+            })
         }
 
         revalidatePath('/admin/orders')

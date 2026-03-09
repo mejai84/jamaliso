@@ -12,6 +12,7 @@ import { DataFlow, CSVColumn } from "@/lib/data-flow"
 import { DataImportWizard } from "@/components/admin/shared/DataImportWizard"
 import { DataFlowActions } from "@/components/admin/shared/DataFlowActions"
 import { Button } from "@/components/ui/button"
+import { FiscalWizard } from "@/components/admin/billing/FiscalWizard"
 import { getBillingDashboardData, toggleContingencyMode, generateLibroAuxiliar, createTestInvoice } from "@/actions/billing-actions"
 import { useEffect } from "react"
 
@@ -38,6 +39,7 @@ export default function BillingPage() {
     const [contingencyMode, setContingencyMode] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [chartData, setChartData] = useState<{ name: string, total: number, fiscal: number }[]>([]);
+    const [isFiscalWizardOpen, setIsFiscalWizardOpen] = useState(false);
 
     // Cargar datos reales
     useEffect(() => {
@@ -170,7 +172,7 @@ export default function BillingPage() {
                     <BillingHeader
                         onSync={handleSync}
                         isSyncing={isSyncing}
-                        onConfig={() => toast.success("Abriendo Configuración de Proveedor Tecnológico...")}
+                        onConfig={() => setIsFiscalWizardOpen(true)}
                         onTest={handleCreateTestInvoice}
                     />
                     <div className="shrink-0">
@@ -253,6 +255,13 @@ export default function BillingPage() {
                         { key: 'customer_nit', label: 'NIT/ID' },
                         { key: 'amount', label: 'Monto' }
                     ]}
+                />
+
+                {/* ASISTENTE FISCAL DIAN (OVERLAY) */}
+                <FiscalWizard
+                    isOpen={isFiscalWizardOpen}
+                    onClose={() => setIsFiscalWizardOpen(false)}
+                    restaurantId="00000000-0000-0000-0000-000000000000"
                 />
             </div>
         </div>

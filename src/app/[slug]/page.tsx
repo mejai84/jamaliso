@@ -93,12 +93,29 @@ export default function RestaurantLandingPage() {
     if (error || !restaurant) {
         return (
             <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-slate-50">
-                <Globe className="w-16 h-16 text-slate-200 mb-6" />
-                <h1 className="text-2xl font-black uppercase tracking-tighter text-slate-900">Página no encontrada</h1>
-                <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mt-2">{error}</p>
-                <Button onClick={() => router.push('/')} className="mt-8 bg-slate-900 text-white rounded-xl h-12 px-8 uppercase font-black text-[10px] tracking-widest">
-                    VOLVER A JAMALI OS
-                </Button>
+                <div className="w-24 h-24 bg-white rounded-[2rem] shadow-2xl flex items-center justify-center mb-8 border border-slate-100 animate-in zoom-in duration-500">
+                    <Globe className="w-10 h-10 text-slate-200" />
+                </div>
+                <h1 className="text-3xl font-black uppercase tracking-tighter text-slate-900 italic">Página no encontrada</h1>
+                <p className="text-slate-400 text-[10px] font-black uppercase tracking-[0.3em] mt-3 text-center max-w-xs leading-relaxed italic">
+                    {error || "Parece que el ecosistema digital que buscas no está disponible o ha sido movido."}
+                </p>
+
+                <div className="flex flex-col sm:flex-row gap-4 mt-12 w-full max-w-sm">
+                    <Button
+                        onClick={() => router.push('/admin/online-sales')}
+                        className="flex-1 bg-slate-900 text-white rounded-2xl h-14 uppercase font-black text-[10px] tracking-widest hover:scale-105 transition-all shadow-xl"
+                    >
+                        VOLVER AL PANEL
+                    </Button>
+                    <Button
+                        onClick={() => router.push('/')}
+                        variant="outline"
+                        className="flex-1 border-2 border-slate-200 text-slate-400 rounded-2xl h-14 uppercase font-black text-[10px] tracking-widest hover:bg-slate-50 transition-all"
+                    >
+                        IR A LANDING
+                    </Button>
+                </div>
             </div>
         )
     }

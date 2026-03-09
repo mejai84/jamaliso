@@ -1,17 +1,18 @@
-"use client"
-
-import { FileText, AlertTriangle, ShieldCheck } from "lucide-react"
+import { FileText, AlertTriangle, ShieldCheck, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { cn } from "@/lib/utils"
 
 interface BillingHeaderProps {
     onSync: () => void;
     onConfig: () => void;
     onTest?: () => void;
     isSyncing: boolean;
+    restaurantName?: string;
+    isProduction?: boolean;
 }
 
-export function BillingHeader({ onSync, onConfig, onTest, isSyncing }: BillingHeaderProps) {
+export function BillingHeader({ onSync, onConfig, onTest, isSyncing, restaurantName = "JAMALI OS", isProduction = false }: BillingHeaderProps) {
     return (
         <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-10">
             <div className="space-y-4">
@@ -25,15 +26,18 @@ export function BillingHeader({ onSync, onConfig, onTest, isSyncing }: BillingHe
                 </div>
                 <div className="flex items-center gap-4 text-sm font-semibold uppercase tracking-widest text-muted-foreground">
                     <span className="flex items-center gap-2">
-                        <ShieldCheck className="w-4 h-4 text-emerald-500" /> API MOCKUP v1.0
+                        <ShieldCheck className={cn("w-4 h-4", isProduction ? "text-emerald-500" : "text-amber-500")} />
+                        {isProduction ? "Proveedor DIAN: PRODUCTIVO" : "Proveedor DIAN: HABILITACIÓN"}
                     </span>
                     <div className="w-1.5 h-1.5 rounded-full bg-border" />
-                    <span>ENTORNO DE DEMOSTRACIÓN</span>
+                    <span>{restaurantName}</span>
                 </div>
-                <div className="flex items-center gap-3 px-4 py-2 bg-amber-500/10 border border-amber-500/20 rounded-xl text-amber-500 text-xs font-bold w-fit">
-                    <AlertTriangle className="w-4 h-4" />
-                    ESTOS DOCUMENTOS NO TIENEN VALIDEZ FISCAL REAL
-                </div>
+                {!isProduction && (
+                    <div className="flex items-center gap-3 px-4 py-2 bg-amber-500/10 border border-amber-500/20 rounded-xl text-amber-500 text-xs font-bold w-fit">
+                        <AlertTriangle className="w-4 h-4" />
+                        MODO DE PRUEBAS ACTIVO
+                    </div>
+                )}
             </div>
 
             <div className="flex items-center gap-4">
