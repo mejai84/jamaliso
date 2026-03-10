@@ -442,7 +442,10 @@ export default function JamaliGuardianPage() {
                                                                         </p>
                                                                     </div>
                                                                 </div>
-                                                                <button className="h-10 w-10 rounded-xl bg-orange-500 border border-orange-500/20 flex items-center justify-center text-black">
+                                                                <button
+                                                                    onClick={() => router.push('/admin/inventory')}
+                                                                    title="Ver Inventario"
+                                                                    className="h-10 w-10 rounded-xl bg-orange-500 border border-orange-500/20 flex items-center justify-center text-black hover:bg-orange-400 transition-all active:scale-95">
                                                                     <Activity className="w-4 h-4" />
                                                                 </button>
                                                             </div>
@@ -459,11 +462,24 @@ export default function JamaliGuardianPage() {
                 </main>
 
                 <nav className="fixed bottom-10 left-1/2 -translate-x-1/2 w-[340px] h-20 bg-slate-900/60 backdrop-blur-3xl border border-slate-200 rounded-full flex items-center justify-around px-8 shadow-2xl z-50">
-                    {[Zap, Activity, TerminalSquare, Settings].map((Icon, i) => (
+                    {([
+                        { icon: ShieldAlert, tab: 'security' },
+                        { icon: Activity, tab: 'risk' },
+                        { icon: TerminalSquare, tab: 'inventory' },
+                        { icon: Settings, tab: null }, // Futuro: settings
+                    ] as const).map(({ icon: Icon, tab }, i) => (
                         <motion.button
                             key={i}
                             whileTap={{ scale: 0.8 }}
-                            className={cn("p-4 transition-all", i === 0 ? "text-red-500" : "text-slate-500 hover:text-slate-900")}
+                            onClick={() => tab && setActiveTab(tab as any)}
+                            className={cn(
+                                "p-4 transition-all rounded-full",
+                                tab && activeTab === tab
+                                    ? "text-red-500 bg-red-500/10"
+                                    : tab
+                                        ? "text-slate-500 hover:text-slate-200"
+                                        : "text-slate-700 cursor-not-allowed opacity-40"
+                            )}
                         >
                             <Icon className="w-6 h-6" />
                         </motion.button>

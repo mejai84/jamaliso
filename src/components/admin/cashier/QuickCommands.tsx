@@ -25,7 +25,7 @@ export function QuickCommands({ onIncome, onExpense, onPettyCash, onAudit }: Qui
                     <Plus className="w-7 h-7" />
                 </div>
                 <div className="text-left relative z-10">
-                    <span className="font-black uppercase text-xl md:text-2xl italic tracking-tighter group-hover:text-orange-600 transition-colors block leading-none">INGRESO</span>
+                    <span className="font-black uppercase text-xl md:text-2xl italic tracking-tighter text-slate-900 group-hover:text-orange-600 transition-colors block leading-none">INGRESO</span>
                     <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-2 italic block opacity-60">DEPOSIT_FLOW</span>
                 </div>
             </Button>
@@ -41,7 +41,7 @@ export function QuickCommands({ onIncome, onExpense, onPettyCash, onAudit }: Qui
                     <Minus className="w-7 h-7" />
                 </div>
                 <div className="text-left relative z-10">
-                    <span className="font-black uppercase text-xl md:text-2xl italic tracking-tighter group-hover:text-orange-600 transition-colors block leading-none">EGRESO</span>
+                    <span className="font-black uppercase text-xl md:text-2xl italic tracking-tighter text-slate-900 group-hover:text-orange-600 transition-colors block leading-none">EGRESO</span>
                     <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mt-2 italic block opacity-60">WITHDRAWAL_FLOW</span>
                 </div>
             </Button>

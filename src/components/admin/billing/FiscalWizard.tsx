@@ -215,11 +215,38 @@ export function FiscalWizard({ isOpen, onClose, restaurantId }: FiscalWizardProp
 
                                         {currentStep === 2 && (
                                             <div className="space-y-6">
-                                                <div className="p-8 border-2 border-dashed border-white/5 rounded-3xl bg-white/[0.01] text-center hover:bg-white/[0.03] transition-colors cursor-pointer group">
+                                                <div
+                                                    className="p-8 border-2 border-dashed border-white/5 rounded-3xl bg-white/[0.01] text-center hover:bg-white/[0.03] transition-colors cursor-pointer group relative"
+                                                    onClick={() => document.getElementById('cert-file-input')?.click()}
+                                                >
                                                     <Key className="w-12 h-12 mx-auto mb-4 text-orange-500 group-hover:scale-110 transition-transform" />
-                                                    <span className="text-sm font-black italic uppercase text-white tracking-widest">Inyectar Certificado (.p12)</span>
-                                                    <p className="text-[10px] text-slate-500 mt-2 uppercase font-black tracking-tighter">JAMALI OS Securitize Engine</p>
-                                                    <Input type="file" className="hidden" />
+                                                    {formData.certificate ? (
+                                                        <>
+                                                            <span className="text-sm font-black italic uppercase text-emerald-400 tracking-widest">✅ Certificado Cargado</span>
+                                                            <p className="text-[10px] text-slate-500 mt-2 uppercase font-black tracking-tighter">Haz clic para reemplazar</p>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <span className="text-sm font-black italic uppercase text-white tracking-widest">Inyectar Certificado (.p12)</span>
+                                                            <p className="text-[10px] text-slate-500 mt-2 uppercase font-black tracking-tighter">JAMALI OS Securitize Engine · Haz clic para seleccionar</p>
+                                                        </>
+                                                    )}
+                                                    <Input
+                                                        id="cert-file-input"
+                                                        type="file"
+                                                        accept=".p12,.pfx"
+                                                        className="hidden"
+                                                        onChange={(e) => {
+                                                            const file = e.target.files?.[0]
+                                                            if (!file) return
+                                                            const reader = new FileReader()
+                                                            reader.onload = (ev) => {
+                                                                const base64 = (ev.target?.result as string).split(',')[1]
+                                                                setFormData(fd => ({ ...fd, certificate: base64 }))
+                                                            }
+                                                            reader.readAsDataURL(file)
+                                                        }}
+                                                    />
                                                 </div>
                                                 <div className="space-y-3">
                                                     <Label className="text-[10px] font-black uppercase text-slate-400 ml-1">PIN del Certificado</Label>
@@ -227,6 +254,7 @@ export function FiscalWizard({ isOpen, onClose, restaurantId }: FiscalWizardProp
                                                 </div>
                                             </div>
                                         )}
+
 
                                         {currentStep === 3 && (
                                             <div className="space-y-8">

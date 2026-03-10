@@ -331,20 +331,24 @@ export async function splitOrder(
         }
 
         // 4. Recalcular totales (Original)
+        const { rows: [{ src_subtotal }] } = await client.query('SELECT COALESCE(SUM(subtotal), 0) as src_subtotal FROM order_items WHERE order_id = $1', [sourceOrderId])
         await client.query(`
             UPDATE orders 
-            SET subtotal = (SELECT COALESCE(SUM(subtotal), 0) FROM order_items WHERE order_id = $1),
-                total = (SELECT COALESCE(SUM(subtotal), 0) FROM order_items WHERE order_id = $1) + COALESCE(tax, 0) + COALESCE(service_charge, 0)
+            SET subtotal = $2,
+                total = $2 + COALESCE(tax, 0) + COALESCE(service_charge, 0),
+                updated_at = NOW()
             WHERE id = $1
-        `, [sourceOrderId])
+        `, [sourceOrderId, src_subtotal])
 
         // 5. Recalcular totales (Nueva)
+        const { rows: [{ new_subtotal }] } = await client.query('SELECT COALESCE(SUM(subtotal), 0) as new_subtotal FROM order_items WHERE order_id = $1', [newOrder.id])
         await client.query(`
             UPDATE orders 
-            SET subtotal = (SELECT COALESCE(SUM(subtotal), 0) FROM order_items WHERE order_id = $1),
-                total = (SELECT COALESCE(SUM(subtotal), 0) FROM order_items WHERE order_id = $1) + COALESCE(tax, 0) + COALESCE(service_charge, 0)
+            SET subtotal = $2,
+                total = $2 + COALESCE(tax, 0) + COALESCE(service_charge, 0),
+                updated_at = NOW()
             WHERE id = $1
-        `, [newOrder.id])
+        `, [newOrder.id, new_subtotal])
 
         await client.query('COMMIT')
 

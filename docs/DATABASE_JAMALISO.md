@@ -12,7 +12,7 @@ La estructura principal sobre la cual todo pivotea.
 | `tenants` | **Partner / Reseller** | Entidad de más alto nivel para Marca Blanca. Almacena: nombre del distribuidor, logo corporativo, color primario del Partner, subdominio maestro y plan de suscripción B2B. |
 | `restaurants` | **Sucursal / Cliente** | Datos de las sucursales. Cada restaurante pertenece a un `tenant_id`. Atributos clave: `name`, `subdomain`, `logo_url`, `primary_color`. Nuevos campos: `is_web_active` (boolean), `web_mode` (menu/ecommerce), `instagram_url`, `facebook_url`, `cuisine_type`, `language` (es/en). |
 | `profiles` | Usuarios | Perfiles vinculados a `auth.users`. Controlan acceso y roles. Vinculados a un `restaurant_id`. **Roles:** `super_admin`, `fiscal_manager`, `auditor`, `owner`, `admin`, etc. |
-| `settings` | Configuración | Ajustes globales del restaurante. **PK (restaurant_id, key)** asegura que las configuraciones sean aisladas por tenant. |
+| `settings` | Configuración | Ajustes globales del restaurante. **PK (restaurant_id, key)** asegura que las configuraciones sean aisladas por tenant. Ej: `payment_gateways`, `regional_config`. |
 | `shift_handoffs` | **Traspaso de Turno** | Registro de entrega de caja entre empleados. Guarda snapshots de mesas abiertas, pedidos en cocina y efectivo contado. |
 | `software_provider_info` | **Proveedor de Software** | Datos legales del creador del software (JAMALISO SAS). Requerido por la DIAN para el XML fiscal. |
 
@@ -83,6 +83,7 @@ Las herramientas para aumentar el ticket promedio y la retención de clientes.
 | `guardian_employee_risk` | **Vista** | Motor IA que cruza anulaciones, descuentos y auditoría previa para generar un Score de Riesgo (0-100%). |
 | `pattern_anomaly_watchdog` | **Trigger** | Disparador reactivo que detecta ráfagas de fraude en ventanas de < 2 horas y scores críticos. |
 | `inventory_watchdog` | **Trigger** | Alerta automática al Guardián cuando un insumo rompe el stock mínimo configurado. |
+| `ai_consultant_logs` | **Tabla** | Registro de análisis y predicciones JSON de la IA sobre ventas e inventario, consumido por el Dashboard. |
 
 ---
 

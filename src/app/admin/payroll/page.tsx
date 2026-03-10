@@ -65,10 +65,26 @@ export default function PayrollPage() {
     }
 
     const handleFinalizeShift = async (shiftId: string, empName: string) => {
-        if (!confirm(`¿Deseas finalizar forzosamente el turno de ${empName}?`)) return
-        const { error } = await supabase.from('shifts').update({ status: 'CLOSED', ended_at: new Date().toISOString() }).eq('id', shiftId)
-        if (!error) { toast.success(`TURNO DE ${empName} FINALIZADO`); loadData(); }
-        else { toast.error("Error: " + error.message) }
+        console.log(`FINALIZING SHIFT: ${shiftId} for ${empName}`)
+        const ok = confirm(`¿Deseas finalizar forzosamente el turno de ${empName}?`)
+        if (!ok) return
+
+        toast.loading(`Cerrando turno de ${empName}...`, { id: 'finalize_shift' })
+        try {
+            const { error } = await supabase.from('shifts').update({
+                status: 'CLOSED',
+                ended_at: new Date().toISOString()
+            }).eq('id', shiftId)
+
+            if (!error) {
+                toast.success(`TURNO DE ${empName} FINALIZADO`, { id: 'finalize_shift' })
+                loadData()
+            } else {
+                toast.error("Error: " + error.message, { id: 'finalize_shift' })
+            }
+        } catch (err) {
+            toast.error("Error inesperado al cerrar turno", { id: 'finalize_shift' })
+        }
     }
 
     const handleCalculatePayroll = async () => {

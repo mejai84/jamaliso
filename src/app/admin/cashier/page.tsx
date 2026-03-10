@@ -3,10 +3,12 @@
 import { useState, useEffect } from "react"
 import { supabase } from "@/lib/supabase/client"
 import { getPosStatus, PosStatus, processOrderPayment } from "@/actions/pos"
-import { Loader2, Activity, ArrowRight, Wallet, CreditCard, Banknote, X, MessageSquare } from "lucide-react"
+import { Loader2, Activity, ArrowRight, Wallet, CreditCard, Banknote, X, MessageSquare, AlertTriangle } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useRestaurant } from "@/providers/RestaurantProvider"
 import { toast } from "sonner"
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
 import { Movement } from "./types"
 
 // Components
@@ -38,6 +40,8 @@ export default function CashierPage() {
     const [zReportData, setZReportData] = useState<any>(null)
     const [activeVoucher, setActiveVoucher] = useState<any>(null)
     const [selectedOrder, setSelectedOrder] = useState<any>(null)
+    const [selectedOrderItems, setSelectedOrderItems] = useState<any[]>([])
+    const [cashReceived, setCashReceived] = useState<number>(0)
     const [isProcessingPayment, setIsProcessingPayment] = useState(false)
 
     useEffect(() => {
@@ -229,6 +233,7 @@ export default function CashierPage() {
             if (res.success) {
                 toast.success("ORDEN PAGADA", { description: "La cuenta ha sido cerrada correctamente." })
                 setSelectedOrder(null)
+                setCashReceived(0)
                 fetchDashboardData(status?.activeCashboxSession?.id!)
             } else {
                 toast.error(res.error)
@@ -283,42 +288,58 @@ export default function CashierPage() {
                             </div>
 
                             <div className="space-y-3 relative z-10">
-                                {pendingOrders.length > 0 ? pendingOrders.map((table) => (
-                                    <div
-                                        key={table.id}
-                                        className={cn(
-                                            "bg-white/5 border border-white/10 rounded-2xl p-4 flex items-center justify-between hover:bg-white/10 transition-all cursor-pointer group/item",
-                                            table.active_order?.status === 'payment_requested' && "border-orange-500/50 bg-orange-500/10 ring-2 ring-orange-500/20"
-                                        )}
-                                        onClick={() => setSelectedOrder(table)}
-                                    >
-                                        <div className="flex items-center gap-4">
-                                            <div className={cn(
-                                                "w-10 h-10 rounded-xl flex items-center justify-center font-black italic text-white transition-all",
-                                                table.active_order?.status === 'payment_requested' ? "bg-orange-600 scale-110 shadow-lg shadow-orange-600/20" : "bg-slate-800"
-                                            )}>
-                                                {table.table_name.replace(/\D/g, '') || table.table_number}
-                                            </div>
-                                            <div>
-                                                <div className="flex items-center gap-2">
-                                                    <p className="text-[10px] font-black text-white/40 uppercase tracking-widest italic leading-none">
-                                                        {table.active_order?.status === 'payment_requested' ? "CUENTA SOLICITADA" : "ORDEN EN CURSO"}
-                                                    </p>
-                                                    {table.active_order?.status === 'payment_requested' && (
-                                                        <span className="w-2 h-2 rounded-full bg-orange-500 animate-ping" />
-                                                    )}
+                                {pendingOrders.length > 0 ? pendingOrders.map((table) => {
+                                    const isPaymentRequested = table.active_order?.status === 'payment_requested';
+                                    return (
+                                        <div
+                                            key={table.id}
+                                            className={cn(
+                                                "bg-white/5 border-2 rounded-2xl p-4 flex items-center justify-between transition-all cursor-pointer group/item relative overflow-hidden",
+                                                isPaymentRequested ? "border-orange-500 bg-orange-500/20 shadow-[0_0_30px_rgba(234,88,12,0.2)] animate-pulse" : "border-white/10 hover:bg-white/10"
+                                            )}
+                                            onClick={async () => {
+                                                setSelectedOrder(table)
+                                                const { data } = await supabase.from('order_items').select('*, products(name)').eq('order_id', table.active_order?.id)
+                                                setSelectedOrderItems(data || [])
+                                            }}
+                                        >
+                                            {isPaymentRequested && (
+                                                <div className="absolute top-0 left-0 w-1 h-full bg-orange-500" />
+                                            )}
+                                            <div className="flex items-center gap-5">
+                                                <div className={cn(
+                                                    "w-12 h-12 rounded-2xl flex items-center justify-center font-black italic text-white transition-all shadow-lg",
+                                                    isPaymentRequested ? "bg-orange-500 scale-110" : "bg-slate-800"
+                                                )}>
+                                                    {table.table_name.replace(/\D/g, '') || table.table_number}
                                                 </div>
-                                                <p className="text-white font-black italic uppercase tracking-tighter leading-none mt-1">{table.table_name}</p>
+                                                <div className="space-y-1">
+                                                    <div className="flex items-center gap-2">
+                                                        <p className={cn(
+                                                            "text-[9px] font-black uppercase tracking-widest italic leading-none",
+                                                            isPaymentRequested ? "text-orange-400" : "text-white/40"
+                                                        )}>
+                                                            {isPaymentRequested ? "🛎️ CUENTA SOLICITADA" : "ORDEN EN CURSO"}
+                                                        </p>
+                                                    </div>
+                                                    <p className="text-white font-black italic uppercase tracking-tighter leading-none text-base">{table.table_name}</p>
+                                                </div>
+                                            </div>
+                                            <div className="text-right flex items-center gap-4">
+                                                <div className={cn(
+                                                    "items-center gap-2 bg-orange-600 text-white text-[10px] font-black px-4 py-2 rounded-xl shadow-lg shadow-orange-600/20 transition-all",
+                                                    isPaymentRequested ? "flex animate-bounce" : "hidden group-hover/item:flex"
+                                                )}>
+                                                    RECIBIR <ArrowRight className="w-3 h-3" />
+                                                </div>
+                                                <p className={cn(
+                                                    "font-black italic text-xl tracking-tighter",
+                                                    isPaymentRequested ? "text-white" : "text-orange-500"
+                                                )}>${(table.active_order as any)?.total?.toLocaleString()}</p>
                                             </div>
                                         </div>
-                                        <div className="text-right flex items-center gap-3">
-                                            <div className="hidden group-hover/item:flex items-center gap-1 bg-orange-600 text-white text-[8px] font-black px-2 py-1 rounded-lg animate-in fade-in slide-in-from-right-1">
-                                                CERRAR <ArrowRight className="w-2 h-2" />
-                                            </div>
-                                            <p className="text-orange-500 font-black italic text-lg tracking-tighter">${(table.active_order as any)?.total?.toLocaleString()}</p>
-                                        </div>
-                                    </div>
-                                )) : (
+                                    )
+                                }) : (
                                     <div className="py-10 text-center opacity-30">
                                         <p className="text-[10px] font-black uppercase tracking-widest italic">No hay cuentas pendientes</p>
                                     </div>
@@ -388,66 +409,127 @@ export default function CashierPage() {
             {selectedOrder && (
                 <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-slate-900/90 backdrop-blur-xl animate-in fade-in duration-300">
                     <div className="absolute inset-0" onClick={() => setSelectedOrder(null)} />
-                    <div className="relative bg-white w-full max-w-lg rounded-[2.5rem] md:rounded-[3rem] overflow-hidden shadow-2xl animate-in zoom-in-95">
-                        <div className="p-8 border-b border-slate-100 flex justify-between items-center">
+                    <div className="relative bg-white w-full max-w-5xl rounded-[2.5rem] md:rounded-[4rem] overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+                        {/* Header */}
+                        <div className="px-8 py-6 border-b border-slate-100 flex justify-between items-center bg-white shrink-0">
                             <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 bg-orange-600 rounded-2xl flex items-center justify-center text-white font-black italic shadow-lg shadow-orange-600/20">
-                                    {selectedOrder.table_name.replace(/\D/g, '')}
+                                <div className="w-12 h-12 bg-orange-600 rounded-2xl flex items-center justify-center text-white font-black italic shadow-lg">
+                                    {selectedOrder.table_name.replace(/\D/g, '') || '?'}
                                 </div>
                                 <div>
-                                    <h3 className="text-2xl font-black italic uppercase tracking-tighter leading-none">Cerrar <span className="text-orange-600">Cuenta</span></h3>
-                                    <p className="text-[10px] font-black text-slate-400 mt-2 uppercase tracking-widest italic">{selectedOrder.table_name} • MESA OCUPADA</p>
+                                    <h3 className="text-xl md:text-2xl font-black italic uppercase tracking-tighter leading-none">Cerrar <span className="text-orange-600">Cuenta</span></h3>
+                                    <p className="text-[10px] font-black text-slate-400 mt-2 uppercase tracking-widest italic">{selectedOrder.table_name} • COBRO DIRECTO</p>
                                 </div>
                             </div>
                             <button onClick={() => setSelectedOrder(null)} className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center hover:bg-rose-500 hover:text-white transition-colors"><X className="w-5 h-5" /></button>
                         </div>
-                        <div className="p-8 space-y-6">
-                            <div className="bg-slate-900 rounded-[2rem] p-8 text-center space-y-2 border-4 border-slate-800 shadow-2xl">
-                                <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.4em] italic">Total Neto Recaudado</p>
-                                <p className="text-5xl md:text-6xl font-black italic tracking-tighter text-orange-500">${selectedOrder.active_order.total.toLocaleString()}</p>
-                            </div>
+                        <div className="p-8 space-y-8 flex flex-col md:flex-row gap-8 overflow-y-auto custom-scrollbar">
+                            <div className="flex-1 space-y-6">
+                                <div className="bg-slate-900 rounded-[2rem] p-8 text-center space-y-2 border-4 border-slate-800 shadow-2xl">
+                                    <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.4em] italic leading-none">Total Neto Recaudado</p>
+                                    <p className="text-5xl md:text-6xl font-black italic tracking-tighter text-orange-500">${selectedOrder.active_order.total.toLocaleString()}</p>
+                                </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <button
-                                    disabled={isProcessingPayment}
-                                    onClick={() => handlePaymentConfirm('cash')}
-                                    className="h-24 bg-emerald-50 text-emerald-600 border-2 border-emerald-100 rounded-3xl flex flex-col items-center justify-center gap-1 hover:bg-emerald-600 hover:text-white transition-all group disabled:opacity-50"
-                                >
-                                    <Banknote className="w-8 h-8 group-hover:scale-110 transition-transform" />
-                                    <span className="text-[10px] font-black uppercase tracking-widest">EFECTIVO</span>
-                                </button>
-                                <button
-                                    disabled={isProcessingPayment}
-                                    onClick={() => handlePaymentConfirm('card')}
-                                    className="h-24 bg-blue-50 text-blue-600 border-2 border-blue-100 rounded-3xl flex flex-col items-center justify-center gap-1 hover:bg-blue-600 hover:text-white transition-all group disabled:opacity-50"
-                                >
-                                    <CreditCard className="w-8 h-8 group-hover:scale-110 transition-transform" />
-                                    <span className="text-[10px] font-black uppercase tracking-widest">TARJETA</span>
-                                </button>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <button
+                                        disabled={isProcessingPayment}
+                                        onClick={() => handlePaymentConfirm('cash')}
+                                        className="h-24 bg-emerald-50 text-emerald-600 border-2 border-emerald-100 rounded-3xl flex flex-col items-center justify-center gap-1 hover:bg-emerald-600 hover:text-white transition-all group disabled:opacity-50 relative overflow-hidden"
+                                    >
+                                        <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-150 transition-transform"><Banknote className="w-12 h-12" /></div>
+                                        <Banknote className="w-8 h-8 group-hover:scale-110 transition-transform" />
+                                        <span className="text-[10px] font-black uppercase tracking-widest">EFECTIVO</span>
+                                    </button>
+                                    <button
+                                        disabled={isProcessingPayment}
+                                        onClick={() => handlePaymentConfirm('card')}
+                                        className="h-24 bg-blue-50 text-blue-600 border-2 border-blue-100 rounded-3xl flex flex-col items-center justify-center gap-1 hover:bg-blue-600 hover:text-white transition-all group disabled:opacity-50 relative overflow-hidden"
+                                    >
+                                        <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-150 transition-transform"><CreditCard className="w-12 h-12" /></div>
+                                        <CreditCard className="w-8 h-8 group-hover:scale-110 transition-transform" />
+                                        <span className="text-[10px] font-black uppercase tracking-widest">TARJETA</span>
+                                    </button>
+                                </div>
+
+                                <div className="bg-slate-50 border-2 border-slate-100 rounded-3xl p-6 space-y-4">
+                                    <div className="flex justify-between items-center px-1">
+                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">Recibido Efectivo</label>
+                                        {cashReceived > (selectedOrder.active_order?.total || 0) && (
+                                            <div className="px-3 py-1 bg-emerald-100 text-emerald-600 rounded-lg text-[9px] font-black animate-bounce">
+                                                CAMBIO: ${(cashReceived - selectedOrder.active_order.total).toLocaleString()}
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="relative">
+                                        <span className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
+                                        <input
+                                            type="number"
+                                            value={cashReceived || ''}
+                                            onChange={(e) => setCashReceived(Number(e.target.value))}
+                                            placeholder="Monto..."
+                                            className="w-full h-14 bg-white border-2 border-slate-200 rounded-2xl pl-10 pr-6 font-black text-xl text-slate-900 focus:border-orange-500 outline-none transition-all"
+                                        />
+                                    </div>
+                                    <div className="grid grid-cols-4 gap-2">
+                                        {[10000, 20000, 50000, 100000].map(val => (
+                                            <button key={val} type="button" onClick={() => setCashReceived(val)} className="h-10 bg-white border border-slate-200 rounded-xl text-[10px] font-black text-slate-600 hover:bg-slate-900 hover:text-white transition-all">${val / 1000}k</button>
+                                        ))}
+                                    </div>
+                                </div>
+
                                 <button
                                     disabled={isProcessingPayment}
                                     onClick={() => handlePaymentConfirm('transfer')}
-                                    className="md:col-span-2 h-16 bg-slate-50 text-slate-600 border-2 border-slate-100 rounded-2xl flex items-center justify-center gap-3 hover:bg-slate-900 hover:text-white transition-all group disabled:opacity-50"
+                                    className="w-full h-16 bg-white border-2 border-slate-100 text-slate-400 rounded-2xl flex items-center justify-center gap-3 hover:bg-slate-900 hover:text-white transition-all group disabled:opacity-50"
                                 >
                                     <Wallet className="w-5 h-5" />
-                                    <span className="text-[10px] font-black uppercase tracking-widest italic">TRANSFERENCIA BANCARIA</span>
+                                    <span className="text-[10px] font-black uppercase tracking-widest italic">Transferencia / QR</span>
                                 </button>
                             </div>
 
+                            {/* Right: Order Details Inline */}
+                            <div className="flex-1 bg-slate-50 rounded-[2.5rem] border-2 border-slate-100 p-6 flex flex-col min-h-[350px]">
+                                <div className="flex items-center justify-between mb-6">
+                                    <h4 className="text-xs font-black uppercase italic tracking-widest text-slate-400">Detalle de Comanda</h4>
+                                    <span className="text-[9px] font-black bg-slate-200 text-slate-500 px-2 py-1 rounded-lg">ID: #{selectedOrder.active_order.id.slice(0, 8)}</span>
+                                </div>
+                                <div className="flex-1 overflow-y-auto space-y-3 custom-scrollbar pr-2 mb-6">
+                                    {selectedOrderItems.map((item: any) => (
+                                        <div key={item.id} className="flex justify-between items-center group/item hover:bg-white/50 p-2 rounded-xl transition-all">
+                                            <div className="flex items-center gap-3">
+                                                <span className="w-7 h-7 bg-slate-900 text-white rounded-lg flex items-center justify-center text-[10px] font-black italic">{item.quantity}x</span>
+                                                <div>
+                                                    <p className="text-[11px] font-black italic uppercase text-slate-800 leading-none">{item.products?.name}</p>
+                                                    {item.notes && <p className="text-[9px] text-orange-600 font-bold italic mt-1 leading-none uppercase">📝 {item.notes}</p>}
+                                                </div>
+                                            </div>
+                                            <span className="text-[11px] font-black text-slate-400">${item.subtotal?.toLocaleString()}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className="mt-auto pt-6 border-t border-slate-200">
+                                    <div className="flex justify-between text-xs font-black italic uppercase text-slate-400">
+                                        <span>Subtotal Estimado</span>
+                                        <span>${(selectedOrder.active_order.total / 1.1).toLocaleString()}</span>
+                                    </div>
+                                    <div className="flex justify-between text-base font-black italic uppercase text-slate-900 mt-2">
+                                        <span>Total a Recaudar</span>
+                                        <span className="text-orange-600">${selectedOrder.active_order.total.toLocaleString()}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Footer */}
+                        <div className="px-8 py-6 border-t border-slate-50 flex items-center justify-center shrink-0">
                             <Button
                                 onClick={() => router.push(`/admin/orders?table=${selectedOrder.id}`)}
                                 variant="ghost"
-                                className="w-full text-slate-400 text-[9px] font-black uppercase tracking-widest italic hover:text-orange-600"
+                                className="text-slate-400 text-[10px] font-black uppercase tracking-widest italic hover:text-orange-600"
                             >
-                                <MessageSquare className="w-4 h-4 mr-2" /> VER DETALLE DE COMANDA COMPLETA
+                                <MessageSquare className="w-4 h-4 mr-2" /> VER GESTIÓN COMPLETA DE MESA
                             </Button>
                         </div>
-                        {isProcessingPayment && (
-                            <div className="absolute inset-0 bg-white/60 backdrop-blur-sm flex flex-col items-center justify-center z-50 animate-in fade-in duration-300">
-                                <Loader2 className="w-12 h-12 text-orange-600 animate-spin" />
-                                <p className="text-[10px] font-black uppercase tracking-widest mt-4 text-orange-600 animate-pulse">PROCESANDO TRANSACCIÓN...</p>
-                            </div>
-                        )}
                     </div>
                 </div>
             )}

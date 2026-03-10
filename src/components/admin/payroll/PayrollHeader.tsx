@@ -40,14 +40,25 @@ export function PayrollHeader({ stats, menuTabs, activeTab, setActiveTab }: Payr
                 </div>
                 <div className="flex gap-4">
                     <Button
-                        onClick={() => toast.info("REPORTE CONTABLE: Procesando...")}
+                        onClick={() => {
+                            console.log("REPORTE CONTABLE CLICKED")
+                            toast.info("REPORTE CONTABLE: Procesando exportación global...")
+                        }}
                         variant="ghost"
+                        type="button"
                         className="h-14 px-8 bg-white/5 border border-white/10 text-slate-400 font-black uppercase text-[10px] tracking-widest rounded-2xl"
                     >
                         REPORTE CONTABLE
                     </Button>
                     <Button
-                        onClick={() => toast.info("MÓDULO DE CONTRATACIÓN: Cargando perfiles...")}
+                        onClick={() => {
+                            console.log("NUEVO COLABORADOR CLICKED")
+                            setActiveTab('employees')
+                            toast.success("MÓDULO DE PERSONAL ACTIVADO", {
+                                description: "Use el botón 'AGREGAR' en la pestaña de empleados."
+                            })
+                        }}
+                        type="button"
                         className="h-14 px-8 bg-orange-600 text-black font-black uppercase text-xs italic tracking-widest rounded-2xl shadow-xl shadow-orange-600/20 hover:bg-orange-500"
                     >
                         <UserPlus className="w-5 h-5 mr-3" /> NUEVO COLABORADOR
@@ -56,11 +67,15 @@ export function PayrollHeader({ stats, menuTabs, activeTab, setActiveTab }: Payr
             </div>
 
             {/* NAVIGATION TABS */}
-            <div className="flex flex-wrap items-center gap-2 md:gap-4 bg-white/40 p-2 rounded-2xl border border-slate-200 shrink-0 font-sans">
+            <div className="flex flex-wrap items-center gap-2 md:gap-4 bg-white/40 p-2 rounded-2xl border border-slate-200 shrink-0 font-sans relative z-50">
                 {menuTabs.map(tab => (
                     <button
                         key={tab.id}
-                        onClick={() => setActiveTab(tab.id)}
+                        type="button"
+                        onClick={() => {
+                            console.log(`SWITCHING TO TAB: ${tab.id}`)
+                            setActiveTab(tab.id)
+                        }}
                         className={cn(
                             "flex-1 flex items-center justify-center gap-2 max-md:py-3 py-3 rounded-xl transition-all font-black uppercase italic text-[9px] tracking-widest",
                             activeTab === tab.id

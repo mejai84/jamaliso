@@ -147,7 +147,7 @@ export default function CierreTurnoPage() {
                 Continuar al Resumen →
             </button>
             <button
-                onClick={() => window.location.href = '/admin/caja'}
+                onClick={() => window.location.href = '/admin/cashier'}
                 className="w-full h-14 bg-transparent text-slate-500 hover:text-slate-800 rounded-xl font-bold text-sm mt-2 transition-all"
             >
                 Cancelar

@@ -245,7 +245,7 @@ export default function OnlineSalesPage() {
                                             <h3 className="text-2xl md:text-3xl font-black italic tracking-tighter uppercase">Tu vitrina al mundo</h3>
                                             <div className="flex flex-col md:flex-row items-center gap-4">
                                                 <div className="px-6 py-3 bg-slate-50 border-2 border-slate-100 rounded-2xl font-mono text-sm font-bold text-slate-400 shadow-inner">
-                                                    {restaurant?.subdomain || restaurant?.slug || 'restaurante'}.jamaliso.com
+                                                    {restaurant?.name || "RESTAURANTE"}.jamaliso.com
                                                 </div>
                                                 <div className="flex gap-2">
                                                     <Button onClick={copyToClipboard} variant="ghost" className="h-12 px-6 rounded-2xl bg-white border border-slate-100 shadow-sm hover:scale-105 transition-all text-slate-400 hover:text-slate-900 gap-2 uppercase font-black text-[10px] italic tracking-widest">
@@ -341,7 +341,9 @@ export default function OnlineSalesPage() {
                                         <div className="space-y-6">
                                             <h4 className="text-xl font-black italic uppercase tracking-tighter mb-1 font-sans">Logotipo</h4>
                                             <div className="flex items-center bg-slate-50/50 border-2 border-dashed border-slate-100 rounded-3xl p-1.5 hover:border-slate-900 transition-all">
-                                                <div className="w-12 h-12 flex items-center justify-center bg-white rounded-2xl shadow-sm mr-2">{restaurant?.logo_url ? <img src={restaurant.logo_url} className="w-full h-full object-contain p-2" /> : <Camera className="w-5 h-5" />}</div>
+                                                <div className="w-12 h-12 flex items-center justify-center bg-white rounded-2xl shadow-sm mr-2">
+                                                    {restaurant?.logo_url ? <img src={restaurant.logo_url} alt="Logo" className="w-full h-full object-contain p-2" /> : <Camera className="w-5 h-5" />}
+                                                </div>
                                                 <input placeholder="URL del Logo" defaultValue={restaurant?.logo_url || ''} onBlur={(e) => updateRestaurant({ logo_url: e.target.value })} className="flex-1 bg-transparent py-4 text-[10px] font-black focus:outline-none" />
                                                 <Button onClick={() => detectLogoColor(restaurant?.logo_url || '')} size="sm" className="mr-2 bg-slate-900 text-white rounded-xl text-[8px] font-black">EXTRAER COLOR</Button>
                                             </div>
@@ -392,8 +394,10 @@ export default function OnlineSalesPage() {
                             {previewDevice === 'mobile' && <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-6 bg-slate-800 rounded-b-2xl z-30" />}
                             <div className={cn("h-full overflow-hidden flex flex-col relative z-20 rounded-[2rem] no-scrollbar overflow-y-auto", restaurant?.landing_page_config?.brand_mood?.style === 'noir' ? "bg-slate-950 text-white" : "bg-white text-slate-900")}>
                                 <div className="p-8 space-y-4">
+                                    <p className="text-[10px] font-black text-white uppercase italic tracking-tighter leading-none">{restaurant?.name || 'JAMALI OS'}</p>
                                     <h5 className="text-3xl font-black italic uppercase tracking-tighter leading-none">{restaurant?.landing_page_config?.hero?.title_part1 || 'SABORES'} <br /><span className="text-orange-600">{restaurant?.landing_page_config?.hero?.title_part2 || 'PREMIUM'}</span></h5>
-                                    <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest italic">{restaurant?.landing_page_config?.hero?.tagline || 'GASTRONOMIA CON ALMA'}</p>
+                                    <p className="text-[7px] font-black text-white/50 uppercase tracking-[0.3em] italic mb-1">/{restaurant?.subdomain || 'local'}</p>
+                                    <p className="text-xs text-slate-500 font-medium leading-relaxed italic">{restaurant?.landing_page_config?.hero?.tagline || 'GASTRONOMIA CON ALMA'}</p>
                                     <div className="flex gap-2 pt-4">
                                         <button className="h-10 px-6 bg-orange-600 text-white rounded-xl text-[8px] font-black uppercase italic tracking-widest transition-all hover:scale-105 active:scale-95 shadow-xl shadow-orange-600/20">VER CARTA</button>
                                     </div>

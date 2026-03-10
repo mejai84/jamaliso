@@ -24,11 +24,12 @@ import { WaiterHeader } from "@/components/admin/waiter/WaiterHeader"
 import { TableGrid } from "@/components/admin/waiter/TableGrid"
 import { TableOptions } from "@/components/admin/waiter/TableOptions"
 import { OrderInterface } from "@/components/admin/waiter/OrderInterface"
-import { KitchenChatModal } from "@/components/admin/waiter/KitchenChatModal"
+import { InternalChatModal } from "@/components/shared/InternalChatModal"
 import { BillPreviewModal } from "@/components/admin/waiter/BillPreviewModal"
 import { TransferItemModal } from "@/components/admin/waiter/TransferItemModal"
 import { SplitCheckModal } from "@/components/admin/waiter/SplitCheckModal"
 import { VoidAuthModal } from "@/components/admin/orders/VoidAuthModal"
+import { ActiveOrderNotesModal } from "@/components/admin/waiter/ActiveOrderNotesModal"
 
 export default function WaiterAppPremium() {
     const { restaurant, loading: contextLoading } = useRestaurant()
@@ -38,6 +39,7 @@ export default function WaiterAppPremium() {
     const [view, setView] = useState<'tables' | 'order' | 'options'>('tables')
     const [loading, setLoading] = useState(true)
     const [submitting, setSubmitting] = useState(false)
+    const [isNotesOpen, setIsNotesOpen] = useState(false)
     const [currentTime, setCurrentTime] = useState(new Date())
 
     // Data State
@@ -57,6 +59,7 @@ export default function WaiterAppPremium() {
     const [isBillPreview, setIsBillPreview] = useState(false)
     const [isChatOpen, setIsChatOpen] = useState(false)
     const [kitchenMsg, setKitchenMsg] = useState("")
+    const [waiterEmail, setWaiterEmail] = useState("Mesero")
     const [mergeMode, setMergeMode] = useState<{ active: boolean, sourceId: string | null }>({ active: false, sourceId: null })
     const [isTransferMode, setIsTransferMode] = useState(false)
     const [itemToTransfer, setItemToTransfer] = useState<any>(null)
@@ -65,10 +68,14 @@ export default function WaiterAppPremium() {
     const [pendingSync, setPendingSync] = useState<any[]>([])
     const [voidAuth, setVoidAuth] = useState<{ active: boolean, type: 'order' | 'item' | 'release', id: string, extra?: any } | null>(null)
 
-    // Load pending orders on mount
+    // Load pending orders + waiter email on mount
     useEffect(() => {
         const saved = localStorage.getItem('jamali_pending_orders')
         if (saved) setPendingSync(JSON.parse(saved))
+        // Get waiter name for chat
+        supabase.auth.getUser().then(({ data }) => {
+            if (data.user?.email) setWaiterEmail(data.user.email.split('@')[0])
+        })
     }, [])
 
     // Background Sync Effect
@@ -149,7 +156,8 @@ export default function WaiterAppPremium() {
                 // Fix: Para cada mesa, encontrar SOLO la orden más reciente (evita "mesa zombi")
                 const enrichedTables = tables.map(t => {
                     const tableOrders = (activeOrders || []).filter(o => o.table_id === t.id)
-                    const latestOrder = tableOrders.length > 0 ? tableOrders[0] : null // Ya viene ordenado DESC
+                    const latestOrder = tableOrders.length > 0 ? tableOrders[0] : null
+
                     return {
                         ...t,
                         active_order: latestOrder ? {
@@ -158,7 +166,8 @@ export default function WaiterAppPremium() {
                             status: latestOrder.status,
                             priority: latestOrder.priority,
                             created_at: latestOrder.created_at
-                        } : undefined
+                        } : undefined,
+                        active_orders: tableOrders // Guardamos todas las órdenes para soporte de cuentas paralelas
                     }
                 })
                 setRealTables(enrichedTables)
@@ -409,24 +418,31 @@ export default function WaiterAppPremium() {
                             table={selectedTable!}
                             submitting={submitting}
                             onAddItems={() => setView('order')}
-                            onBillPreview={async () => {
-                                const { data: items } = await supabase.from('order_items').select('*, products(name)').eq('order_id', selectedTable?.active_order?.id)
+                            onBillPreview={async (orderId) => {
+                                const targetId = orderId || selectedTable?.active_order?.id
+                                if (!targetId) return
+                                const { data: items } = await supabase.from('order_items').select('*, products(name)').eq('order_id', targetId)
                                 if (items) { (selectedTable as any).items = items; setIsBillPreview(true) }
                             }}
                             onMergeTables={() => setMergeMode({ active: true, sourceId: selectedTable?.id || null })}
-                            onSplitCheck={async () => {
-                                const { data: items } = await supabase.from('order_items').select('*, products(name)').eq('order_id', selectedTable?.active_order?.id)
-                                if (items) { (selectedTable as any).items = items; setIsSplitMode(true) }
+                            onSplitCheck={async (orderId) => {
+                                const targetId = orderId || selectedTable?.active_order?.id
+                                if (!targetId) return
+                                const { data: items } = await supabase.from('order_items').select('*, products(name)').eq('order_id', targetId)
+                                if (items) { (selectedTable as any).items = items; (selectedTable as any).active_order_id = targetId; setIsSplitMode(true) }
                             }}
-                            onTransferItems={async () => {
-                                const { data: items } = await supabase.from('order_items').select('*, products(name)').eq('order_id', selectedTable?.active_order?.id)
-                                if (items) { (selectedTable as any).items = items; setIsTransferMode(true) }
+                            onTransferItems={async (orderId) => {
+                                const targetId = orderId || selectedTable?.active_order?.id
+                                if (!targetId) return
+                                const { data: items } = await supabase.from('order_items').select('*, products(name)').eq('order_id', targetId)
+                                if (items) { (selectedTable as any).items = items; (selectedTable as any).active_order_id = targetId; setIsTransferMode(true) }
                             }}
-                            onPay={async () => {
-                                if (!selectedTable?.active_order) return;
+                            onPay={async (orderId) => {
+                                const targetId = orderId || selectedTable?.active_order?.id
+                                if (!targetId) return;
                                 setSubmitting(true);
                                 try {
-                                    const result = await requestPayment(selectedTable.active_order.id)
+                                    const result = await requestPayment(targetId)
                                     if (result.success) {
                                         toast.success("COBRO NOTIFICADO AL CAJERO", {
                                             description: "La cuenta ha sido solicitada. Dirija al cliente a caja.",
@@ -441,12 +457,31 @@ export default function WaiterAppPremium() {
                                     setSubmitting(false);
                                 }
                             }}
-                            onDeliver={handleDeliverOrder}
+                            onDeliver={async (orderId) => {
+                                const targetId = orderId || selectedTable?.active_order?.id
+                                if (!targetId || submitting) return
+                                setSubmitting(true)
+                                try {
+                                    const result = await updateOrderStatusSecure(targetId, 'delivered')
+                                    if (result.success) {
+                                        toast.success("ORDEN ENTREGADA")
+                                        setView('tables'); fetchData()
+                                    } else {
+                                        toast.error(result.error || "Error al entregar")
+                                    }
+                                } finally { setSubmitting(false) }
+                            }}
+                            onManageNotes={async (orderId) => {
+                                const targetId = orderId || selectedTable?.active_order?.id
+                                if (!targetId) return
+                                const { data: items } = await supabase.from('order_items').select('*, products(name)').eq('order_id', targetId)
+                                if (items) { (selectedTable as any).items = items; (selectedTable as any).active_order_id = targetId; setIsNotesOpen(true) }
+                            }}
                             onRelease={() => {
                                 setVoidAuth({ active: true, type: 'release', id: selectedTable!.id })
                             }}
-                            onVoidOrder={() => {
-                                setVoidAuth({ active: true, type: 'order', id: selectedTable!.active_order?.id || '' })
+                            onVoidOrder={(orderId) => {
+                                setVoidAuth({ active: true, type: 'order', id: orderId || selectedTable!.active_order?.id || '' })
                             }}
                         />
                     ) : (
@@ -460,6 +495,8 @@ export default function WaiterAppPremium() {
                             submitting={submitting}
                             isPriority={isPriority}
                             restaurant={restaurant}
+                            orderNotes={orderNotes} // Pass orderNotes
+                            onUpdateOrderNotes={setOrderNotes} // Pass setter
                             onAddToCart={addToCart}
                             onRemoveFromCart={removeFromCart}
                             onUpdateCartQty={updateCartQty}
@@ -474,13 +511,12 @@ export default function WaiterAppPremium() {
             </div>
 
             {/* Modals */}
-            <KitchenChatModal
+            <InternalChatModal
                 isOpen={isChatOpen}
                 onClose={() => setIsChatOpen(false)}
-                kitchenMsg={kitchenMsg}
-                setKitchenMsg={setKitchenMsg}
-                onSend={handleSendKitchenMsg}
-                submitting={submitting}
+                restaurantId={restaurant?.id || ''}
+                myArea="waiter"
+                myName={waiterEmail}
             />
 
             <BillPreviewModal
@@ -533,6 +569,13 @@ export default function WaiterAppPremium() {
                 }
                 .animate-pulse-red { animation: pulse-red 2s infinite; }
             `}</style>
+            {/* 📝 MODAL DE OBSERVACIONES ACTIVAS */}
+            <ActiveOrderNotesModal
+                isOpen={isNotesOpen}
+                onClose={() => setIsNotesOpen(false)}
+                table={selectedTable}
+                onRefresh={fetchData}
+            />
         </div >
     )
 }

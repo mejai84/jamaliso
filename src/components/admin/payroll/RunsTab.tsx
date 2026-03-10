@@ -53,8 +53,12 @@ export function RunsTab({
                             </div>
                         </div>
                         <Button
-                            onClick={onCalculatePayroll}
+                            onClick={() => {
+                                console.log("CALCULATE PAYROLL BUTTON CLICKED")
+                                onCalculatePayroll()
+                            }}
                             disabled={isCalculating}
+                            type="button"
                             className="w-full h-16 md:h-20 bg-orange-500 hover:bg-orange-600 text-white font-black uppercase text-sm md:text-base italic tracking-widest rounded-2xl md:rounded-3xl shadow-lg shadow-orange-500/20 active:scale-95 transition-all"
                         >
                             {isCalculating ? (

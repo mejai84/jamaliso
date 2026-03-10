@@ -120,13 +120,20 @@ export function Sidebar({ restaurant, userRole, userName }: SidebarProps) {
 
             {/* Navigation Search */}
             <div className="px-4 2xl:px-6 mb-4 2xl:mb-8 relative z-10">
+                {/* 🛡️ DUMMY TRAPS */}
+                <input type="text" name="dummy-u" tabIndex={-1} aria-hidden="true" className="opacity-0 absolute w-0 h-0 -z-50 pointer-events-none" />
+                <input type="password" name="dummy-p" tabIndex={-1} aria-hidden="true" className="opacity-0 absolute w-0 h-0 -z-50 pointer-events-none" />
+
                 <div className="relative group">
                     <Search className="absolute left-3 2xl:left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-orange-500 transition-colors" />
                     <input
-                        type="search"
+                        type="text"
+                        name={`jamali-search-key-${Math.random().toString(36).substring(7)}`}
                         placeholder={t.sidebar.search_placeholder}
                         value={localSearch}
                         onChange={(e) => setLocalSearch(e.target.value)}
+                        autoComplete="one-time-code"
+                        spellCheck={false}
                         className="w-full h-9 2xl:h-11 pl-9 2xl:pl-12 pr-4 rounded-xl bg-slate-50 border-2 border-slate-100 outline-none focus:border-orange-500/30 text-[9px] 2xl:text-[10px] font-black uppercase tracking-[0.2em] placeholder:text-slate-400 transition-all font-sans text-slate-900 shadow-inner"
                     />
                 </div>

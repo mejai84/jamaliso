@@ -22,23 +22,23 @@ export function CloseShiftCalculator({ counts, handleCountChange, calculatedTota
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
                 {/* Billetes */}
                 <div className="space-y-4">
-                    <h3 className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-4 flex items-center gap-2">
-                        <Banknote className="w-4 h-4" /> Billetes
+                    <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-6 flex items-center gap-2 italic">
+                        <Banknote className="w-5 h-5 text-emerald-500" /> Billetes Corrientes
                     </h3>
                     {DENOMINATIONS.filter(d => d.type === 'bill').map((d) => (
-                        <div key={d.value} className="flex items-center gap-4">
-                            <div className="w-24 text-right font-bold text-muted-foreground text-sm">{d.label}</div>
+                        <div key={d.value} className="flex items-center gap-4 group/row">
+                            <div className="w-24 text-right font-black text-slate-900 text-sm italic group-hover/row:text-orange-600 transition-colors uppercase tracking-tighter">{d.label}</div>
                             <div className="flex-1 relative">
-                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground/50 font-bold">x</span>
+                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 font-bold group-focus-within:text-orange-500">x</span>
                                 <Input
                                     type="number"
                                     placeholder="0"
-                                    className="pl-8 text-right font-mono font-bold bg-muted border-border h-12 rounded-xl focus:ring-primary/20"
+                                    className="pl-8 text-right font-black text-lg bg-white border-2 border-slate-100 h-14 rounded-2xl focus:border-orange-500/20 focus:ring-0 transition-all text-slate-900 shadow-sm"
                                     value={counts[d.value] || ''}
                                     onChange={(e) => handleCountChange(d.value, e.target.value)}
                                 />
                             </div>
-                            <div className="w-24 text-right font-bold text-foreground font-mono text-sm">
+                            <div className="w-24 text-right font-black text-slate-900 font-mono text-base italic tracking-tighter">
                                 {formatPrice(d.value * (counts[d.value] || 0)).replace('$ ', '')}
                             </div>
                         </div>
@@ -47,23 +47,23 @@ export function CloseShiftCalculator({ counts, handleCountChange, calculatedTota
 
                 {/* Monedas */}
                 <div className="space-y-4">
-                    <h3 className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-4 flex items-center gap-2">
-                        <Coins className="w-4 h-4" /> Monedas
+                    <h3 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-6 flex items-center gap-2 italic">
+                        <Coins className="w-5 h-5 text-amber-500" /> Monedas y Fracciones
                     </h3>
                     {DENOMINATIONS.filter(d => d.type === 'coin').map((d) => (
-                        <div key={d.value} className="flex items-center gap-4">
-                            <div className="w-24 text-right font-bold text-muted-foreground text-sm">{d.label}</div>
+                        <div key={d.value} className="flex items-center gap-4 group/row">
+                            <div className="w-24 text-right font-black text-slate-900 text-sm italic group-hover/row:text-orange-600 transition-colors uppercase tracking-tighter">{d.label}</div>
                             <div className="flex-1 relative">
-                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground/50 font-bold">x</span>
+                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 font-bold group-focus-within:text-orange-500">x</span>
                                 <Input
                                     type="number"
                                     placeholder="0"
-                                    className="pl-8 text-right font-mono font-bold bg-muted border-border h-12 rounded-xl focus:ring-primary/20"
+                                    className="pl-8 text-right font-black text-lg bg-white border-2 border-slate-100 h-14 rounded-2xl focus:border-orange-500/20 focus:ring-0 transition-all text-slate-900 shadow-sm"
                                     value={counts[d.value] || ''}
                                     onChange={(e) => handleCountChange(d.value, e.target.value)}
                                 />
                             </div>
-                            <div className="w-24 text-right font-bold text-foreground font-mono text-sm">
+                            <div className="w-24 text-right font-black text-slate-900 font-mono text-base italic tracking-tighter">
                                 {formatPrice(d.value * (counts[d.value] || 0)).replace('$ ', '')}
                             </div>
                         </div>

@@ -113,26 +113,30 @@ export default function PettyCashPage() {
     )
 
     return (
-        <div className="min-h-screen bg-transparent text-foreground p-4 md:p-8 font-sans selection:bg-primary selection:text-primary-foreground relative">
-            <div className="max-w-[1400px] mx-auto space-y-12 animate-in fade-in duration-1000">
+        <div className="min-h-screen text-slate-900 font-sans relative overflow-hidden flex flex-col">
+            {/* 🖼️ FONDO PREMIUM PIXORA */}
+            <div className="fixed inset-0 bg-[url('https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center scale-105 pointer-events-none opacity-20" />
+            <div className="fixed inset-0 backdrop-blur-[100px] bg-white/80 pointer-events-none" />
+
+            <div className="relative z-10 p-4 md:p-8 max-w-[1600px] mx-auto w-full space-y-12 animate-in fade-in duration-1000">
 
                 <PettyCashHeader onEmit={() => { setShowSuccess(false); setIsModalOpen(true); }} />
 
-                <div className="bg-slate-900/40 backdrop-blur-3xl border border-white/5 rounded-[3.5rem] overflow-hidden shadow-2xl animate-in slide-in-from-bottom-6 duration-1000">
-                    <div className="p-10 border-b border-white/5 bg-white/[0.02] flex flex-col md:flex-row md:items-center justify-between gap-8">
+                <div className="bg-white border-2 border-slate-100 rounded-[3rem] overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-700 animate-in slide-in-from-bottom-6 group">
+                    <div className="p-10 border-b-2 border-slate-50 bg-slate-50/30 flex flex-col md:flex-row md:items-center justify-between gap-8">
                         <div className="space-y-1">
-                            <h2 className="text-2xl font-black uppercase italic tracking-tighter flex items-center gap-3 text-white">
-                                <History className="w-6 h-6 text-orange-500" /> Auditoría de Movimientos
+                            <h2 className="text-3xl font-black italic tracking-tighter uppercase leading-none text-slate-900">
+                                Auditoría de <span className="text-orange-600">Movimientos</span>
                             </h2>
-                            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest italic opacity-60">Historial completo de egresos autorizados</p>
+                            <p className="text-[10px] text-slate-400 font-black uppercase tracking-[0.4em] italic leading-none mt-2">Flujo de caja menor y protocolos de gasto</p>
                         </div>
 
                         <div className="relative w-full md:w-[450px] group/search">
-                            <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-700 group-focus-within/search:text-orange-500 transition-colors" />
+                            <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within/search:text-orange-500 transition-colors" />
                             <input
                                 type="text"
                                 placeholder="IDENTIFICADOR O CONCEPTO..."
-                                className="w-full h-16 bg-white/[0.02] border border-white/10 rounded-[2rem] pl-16 pr-8 outline-none focus:border-orange-500/30 transition-all text-sm font-black italic uppercase text-white placeholder:text-slate-800 shadow-inner"
+                                className="w-full h-16 bg-white border-2 border-slate-100 rounded-[2rem] pl-16 pr-8 outline-none focus:border-orange-500/30 transition-all text-sm font-black italic uppercase text-slate-900 placeholder:text-slate-300 shadow-inner"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />

@@ -13,6 +13,7 @@ import { ProductionSummaryModal } from "@/components/admin/kitchen/ProductionSum
 import { StockManagerModal } from "@/components/admin/kitchen/StockManagerModal"
 
 import { adminTranslations } from "@/lib/i18n/admin"
+import { InternalChatModal } from "@/components/shared/InternalChatModal"
 
 export default function KitchenPage() {
     const { restaurant, lang } = useRestaurant()
@@ -29,6 +30,8 @@ export default function KitchenPage() {
     const [isMuted, setIsMuted] = useState(false)
     const [searchStock, setSearchStock] = useState("")
     const [allProducts, setAllProducts] = useState<any[]>([])
+    const [isChatOpen, setIsChatOpen] = useState(false)
+    const [kitchenUser, setKitchenUser] = useState("Cocina")
 
     const playSound = (type: 'new' | 'alert') => {
         if (isMuted) return
@@ -48,6 +51,10 @@ export default function KitchenPage() {
     useEffect(() => {
         const timer = setInterval(() => setCurrentTime(new Date()), 1000)
         if (restaurant) { fetchData(); fetchStations(); }
+        // Get kitchen user name for chat
+        supabase.auth.getUser().then(({ data }) => {
+            if (data.user?.email) setKitchenUser(data.user.email.split('@')[0])
+        })
         const channel = supabase.channel('kitchen-realtime')
             .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, () => {
                 fetchData(); playSound('new'); toast.info(t.notifications.new_order);
@@ -204,6 +211,25 @@ export default function KitchenPage() {
 
             <ProductionSummaryModal isOpen={isSummaryOpen} onClose={() => setIsSummaryOpen(false)} productionSummary={productionSummary} lang={lang} />
             <StockManagerModal isOpen={isStockOpen} onClose={() => setIsStockOpen(false)} products={allProducts} onToggleAvailability={toggleProductAvailability} searchQuery={searchStock} onSearchChange={setSearchStock} lang={lang} />
+
+            {/* 💬 Chat Botón Flotante */}
+            <button
+                onClick={() => setIsChatOpen(true)}
+                className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-orange-600 text-white rounded-2xl shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all"
+                title="Chat Interno"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                </svg>
+            </button>
+
+            <InternalChatModal
+                isOpen={isChatOpen}
+                onClose={() => setIsChatOpen(false)}
+                restaurantId={restaurant?.id || ''}
+                myArea="kitchen"
+                myName={kitchenUser}
+            />
 
             <style jsx global>{`
                 .custom-scrollbar::-webkit-scrollbar { width: 6px; }

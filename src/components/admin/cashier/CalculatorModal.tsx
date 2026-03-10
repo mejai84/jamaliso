@@ -54,9 +54,9 @@ export function CalculatorModal({ isOpen, mode, onSubmit, onClose, submitting }:
                                 "bg-card border-4 border-white/5 p-8 rounded-[3.5rem] flex flex-col items-center justify-between gap-8 transition-all duration-500 hover:border-primary/40 hover:bg-primary/5 group/denom",
                                 d.color.split(' ')[0]
                             )}>
-                                <div className="flex justify-between w-full opacity-40">
-                                    <span className="text-[9px] font-black uppercase tracking-widest italic">{(d as any).isCoin ? 'MONEDA_M0' : 'BILLETE_B0'}</span>
-                                    <Signal className="w-4 h-4" />
+                                <div className="flex justify-between w-full opacity-70">
+                                    <span className="text-[9px] font-black uppercase tracking-widest italic text-white/60">{(d as any).isCoin ? 'MONEDA_M0' : 'BILLETE_B0'}</span>
+                                    <Signal className="w-4 h-4 text-white/40" />
                                 </div>
                                 <h3 className="text-4xl font-black italic tracking-tighter text-white group-hover/denom:scale-110 transition-transform">${d.value.toLocaleString()}</h3>
                                 <div className="flex items-center justify-between w-full bg-black/40 p-3 rounded-[2rem] shadow-inner">
@@ -82,7 +82,7 @@ export function CalculatorModal({ isOpen, mode, onSubmit, onClose, submitting }:
 
                     <div className="flex-1 flex flex-col justify-center space-y-16 relative z-10">
                         <div className="text-center space-y-4 group/total">
-                            <p className="text-[11px] font-black text-primary uppercase tracking-[0.8em] italic leading-none pl-2 animate-pulse">TOTAL CONTADO</p>
+                            <p className="text-[11px] font-black text-white/60 uppercase tracking-[0.8em] italic leading-none pl-2 animate-pulse">TOTAL CONTADO</p>
                             <h2 className="text-8xl font-black italic tracking-tighter text-white leading-none tabular-nums group-hover/total:scale-110 transition-transform duration-700">${calculatedTotal.toLocaleString()}</h2>
                         </div>
 

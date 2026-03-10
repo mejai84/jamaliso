@@ -67,9 +67,12 @@ export function SecurityNode({ newPin, setNewPin, updatingPin, hasPin, onUpdateP
                             <div className="relative flex-1">
                                 <Lock className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-white/20" />
                                 <input
-                                    type="password"
+                                    type="text"
+                                    name="jamali-waiter-pin-secure"
                                     maxLength={4}
                                     placeholder={hasPin ? "••••" : "VACIO"}
+                                    autoComplete="off"
+                                    style={{ WebkitTextSecurity: 'disc' } as any}
                                     className="w-full h-18 bg-white/5 border border-white/10 rounded-[2rem] pl-16 pr-8 outline-none focus:border-primary transition-all font-black text-center text-3xl italic tracking-[0.8em] text-white shadow-inner placeholder:text-white/10"
                                     value={newPin}
                                     onChange={(e) => setNewPin(e.target.value.replace(/\D/g, ''))}
