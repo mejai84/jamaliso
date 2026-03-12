@@ -16,13 +16,21 @@ La estructura principal sobre la cual todo pivotea.
 | `shift_handoffs` | **Traspaso de Turno** | Registro de entrega de caja entre empleados. Guarda snapshots de mesas abiertas, pedidos en cocina y efectivo contado. |
 | `software_provider_info` | **Proveedor de Software** | Datos legales del creador del software (JAMALISO SAS). Requerido por la DIAN para el XML fiscal. |
 
+### 1.1 Plugin Registry (Feature Flags & Monetización)
+Tablas que controlan la arquitectura **Core + Plugins**.
+
+| Tabla | Función | Descripción |
+| :--- | :--- | :--- |
+| `system_modules` | **Catálogo Core** | Catálogo global de todos los módulos/plugins disponibles en JAMALI OS. Atributos: `id`, `name`, `description`, `monthly_price`, `is_core` (boolean). |
+| `tenant_installed_modules` | **Suscripción de Módulos** | Relación N:M que define qué plugins tiene activos un restaurante (`tenant_id`). Controla el lazy loading del Frontend. Atributos: `module_id`, `status` (active, suspended, trial), `trial_ends_at`. |
+
 ## 2. Subsistema de Punto de Venta (POS) y Menú
 Estructura de ventas en piso.
 
 | Tabla | Función | Descripción |
 | :--- | :--- | :--- |
 | `categories` | Menú | Clasificación de productos (Ej: "Bebidas", "Fuertes"). |
-| `products` | Menú | Productos a la venta final (precio, visibilidad, imagen). |
+| `products` | Menú | Productos a la venta final (precio, visibilidad, imagen). **Extensibilidad:** Utiliza la columna `options` (JSONB) para almacenar dinámicamente: `video_url`, `badge` (marketing), `allergens` (array) e ingredientes. |
 | `tables` | Salón | Disposición del salón. Atributos: `status` (Libre, Ocupada, Sucia). |
 | `orders` | Comandas | Cabeza de un pedido. **Máquina de Estados:** `pending → preparing → ready → delivered → payment_requested → paid`. FKs: `waiter_id`, `table_id`. |
 | `order_items` | Detalles | Cada producto de una orden. Permite estados de preparación individuales, modificaciones al plato y notas directas. |

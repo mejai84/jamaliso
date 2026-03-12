@@ -52,8 +52,8 @@ graph TD
 
 ---
 
-## 4. Estructura de Directorios (Clean Folder Structure)
-Siguiendo las mejores prácticas de mantenibilidad y modularidad, el proyecto está estructurado de la siguiente forma:
+## 4. Estructura de Directorios (Clean Folder Structure & Feature-Sliced Design)
+Siguiendo el **Estándar de Módulos JAMALI (Feature-Sliced Design)**, la arquitectura se divide estrictamente entre el Core (funcionalidad base) y los Plugins (módulos expansibles y monetizables).
 
 ```text
 /JAMALISO
@@ -63,25 +63,39 @@ Siguiendo las mejores prácticas de mantenibilidad y modularidad, el proyecto es
 ├── /src                     # Código Fuente Principal
 │   ├── /actions             # Server Actions (Lógica segura del backend en Next.js)
 │   ├── /app                 # App Router de Next.js (Rutas, páginas, layouts)
-│   │   ├── /admin           # Backoffice & POS (Carpeta principal del software)
-│   │   ├── /login           # Autenticación
+│   │   ├── /admin           # Backoffice principal regido por Provider de Módulos
+│   │   ├── /login           # Autenticación Core
 │   │   └── api              # Endpoints API Route
 │   │
-│   ├── /components          # Componentes visuales genéricos y de dominio (Botones, Modales)
-│   │   ├── /admin           # Componentes específicos del POS y Backoffice
-│   │   │   └── /waiter      # Componentes atómicos del Portal de Meseros
-│   │   └── /ui              # Componentes UI base (Shadcn/Tailwind)
-
+│   ├── /core                # (Antiguo /lib) Lógica base inmutable (Bypass de POS)
+│   │   ├── /supabase        # Clientes y Auth
+│   │   ├── /registry        # Core Registry de Plugins (Feature flags)
+│   │   └── base-components.ts
 │   │
-│   ├── /lib                 # Lógica core compartida
-│   │   ├── /supabase        # Clientes Supabase (Server / Browser / Middleware)
-│   │   └── utils.ts         # Funciones puras (Formateos, cálculos estadísticos)
+│   ├── /modules             # (NUEVO) Plugins Dinámicos Aislados
+│   │   ├── /pos             # Caja Registradora (actions, ui, types propios)
+│   │   ├── /inventory       # Módulo de Inventario
+│   │   ├── /payroll         # Módulo de Nómina
+│   │   └── /reservations    # Sistema de Reservas
+│   │
+│   ├── /components          # Componentes visuales genéricos (UI UI, Shadcn)
+│   │   └── /ui              # Componentes UI base (Shadcn/Tailwind)
 │   │
 │   ├── /providers           # Context Providers (Global State)
-│   │   └── RestaurantProvider.tsx # Manejo de contexto del Tenant actual
+│   │   ├── RestaurantProvider.tsx # Manejo de contexto del Tenant actual
+│   │   └── ModuleProvider.tsx     # Inyecta módulos activos (`tenant_installed_modules`)
 │   │
-│   └── /types               # Definiciones de TypeScript e Interfaces
+│   └── /types               # Definiciones compartidas de TypeScript
 ```
+
+---
+
+## 4.5. Estándar de Módulos JAMALI (Core + Plugins)
+Para escalar eficientemente y permitir la monetización granular, JAMALISO utiliza una arquitectura modular asíncrona:
+
+1. **Aislamiento por Dominio:** Cada carpeta dentro de `/modules/` es un ecosistema autónomo. El módulo `/pos` NO DEBE importar funciones directamente del módulo `/inventory`.
+2. **Event-Driven Bus:** La comunicación inter-módulo se hace mediante eventos. Si el POS necesita descontar stock, emite un evento `ORDER_COMPLETED`. Si el módulo de inventario está **instalado y activo**, este escucha el evento y opera.
+3. **Lazy Loading UI:** El `Sidebar` y los flujos de la interfaz leen el `ModuleProvider` para mostrar/ocultar rutas (ej: `/admin/kds`) dependiendo del plan contratado por el restaurante.
 
 ---
 
@@ -192,6 +206,7 @@ graph TD
 *   **Edge Caching (Next.js Native):** Implementación de `unstable_cache` en `src/actions/cache.ts` para catálogos y perfiles de restaurantes, reduciendo carga en Supabase.
 *   **PWA Resiliencia:** Utiliza `@ducanh2912/next-pwa` para registrar un **Service Worker** (`sw.js`).
 *   **Offline Logic:** Motor offline (`src/lib/offline-engine.ts`) para guardado local en emergencias de red.
+*   **Media Persistence Engine:** Integración con **Supabase Storage** para la gestión de activos digitales pesados (Videos .webm y fotos 4K). El sistema utiliza un patrón de `MIME_MAP` y `API routes` para garantizar que la subida desde el Dashboard sea resiliente y soporte `upsert` (actualización de archivos existentes).
 *   **Data Flow Engine (Pixora Import/Export):** Motor de sincronización masiva para Inventario, Productos, Clientes, Empleados, Facturación, Reservas y Recetas. Incluye un **Wizard de Mapeo Inteligente** para procesar archivos CSV externos y reconciliarlos con el esquema de JAMALI OS.
 
 ---

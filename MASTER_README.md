@@ -104,6 +104,13 @@ Este documento es la referencia definitiva para:
 | **Navigation 5.0** | Reorganización de 20+ módulos en 5 dominios estratégicos (Sales, Production, Talent, Digital, Central). | Mejora drástica de la UX, reducción de clics y flujo lógico de trabajo profesional. |
 | **Novedades Lab.** | Gestión de ausentismos con impacto automático en el motor de pagos. | Eliminación de errores manuales en descuentos por incapacidad o permisos. |
 - **Wizard de Habilitación**: Proceso guiado para activar el software propio ante la DIAN.
+- **POZU 2.0 Landmark**: Implementación de referencia de la web pública con optimización de marca "Rock & Burger", video-scroll y conversión optimizada.
+
+### 13. [Dashboard Pro: Gestión de Catálogo](docs/TECHNICAL_AUDIT_2026.md)
+- **Búsqueda y Filtros Real-time**: Localización instantánea de productos por nombre o descripción.
+- **Marketing Badges**: Gestión de etiquetas dinámicas (Best Seller, Nuevo, Recomendado).
+- **Seguridad Alimentaria**: Control centralizado de alérgenos por producto.
+- **Media Persistence**: Integración nativa con Supabase Storage para catálogos con video `.webm` e imágenes de alta resolución.
 
 ---
 ## 🏗️ Documentación del Sistema (Developer & Admin)

@@ -29,6 +29,7 @@ En esta sesión se ha transformado el sistema de un POS robusto a una plataforma
 | **Inventory Shrinkage** | Traceable inventory deduction based on recipes and movements. | Control total de costos (Food Cost) y detección de 'robo hormiga'. |
 | **JAMALI FISCAL PRO** | Motor de cumplimiento Anexo 1.9 DIAN para POS Electrónico y Contingencia. | Legalidad total en Colombia, ahorro en papel y cumplimiento sin topes de UVT. |
 | **Waiter Portal v2.0** | Operaciones atómicas de unión/transferencia y traducción total. | Fluidez operativa en salón y eliminación de errores de estado en mesas. |
+| **POZU LANDING PRO** | Optimización de copy (AIDA), Social Proof dinámico y Rediseño de CTAs. | Aumento drástico en la tasa de conversión y deseo de compra del usuario final. |
 
 ---
 
@@ -75,6 +76,8 @@ Se ha cumplido la **Regla Estricta de Documentación** previa al cierre:
 - [x] **Waiter Portal v2.0**: Actualizado el manual de usuario con las nuevas lógicas de salón.
 - [x] **POS State Machine Fix**: Corregida máquina de estados (`payment_requested`), Real-time en mesero, query cajero, restricción cocina, Server Actions.
 - [x] **JAMALI FISCAL PRO**: Ecosistema completo integrado. Motor Anexo 1.9, Wizard de configuración Pixora UI, y transmisión automática desde POS/Kiosco operativa.
+- [x] **POZU 2.0 LANDING & BRANDING**: Refactorización de marca a "POZU 2.0 ROCK & BURGER". Hero dinámico con video-scroll y optimización de jerarquía visual.
+- [x] **DASHBOARD PRODUCTS PRO**: Implementación de búsqueda ultra-rápida, filtros de categoría, sistema de Badges de marketing y etiquetado de alérgenos con sincronización Supabase Storage.
 
 ---
 
